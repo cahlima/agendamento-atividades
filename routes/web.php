@@ -32,7 +32,7 @@ Route::post('/logout', [App\Http\Controllers\AutenticacaoController::class, 'log
 
 //Rotas Tipo Usuários---------------------------------------------------------------------------------------------
 Route::get('/tipo', [App\Http\Controllers\TipoController::class, 'index'])->name('tipo');
-Route::get('/tipo/adicionar', [App\Http\Controllers\TipoController::class, 'adicionar'])->name('tipo.adicionar');
+Route::post('/tipo/adicionar', [App\Http\Controllers\TipoController::class, 'adicionar'])->name('tipo.adicionar');
 Route::post('/tipo/salvar', [App\Http\Controllers\TipoController::class, 'salvar'])->name('tipo/salvar');
 Route::post('/tipo/salvar', [App\Http\Controllers\TipoController::class, 'salvar'])->name('tipo.salvar');
 Route::get('/tipo/editar/{id}', [App\Http\Controllers\TipoController::class, 'editar'])->name('tipo.editar');
@@ -41,7 +41,7 @@ Route::get('/tipo/deletar/{id}', [App\Http\Controllers\TipoController::class, 'd
 
 //RotasUsuários---------------------------------------------------------------------------------------------
 Route::get('/usuario', [App\Http\Controllers\UsuarioController::class, 'index'])->name('usuario');
-Route::get('/usuario/adicionar', [App\Http\Controllers\UsuarioController::class, 'adicionar'])->name('usuario.adicionar');
+Route::post('/usuario/adicionar', [App\Http\Controllers\UsuarioController::class, 'adicionar'])->name('usuario.adicionar');
 Route::post('/usuario/salvar', [App\Http\Controllers\UsuarioController::class, 'salvar'])->name('usuario/salvar');
 
 Route::get('/usuario/editar/{id_usuario}', [App\Http\Controllers\UsuarioController::class, 'editar'])->name('usuario.editar');
