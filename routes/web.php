@@ -27,7 +27,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/paineladm', [App\Http\Controllers\AutenticacaoController::class, 'index'])->name('paineladm');
 Route::get('/admin', [App\Http\Controllers\AutenticacaoController::class, 'index'])->name('admin');
 Route::get('/login', [App\Http\Controllers\AutenticacaoController::class, 'login'])->name('login');
-Route::post('/logando', [App\Http\Controllers\AutenticacaoController::class, 'logando'])->name('logando');
+Route::post('/logindo', [App\Http\Controllers\AutenticacaoController::class, 'logindo'])->name('logindo');
 Route::post('/logout', [App\Http\Controllers\AutenticacaoController::class, 'logout'])->name('logout');
 
 //Rotas Tipo Usuários---------------------------------------------------------------------------------------------

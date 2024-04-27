@@ -8,7 +8,7 @@
                 <div class="card-header text-center">{{ __('Sistema Agendamentos Aula') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('logando') }}">
+                    <form method="POST" action="{{ route('logindo') }}">
                         @csrf
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <div class="form-group row">
