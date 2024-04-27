@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Listeners\NotificaUsuarioAgenda;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Aulas;
@@ -10,9 +11,8 @@ use App\Models\Agenda;
 use App\Notifications\NotificaUsuario;
 use App\Notifications\NotificaAluno;
 use Illuminate\Support\Facades\Notification;
-
-
-
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\FacadesSession;
 
 class AgendaController extends Controller
 {
@@ -101,7 +101,7 @@ class AgendaController extends Controller
         $id_professor = $aulas->usuario_id;
         $usuario =   $usuarios = Usuarios::find($id_professor);
 
-        $usuario->notify(new NotificaUsuario($usuario, $agenda));
+        $usuario->notify(new NotificaUsuarioAgenda($usuario, $agenda));
 
         $agendas = DB::table('agendas')
         ->join('usuarios', 'agendas.usuario_id', '=', 'usuarios.id_usuario')
@@ -117,7 +117,7 @@ class AgendaController extends Controller
         $agendas = Agenda::create($dados);
 
 
-         \Session::flash('flash_message',[
+         Session::flash('flash_message',[
             'msg'=>"Registro adicionado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -172,7 +172,7 @@ class AgendaController extends Controller
 
         $usuario->notify(new NotificaAluno($usuario, $agendas));
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro atualizado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -190,7 +190,7 @@ class AgendaController extends Controller
 
        $agendas->update($dados);
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro atualizado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -203,7 +203,7 @@ class AgendaController extends Controller
     public function deletar($id){
         Agenda::find($id)->delete();
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro excluido com sucesso!",
             'class'=>"alert-success"
         ]);        return redirect()->route('agenda');

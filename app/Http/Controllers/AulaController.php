@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Aulas;
 use App\Models\Usuarios;
 use App\Models\Agenda;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\FacadesSession;
 
 class AulaController extends Controller
 {
@@ -48,7 +50,7 @@ class AulaController extends Controller
 
         $dados = $request->all();
         $aulas = Aulas::create($dados);
-         \Session::flash('flash_message',[
+         Session::flash('flash_message',[
             'msg'=>"Registro adicionado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -75,7 +77,7 @@ class AulaController extends Controller
 
        $aulas->update($dados);
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro atualizado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -88,7 +90,7 @@ class AulaController extends Controller
     public function deletar($id){
         Aulas::find($id)->delete();
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro excluido com sucesso!",
             'class'=>"alert-success"
         ]);        return redirect()->route('aula');

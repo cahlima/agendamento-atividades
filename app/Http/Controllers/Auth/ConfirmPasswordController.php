@@ -19,7 +19,7 @@ class ConfirmPasswordController extends Controller
     |
     */
 
-    use ConfirmsPasswords;
+    use App\Http\Controllers\Auth\ConfirmsPasswords;
 
     /**
      * Where to redirect users when the intended url fails.

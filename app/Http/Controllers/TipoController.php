@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\Tipos;
+use Illuminate\Support\Facades\Session;
 
 class TipoController extends Controller
 {
@@ -42,7 +43,7 @@ class TipoController extends Controller
 
         $dados = $request->all();
         $tipos = Tipos::create($dados);
-         \Session::flash('flash_message',[
+         Session::flash('flash_message',[
             'msg'=>"Registro adicionado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -70,7 +71,7 @@ class TipoController extends Controller
 
        $tipos->update($dados);
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro atualizado com sucesso!",
             'class'=>"alert-success"
         ]);
@@ -83,7 +84,7 @@ class TipoController extends Controller
     public function deletar($id){
         Tipos::find($id)->delete();
 
-        \Session::flash('flash_message',[
+        Session::flash('flash_message',[
             'msg'=>"Registro excluido com sucesso!",
             'class'=>"alert-success"
         ]);        return redirect()->route('tipo');

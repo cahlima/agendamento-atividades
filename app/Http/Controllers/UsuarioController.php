@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session; // Adicionado para usar Session
+use Illuminate\Support\FacadesSession; // Adicionado para usar Session
 use App\Models\Usuarios;
 use App\Models\Tipos;
 use App\Notifications\NotificaUsuario;
+use Illuminate\Support\Facades\Session;
 
 class UsuarioController extends Controller
 {
