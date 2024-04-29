@@ -103,5 +103,4 @@
                         @endguest
                     </ul>
                 </div>
-            </div>
-        </nav>
+            </div>        </nav>

@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Usuarios;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Notifications\NotificaUsuario;
@@ -28,6 +29,6 @@ class NotificaUsuarioAgenda
     {
         $usuario = Usuarios::find($event->usuario->id);
 
-        $usuario->notify(new NotificaUsuario($usuario));
+        $usuario->notify(new NotificaUsuarioAgenda($usuario));
     }
 }

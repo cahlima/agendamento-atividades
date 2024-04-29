@@ -5,6 +5,7 @@ namespace App\Policies;
 use App\Models\Aulas;
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User;
 
 class AulasPolicy
 {
@@ -33,9 +34,9 @@ class AulasPolicy
         //
     }
 
-    public function vermenuAdmin(Usuarios $usuarios)
+    public function vermenuAdmin(User $user)
     {
-        if($usuarios->tipo_id === 1){
+        if($user->tipo_id === 1){
             return true;
         }else{
         return false ;

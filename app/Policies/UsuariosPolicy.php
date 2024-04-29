@@ -4,6 +4,7 @@ namespace App\Policies;
 
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User;
 
 class UsuariosPolicy
 {
@@ -32,9 +33,9 @@ class UsuariosPolicy
         //
     }
 
-    public function vermenuAdmin(Usuarios $usuarios)
+    public function vermenuAdmin(User $user)
     {
-        return $usuarios->tipo_id === 1;
+        return $user->tipo_id === 1;
     }
 
     /**

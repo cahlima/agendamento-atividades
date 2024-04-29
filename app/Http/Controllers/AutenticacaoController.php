@@ -79,7 +79,7 @@ class AutenticacaoController extends Controller
 
             //$id = Auth::id($usuario->id_usuario);
             //dd($id);
-            Auth::login($usuario);
+            Auth::login($user);
             $request->session()->regenerate();
             return redirect()->intended('paineladm');
 

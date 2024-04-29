@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Agenda;
+use App\Models\User;
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -64,18 +65,18 @@ class AgendaPolicy
         }
     }
 
-    public function viewMenuPro(Usuarios $usuarios)
+    public function viewMenuPro(User $user)
     {
-        if($usuarios->tipo_id === 2){
+        if($user->tipo_id === 2){
             return true;
         }else{
         return false ;
         }
     }
 
-    public function viewMenuAlun(Usuarios $usuarios)
+    public function viewMenuAlun(User $user)
     {
-        if($usuarios->tipo_id === 3){
+        if($user->tipo_id === 3){
             return true;
         }else{
         return false ;

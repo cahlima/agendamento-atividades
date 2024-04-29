@@ -68,8 +68,7 @@ Route::get('/agenda/agendarconf', [App\Http\Controllers\AgendaController::class,
 Route::post('/agenda/salvar', [App\Http\Controllers\AgendaController::class, 'salvar'])->name('agenda/salvar');
 Route::post('/agenda/salvar', [App\Http\Controllers\AgendaController::class, 'salvar'])->name('agenda.salvar');
 Route::get('/agenda/editar/{id}', [App\Http\Controllers\AgendaController::class, 'editar'])->name('agenda.editar');
-Route::put('/agenda/atualizar/{id}', [App\Http\Controllers\AgendaController::class, 'atualizar'])->name('agenda.atualizar');
-Route::get('/agenda/deletar/{id}', [App\Http\Controllers\AgendaController::class, 'deletar'])->name('agenda.deletar');
+Route::put('/agenda/atualizar/{id}', [App\Http\Controllers\AgendaController::class, 'atualizar'])->name('age,letar');
 Route::get('/agendaaluno', [App\Http\Controllers\AgendaController::class, 'agendaaluno'])->name('agendaaluno');
 Route::get('/agenda/editaraluno/{id}', [App\Http\Controllers\AgendaController::class, 'editaraluno'])->name('agenda.editaraluno');
 Route::put('/agenda/atualizaraluno/{id}', [App\Http\Controllers\AgendaController::class, 'atualizaraluno'])->name('agenda.atualizaraluno');
