@@ -17,8 +17,8 @@
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    blade
+    <link href="{{ asset('css/app.scss') }}" rel="stylesheet">
+
     <!-- CSS only -->
 <link rel="stylesheet" href="https://staYou are logged inckpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
 
@@ -39,3 +39,4 @@
 </body>
 </html>
 
+ç

@@ -26,20 +26,26 @@
                             </div> -->
                             <div class="form-group col-md-12 ">
                             <label for="nome">Tipo</label>
+                            
                             <select class="form-control" name="tipo_id">
                                 @foreach($tipos as $tipo)
                                     <option value="{{$tipo->id}}"> {{$tipo->descricao}}</option>
                                 @endforeach
                             </select>
+
                             </div>
                             <div class="form-group col-md-12 ">
                                 <label for="nome">Nome</label>
                                 <input type="text" class="form-control" id="nome" name="nome">
                             </div>
+
+
                             <div class="form-group col-md-12 ">
                                 <label for="descricao">Sobrenome</label>
                                 <input type="text" class="form-control" id="sobrenome" name="sobrenome">
                             </div>
+
+
                             <div class="form-group col-md-12 ">
                                 <label for="login">Login</label>
                                 <input type="text" class="form-control" id="login" name="login">

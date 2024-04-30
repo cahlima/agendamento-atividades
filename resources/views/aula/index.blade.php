@@ -17,7 +17,7 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Professor</th>
-                                    <th>Materia</th>
+                                    <th>Atividade</th>
                                     <th>Data</th>
                                     <th>Hora</th>
 
