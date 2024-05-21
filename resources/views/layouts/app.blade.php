@@ -1,53 +1,65 @@
-<!doctype html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <!-- CSRF Token -->
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
-    <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-
-    <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
-
-    <!-- Styles -->
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-
-    <!-- CSS only -->
-
-
-<!-- JS, Popper.js, and jQuery -->
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-<!--<script src="https://stackpath.boimport Echo from 'laravel-echo';
-
-import Pusher from 'pusher-js';
-window.Pusher = Pusher;
-
-window.Echo = new Echo({
-broadcaster: 'pusher',
-key: import.meta.env.VITE_PUSHER_APP_KEY,
-cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER ?? 'mt1',
-encrypted: true
-});
-SdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>-->
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laravel</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+        #header {
+            background: url('/path/to/your/image.png') no-repeat center center;
+            background-size: cover;
+            height: 200px;
+            width: 100%;
+        }
+        #sidebar {
+            min-width: 200px;
+            max-width: 200px;
+            background: #343a40;
+            padding: 20px;
+        }
+        #sidebar .nav-link {
+            color: #ffffff;
+        }
+        #sidebar .nav-link:hover {
+            background: #495057;
+        }
+        #content {
+            flex: 1;
+            padding: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        @include('layouts._includes._nav')
-
-        <main class="py-4">
+    <div id="header"></div>
+    <div class="d-flex">
+        <div id="sidebar" class="bg-dark">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('paineladm') }}">Painel Administrativo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('matricula.geral') }}">Matrículas Geral</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('atividades.index') }}">Atividades Geral</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('usuario.index') }}">Usuários</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ route('tipo.index') }}">Tipos de Usuários</a>
+                </li>
+            </ul>
+        </div>
+        <div id="content">
             @yield('content')
-        </main>
+        </div>
     </div>
 </body>
 </html>
-
-

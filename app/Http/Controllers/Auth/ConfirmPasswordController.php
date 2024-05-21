@@ -3,33 +3,23 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Providers\RouteServiceProvider;
-use Illuminate\Foundation\Auth\ConfirmsPasswords;
+use App\Models\Usuarios;
 
 class ConfirmPasswordController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Confirm Password Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller is responsible for handling password confirmations and
-    | uses a simple trait to include the behavior. You're free to explore
-    | this trait and override any functions that require customization.
-    |
-    */
-
-    use App\Http\Controllers\Auth\ConfirmsPasswords;
-
     /**
-     * Where to redirect users when the intended url fails.
+     * Onde redirecionar usuários quando a URL pretendida falhar.
      *
      * @var string
      */
     protected $redirectTo = RouteServiceProvider::HOME;
 
     /**
-     * Create a new controller instance.
+     * Cria uma nova instância do controlador.
      *
      * @return void
      */
@@ -37,5 +27,43 @@ class ConfirmPasswordController extends Controller
     {
         $this->middleware('auth');
     }
-}
 
+    /**
+     * Mostra o formulário de confirmação de senha.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showConfirmForm()
+    {
+        return view('auth.confirm-password');
+    }
+
+    /**
+     * Processa a confirmação de senha.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function confirm(Request $request)
+    {
+        $request->validate([
+            'password' => 'required|string',
+        ]);
+
+        $user = Auth::usuario();
+
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors(['password' => 'Senha incorreta.']);
+        }
+
+        if ($user->isAdmin()) {
+            return redirect()->intended('/PerfilAdm');
+        } elseif ($user->isProfessor()) {
+            return redirect()->intended('/PerfilProf');
+        } elseif ($user->isAluno()) {
+            return redirect()->intended('/PerfilAluno');
+        }
+
+        return redirect()->intended($this->redirectTo);
+    }
+}

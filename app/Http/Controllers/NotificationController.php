@@ -1,25 +1,35 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Notifications;
 
-use Illuminate\Http\Request;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Messages\MailMessage;
 
-class NotificationController extends Controller
+class NotificaUsuarioMatricula extends Notification
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    use Queueable;
+
+    protected $usuario;
+    protected $matricula;
+
+    public function __construct($usuario, $matricula)
     {
-        $this->middleware('auth');
+        $this->usuario = $usuario;
+        $this->matricula = $matricula;
     }
 
-    public function notification(Request $request){
+    public function via($notifiable)
+    {
+        return ['mail'];
+    }
 
-        $notifications =$request->user()->notifications;
-
-        return response()->json(compact('notifications'));
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+                    ->line('Você foi matriculado com sucesso.')
+                    ->action('Ver Matrícula', url('/matriculas/'.$this->matricula->id))
+                    ->line('Obrigado por usar nosso aplicativo!');
     }
 }
