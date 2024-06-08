@@ -12,8 +12,8 @@
          */
         public function edit()
         {
-            $user = Auth::user(); // Pega o usuário atualmente autenticado
-            return view('admin.perfil.edit', compact('user')); // Retorna a view com os dados do usuário
+            $usuario = Auth::usuario(); // Pega o usuário atualmente autenticado
+            return view('admin.perfil.edit', compact('usuario')); // Retorna a view com os dados do usuário
         }
 
         /**
@@ -24,17 +24,17 @@
          */
         public function update(Request $request)
         {
-            $user = Auth::user(); // Pega o usuário atualmente autenticado
+            $usuario = Auth::usuario(); // Pega o usuário atualmente autenticado
 
             // Validação dos dados submetidos
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+                'email' => 'required|string|email|max:255|unique:users,email,' . $usuario->id,
                 // Inclua outras validações conforme necessário
             ]);
 
             // Atualização dos dados do usuário
-            $user->update([
+            $usuario->update([
                 'name' => $request->name,
                 'email' => $request->email,
                 // Inclua outras atualizações conforme necessário

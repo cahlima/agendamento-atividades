@@ -31,11 +31,14 @@ class LoginController extends Controller
     protected function redirectTo()
     {
         // Verifica o tipo de usuário para redirecionar adequadamente
+
         if (Auth::usuario()->isAdmin()) {
-            return '/admin'; // Rota para o dashboard administrativo
+            return '/paineladmin'; // Rota para o dashboard administrativo
         } elseif (Auth::usuario()->isProfessor()) {
-            return '/professor/home'; // Rota para o dashboard de professores
-        } else {
+            return '/painelprof'; // Rota para o dashboard de professores
+        } elseif (Auth::usuario()->isAluno()){
+                return '/painelaluno'; // rota painel aluno
+            } else  {
             return RouteServiceProvider::HOME; // Rota padrão para usuários comuns
         }
     }

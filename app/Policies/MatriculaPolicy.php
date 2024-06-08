@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\Matricula;
-use App\Models\User;
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -17,7 +16,7 @@ class MatriculaPolicy
      * @param  \App\Models\Usuarios  $usuarios
      * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(Usuarios $usuarios)
+    public function viewAny(Usuarios $usuario)
     {
         //
     }
@@ -65,18 +64,18 @@ class MatriculaPolicy
         }
     }
 
-    public function viewMenuPro(User $user)
+    public function viewMenuPro(Usuarios $usuarios)
     {
-        if($user->tipo_id === 2){
+        if($usuarios->tipo_id === 2){
             return true;
         }else{
         return false ;
         }
     }
 
-    public function viewMenuAlun(User $user)
+    public function viewMenuAlun(Usuarios $usuario)
     {
-        if($user->tipo_id === 3){
+        if($usuarios->tipo_id === 3){
             return true;
         }else{
         return false ;

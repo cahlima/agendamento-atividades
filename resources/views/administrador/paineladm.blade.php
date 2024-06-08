@@ -13,21 +13,7 @@
                     </div>
                 @endif
 
-                <p>{{ __('Você está no painel Administrativo') }}</p>
-
-                <a href="{{ route('logout') }}"
-                    onclick="event.preventDefault();
-                    document.getElementById('logout-form').submit();">
-                    Logout
-                </a>
-
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-
-                <div class="mb-3">
-                    <a href="{{ route('admin.atividades.create') }}">Criar Atividade</a>
-                </div>
+                <p>{{ __('Bem-vindo(a) ao painel administrativo! Utilize o menu ao lado para navegar.') }}</p>
 
                 <div class="mt-4">
                     <h4>{{ __('Atividades Cadastradas') }}</h4>

@@ -2,32 +2,21 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Notifications\Notifiable;
 
 class Matricula extends Model
 {
-    use HasFactory,Notifiable;
+    protected $table = 'matriculas';
 
-    protected $fillable = ['atividade_id','usuario_id','status'];
-    protected $primaryKey = 'id_matricula';
+    protected $fillable = ['usuario_id', 'atividade_id', 'tipo_id'];
 
-    public function usuarios()
+    public function usuario()
     {
-        return $this->belongsTo('App\Models\Usuarios', 'usuario_id');
-    }
-    public function atividades()
-    {
-        return $this->belongsTo('App\Models\Atividades', 'atividades_id');
+        return $this->belongsTo(Usuarios::class);
     }
 
-    // app/Models/Matricula.php
-
-public function aluno()
-{
-    return $this->belongsTo(Aluno::class);
+    public function atividade()
+    {
+        return $this->belongsTo(Atividades::class);
+    }
 }
-
-}
-

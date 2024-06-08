@@ -4,24 +4,56 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Atividades;
-use App\Models\Usuarios;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class AtividadesController extends Controller
 {
+    // Método para determinar o tipo de usuário
+    private function getUserType()
+    {
+        return auth()->usuario()->type; // Supondo que o campo 'type' armazene o tipo de usuário
+    }
+
     public function index()
     {
-        $atividades = Atividades::with('usuario')->paginate(10);
+        $userType = $this->getUserType();
+
+        switch ($userType) {
+            case 'admin':
+                // Administrador vê todas as atividades
+                $atividades = Atividades::with('usuario')->paginate(10);
+                break;
+
+            case 'professor':
+                // Professor vê apenas suas atividades
+                $atividades = Atividades::where('usuario_id', auth()->id())->paginate(10);
+                break;
+
+            case 'aluno':
+                // Aluno vê apenas atividades relacionadas a ele
+                $atividades = Atividades::whereHas('alunos', function ($query) {
+                    $query->where('aluno_id', auth()->id());
+                })->paginate(10);
+                break;
+
+            default:
+                // Se não for nenhum dos tipos acima, redirecionar ou lançar exceção
+                abort(403, 'Acesso não autorizado.');
+        }
 
         return view('atividades.index', compact('atividades'));
     }
 
     public function professor()
     {
-        $id_usuario = auth()->user()->id;
+        // Este método é específico para professores
+        $userType = $this->getUserType();
 
-        $atividades = Atividades::where('usuario_id', $id_usuario)->paginate(10);
+        if ($userType != 'professor') {
+            abort(403, 'Acesso não autorizado.');
+        }
+
+        $atividades = Atividades::where('usuario_id', auth()->id())->paginate(10);
 
         return view('atividades.index', compact('atividades'));
     }

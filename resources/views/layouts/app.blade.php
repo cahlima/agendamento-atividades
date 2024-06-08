@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -36,30 +36,50 @@
     </style>
 </head>
 <body>
-    <div id="header"></div>
-    <div class="d-flex">
-        <div id="sidebar" class="bg-dark">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('paineladm') }}">Painel Administrativo</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('matricula.geral') }}">Matrículas Geral</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('atividades.index') }}">Atividades Geral</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('usuario.index') }}">Usuários</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('tipo.index') }}">Tipos de Usuários</a>
-                </li>
-            </ul>
+    @auth
+        <div id="header"></div>
+        <div class="d-flex">
+            <div id="sidebar" class="bg-dark">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">{{ __('Bem-vindo(a), ') }}{{ Auth::user()->nome }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('atividades.index') }}">Consultar Atividades</a>
+                    </li>
+                    @if (Auth::user()->type == 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('admin.atividades.create') }}">Cadastrar Atividades</a>
+                        </li>
+                    @endif
+                    @if (Auth::user()->type == 'professor')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('atividades.professor') }}">Minhas Atividades</a>
+                        </li>
+                    @endif
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('usuario.editar', Auth::user()->id) }}">Meu Perfil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}"
+                            onclick="event.preventDefault();
+                            document.getElementById('logout-form').submit();">
+                            Sair
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
+            <div id="content">
+                @yield('content')
+            </div>
         </div>
-        <div id="content">
+    @else
+        <div id="content" class="container">
             @yield('content')
         </div>
-    </div>
+    @endauth
 </body>
 </html>

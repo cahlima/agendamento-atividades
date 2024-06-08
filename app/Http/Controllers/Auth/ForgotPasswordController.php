@@ -75,8 +75,8 @@ class ForgotPasswordController extends Controller
 
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
+            function ($usuario, $password) {
+                $usuario->forceFill([
                     'password' => Hash::make($password)
                 ])->save();
             }

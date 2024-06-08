@@ -34,9 +34,9 @@ class AtividadesPolicy
         //
     }
 
-    public function vermenuAdmin(User $user)
+    public function vermenuAdmin(Usuario $usuario)
     {
-        if($user->tipo_id === 1){
+        if($usuario->tipo_id === 1){
             return true;
         }else{
         return false ;

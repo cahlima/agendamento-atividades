@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Atividades;
 use App\Models\Matricula;
+use App\Models\Usuario;
 use App\Models\Usuarios;
 use App\Notifications\NotificaUsuarioMatricula;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ class MatriculaController extends Controller
 {
     public function index()
     {
-        $id_usuario = auth()->user()->id;
+        $id_usuario = auth()->usuario()->id;
         $matriculas = DB::table('matriculas')
             ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
             ->join('atividades', 'matriculas.atividades_id', '=', 'atividades.id')
@@ -36,7 +37,7 @@ class MatriculaController extends Controller
 
     public function matriculaaluno()
     {
-        $id_usuario = auth()->user()->id;
+        $id_usuario = auth()->usuario()->id;
         $matriculas = DB::table('matriculas')
             ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
             ->join('atividades', 'matriculas.atividades_id', '=', 'atividades.id')
@@ -65,7 +66,7 @@ class MatriculaController extends Controller
     public function matricular($id)
     {
         $atividades = Atividades::find($id);
-        $id_usuario = auth()->user()->id;
+        $id_usuario = auth()->usuario()->id;
 
         $dados = [
             "atividades_id" => $id,
@@ -77,7 +78,7 @@ class MatriculaController extends Controller
         $id_atividades = $matricula->atividades_id;
         $atividades = Atividades::find($id_atividades);
         $id_professor = $atividades->usuario_id;
-        $usuario = Usuarios::find($id_professor);
+        $usuario = Usuario::find($id_professor);
 
         // Notificar o professor
         $usuario->notify(new NotificaUsuarioMatricula($usuario, $matricula));
@@ -124,7 +125,7 @@ class MatriculaController extends Controller
         $dados = $request->all();
         $matriculas->update($dados);
 
-        $id_usuario = auth()->user()->id;
+        $id_usuario = auth()->usuario()->id;
         $id_atividades = $matriculas->atividades_id;
         $atividades = Atividades::find($id_atividades);
         $id_aluno = $matriculas->usuario_id;

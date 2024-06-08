@@ -50,17 +50,17 @@ class ConfirmPasswordController extends Controller
             'password' => 'required|string',
         ]);
 
-        $user = Auth::usuario();
+        $usuario = Auth::usuario();
 
-        if (!Hash::check($request->password, $user->password)) {
+        if (!Hash::check($request->password, $usuario->password)) {
             return back()->withErrors(['password' => 'Senha incorreta.']);
         }
 
-        if ($user->isAdmin()) {
+        if ($usuario->isAdmin()) {
             return redirect()->intended('/PerfilAdm');
-        } elseif ($user->isProfessor()) {
+        } elseif ($usuario->isProfessor()) {
             return redirect()->intended('/PerfilProf');
-        } elseif ($user->isAluno()) {
+        } elseif ($usuario->isAluno()) {
             return redirect()->intended('/PerfilAluno');
         }
 

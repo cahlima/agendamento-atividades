@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Usuario;
+use App\Models\Usuarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class AutenticacaoController extends Controller
 {
     public function index()
     {
-        $user = Auth::usuario();
-        Log::info('Usuário autenticado redirecionando...', ['user' => $user]);
-        if ($user->isAdmin()) {
+        $usuario = Auth::usuario();
+        Log::info('Usuário autenticado redirecionando...', ['usuario' => $usuario]);
+
+        if ($usuario->isAdmin()) {
             return redirect()->route('paineladm');
-
-        } elseif ($user->isProfessor()) {
+        } elseif ($usuario->isProfessor()) {
             return redirect()->route('painelprof');
-
-        } elseif ($user->isAluno()) {
+        } elseif ($usuario->isAluno()) {
             return redirect()->route('painelaluno');
         } else {
             return redirect()->route('home');
@@ -41,21 +41,22 @@ class AutenticacaoController extends Controller
 
         $login = $request->input('login');
         $senha = $request->input('senha');
-        $user = User::where('login', $login)->first();
-        if ($user && Hash::check($senha, $user->senha)) {
-            Auth::login($user);
+        $usuario = Usuarios::where('login', $login)->first();
+
+        if ($usuario && Hash::check($senha, $usuario->senha)) {
+            Auth::login($usuario);
             $request->session()->regenerate();
 
-            Log::info('Usuário logado com sucesso', ['user' => $user]);
+            Log::info('Usuário logado com sucesso', ['usuario' => $usuario]);
 
             // Redirecionamento baseado no tipo de usuário
-            if ($user->isAdmin()) {
+            if ($usuario->isAdmin()) {
                 Log::info('Redirecionando para paineladm');
                 return redirect()->intended('paineladm');
-            } elseif ($user->isProfessor()) {
+            } elseif ($usuario->isProfessor()) {
                 Log::info('Redirecionando para painelprof');
                 return redirect()->intended('painelprof');
-            } elseif ($user->isAluno()) {
+            } elseif ($usuario->isAluno()) {
                 Log::info('Redirecionando para painelaluno');
                 return redirect()->intended('painelaluno');
             } else {
@@ -68,11 +69,11 @@ class AutenticacaoController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         Auth::logout();
-        request()->session()->invalidate();
-        request()->session()->regenerateToken();
-        return redirect()->route('login');
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->with('success', 'Você foi deslogado com sucesso.');
     }
 }

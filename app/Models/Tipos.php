@@ -2,23 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Tipos extends Model
 {
-    use HasFactory;
+    protected $table = 'tipos';
 
-    protected $fillable = ['descricao'];
-    protected $primaryKey = 'id';
+    protected $fillable = ['nome'];
 
-    //protected $table = "usuarios";
-
-    public function Tipos(Tipos $tip){
-        return $this->tipo->save($tip);
+    public function usuarios()
+    {
+        return $this->hasMany(Usuarios::class, 'tipo_id');
     }
-    public function usuarios(){
-        return $this->hasMany('App\Models\Usuarios', 'tipo_id');
-    }
-
 }

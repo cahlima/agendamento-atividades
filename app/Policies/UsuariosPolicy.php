@@ -4,97 +4,64 @@ namespace App\Policies;
 
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
-use Illuminate\Foundation\Auth\User;
 
-class UsuariosPolicy
+class UsuarioPolicy
 {
     use HandlesAuthorization;
 
     /**
      * Determine whether the user can view any models.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function viewAny(Usuarios $usuarios)
+    public function viewAny(Usuarios $user)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can view the model.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function view(Usuarios $usuarios)
+    public function view(Usuarios $user, Usuarios $model)
     {
-        //
-    }
-
-    public function vermenuAdmin(User $user)
-    {
-        return $user->tipo_id === 1;
+        return $user->isAdmin() || $user->id === $model->id;
     }
 
     /**
      * Determine whether the user can create models.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function create(Usuarios $usuarios)
+    public function create(Usuarios $user)
     {
-        return $usuarios->tipo_id === 1;
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can update the model.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function update(Usuarios $usuarios)
+    public function update(Usuarios $user, Usuarios $model)
     {
-        return $usuarios->tipo_id === 1;
+        return $user->isAdmin() || $user->id === $model->id;
     }
 
     /**
      * Determine whether the user can delete the model.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function delete(Usuarios $usuarios)
+    public function delete(Usuarios $user, Usuarios $model)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can restore the model.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function restore(Usuarios $usuarios)
+    public function restore(Usuarios $user, Usuarios $model)
     {
-        //
+        return $user->isAdmin();
     }
 
     /**
      * Determine whether the user can permanently delete the model.
-     *
-     * @param  \App\Models\Usuarios  $usuarios
-     * @param  \App\Models\Usuarios  $usuarios
-     * @return \Illuminate\Auth\Access\Response|bool
      */
-    public function forceDelete(Usuarios $usuarios)
+    public function forceDelete(Usuarios $user, Usuarios $model)
     {
-        //
+        return $user->isAdmin();
     }
 }
-

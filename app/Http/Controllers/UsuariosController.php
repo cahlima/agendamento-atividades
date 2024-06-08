@@ -9,7 +9,7 @@ use App\Models\Usuarios;
 use App\Models\Tipos;
 use Illuminate\Support\Facades\Validator;
 
-class UsuarioController extends Controller
+class UsuariosController extends Controller
 {
     public function __construct()
     {
@@ -27,7 +27,7 @@ class UsuarioController extends Controller
     public function adicionar()
     {
         $this->authorize('create', Usuarios::class);
-        $tipos = Tipos::all(); // Assume que a lista de tipos é gerenciável sem paginação
+        $tipos = Tipos::all();
         return view('usuario.adicionar', compact('tipos'));
     }
 
@@ -65,8 +65,10 @@ class UsuarioController extends Controller
         if (!$usuario) {
             return redirect()->back()->withErrors('Usuário não encontrado.');
         }
+
+        // Autorização com o usuário autenticado e a instância de Usuarios
         $this->authorize('update', $usuario);
-        $tipos = Tipos::all(); // Sem paginação
+        $tipos = Tipos::all();
         return view('usuario.editar', compact('usuario', 'tipos'));
     }
 
@@ -77,7 +79,20 @@ class UsuarioController extends Controller
         if (!$usuario) {
             return redirect()->back()->withErrors('Usuário não encontrado.');
         }
+
+        // Autorização com o usuário autenticado e a instância de Usuarios
         $this->authorize('update', $usuario);
+
+        $validator = Validator::make($request->all(), [
+            'nome' => 'required|string|max:255',
+            'email' => 'required|email|unique:usuarios,email,'.$usuario->id,
+            'tipo_id' => 'required|exists:tipos,id'
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
         $usuario->update($request->only(['nome', 'email', 'tipo_id']));
         Session::flash('flash_message', [
             'msg' => "Registro atualizado com sucesso!",
@@ -92,6 +107,8 @@ class UsuarioController extends Controller
     {
         $usuario = Usuarios::find($id);
         if ($usuario) {
+            // Autorização com o usuário autenticado e a instância de Usuarios
+            $this->authorize('delete', $usuario);
             $usuario->delete();
             Session::flash('flash_message', [
                 'msg' => "Registro excluído com sucesso!",

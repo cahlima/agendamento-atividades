@@ -1,24 +1,29 @@
 <?php
+
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Atividades extends Model
 {
-    use HasFactory;
+    protected $table = 'atividades';
 
-    protected $fillable = ['usuario_id', 'titulo', 'descricao'];
-    protected $primaryKey = 'id';
+    protected $fillable = ['nome', 'descricao', 'data_inicio', 'data_termino'];
 
-    public function usuarios()
+    public function alunos()
     {
-        return $this->belongsTo('App\Models\Usuarios', 'usuario_id');
+        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
+                    ->wherePivot('tipo_id', 3);
     }
 
-    public function matricula()
+    public function professores()
     {
-        return $this->hasMany('App\Models\Matricula', 'atividades_id');
+        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
+                    ->wherePivot('tipo_id', 2);
+    }
+    public function atividadesIndex()
+    {
+     return $this->belongsToAMny(Atividades::class,
+     'matriculas', 'usuario_id', 'atividade_id');
     }
 }
-

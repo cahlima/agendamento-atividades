@@ -14,9 +14,9 @@ class CreateTiposTable extends Migration
     public function up()
     {
         Schema::create('tipos', function (Blueprint $table) {
-            $table->id();
-            $table->string('nome');
-            $table->timestamps();
+            $table->id(); // Chave primária
+            $table->string('nome', 255)->unique(); // Nome do tipo com restrição de unicidade
+            $table->timestamps(); // Campos created_at e updated_at
         });
     }
 
