@@ -18,11 +18,23 @@
 
                     <p>Aqui você pode ver suas informações e acessar as funcionalidades disponíveis para os alunos.</p>
 
-                    <div class="list-group">
-                        <a href="#" class="list-group-item list-group-item-action">Buscar atividades</a>
-                        <a href="#" class="list-group-item list-group-item-action">Ver minhas Atividades</a>
-                        <a href="#" class="list-group-item list-group-item-action">Editar perfil</a>
-                        <a href="#" class="list-group-item list-group-item-action">Configurações</a>
+                    <div class="list-group mb-4">
+                        <a href="{{ route('aluno.atividades.index') }}" class="list-group-item list-group-item-action">Buscar atividades</a>
+                        <a href="{{ route('aluno.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Ver minhas Atividades</a>
+                        <a href="{{ route('aluno.perfil.edit') }}" class="list-group-item list-group-item-action">Editar perfil</a>
+                    </div>
+
+                    <div>
+                        <h4>Minhas Atividades</h4>
+                        @if($atividades->isEmpty())
+                            <p>Você ainda não está matriculado em nenhuma atividade.</p>
+                        @else
+                            <ul class="list-group">
+                                @foreach($atividades as $atividade)
+                                    <li class="list-group-item">{{ $atividade->nome }} - {{ $atividade->descricao }}</li>
+                                @endforeach
+                            </ul>
+                        @endif
                     </div>
                 </div>
             </div>

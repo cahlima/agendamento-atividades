@@ -21,9 +21,5 @@ class Atividades extends Model
         return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
                     ->wherePivot('tipo_id', 2);
     }
-    public function atividadesIndex()
-    {
-     return $this->belongsToAMny(Atividades::class,
-     'matriculas', 'usuario_id', 'atividade_id');
-    }
 }
+

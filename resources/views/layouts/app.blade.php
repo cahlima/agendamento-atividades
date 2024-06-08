@@ -39,40 +39,7 @@
     @auth
         <div id="header"></div>
         <div class="d-flex">
-            <div id="sidebar" class="bg-dark">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">{{ __('Bem-vindo(a), ') }}{{ Auth::user()->nome }}</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('atividades.index') }}">Consultar Atividades</a>
-                    </li>
-                    @if (Auth::user()->type == 'admin')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.atividades.create') }}">Cadastrar Atividades</a>
-                        </li>
-                    @endif
-                    @if (Auth::user()->type == 'professor')
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.professor') }}">Minhas Atividades</a>
-                        </li>
-                    @endif
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('usuario.editar', Auth::user()->id) }}">Meu Perfil</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();
-                            document.getElementById('logout-form').submit();">
-                            Sair
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </div>
-            <div id="content">
+            <div id="content" class="container">
                 @yield('content')
             </div>
         </div>

@@ -16,7 +16,7 @@
                                 <th>Nome</th>
                                 <th>Sobrenome</th>
                                 <th>Login</th>
-                                @can('update', App\Models\User::class)
+                                @can('update', App\Models\Usuarios::class)
                                     <th>Opções</th>
                                 @endcan
                             </tr>
@@ -39,7 +39,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    @can('create', App\Models\User::class)
+                    @can('create', App\Models\Usuarios::class)
                     <a href="{{ route('usuario.adicionar') }}" class="btn btn-primary">Adicionar</a>
                     @endcan
                 </div>

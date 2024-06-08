@@ -9,7 +9,6 @@ use App\Models\Usuarios;
 use App\Models\Atividades;
 use App\Models\Matricula;
 use App\Models\Tipos;
-use App\Models\Usuario;
 use Illuminate\Support\Facades\Validator;
 
 class PainelAdmController extends Controller
