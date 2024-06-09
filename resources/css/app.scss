@@ -1,2 +1,47 @@
 // Bootstrap
+// Bootstrap
 @import "~bootstrap/scss/bootstrap";
+
+// Custom styles
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.sidebar {
+    background-color: #f8f9fa;
+    padding: 15px;
+    height: 100vh;
+    position: fixed;
+    width: 200px;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    white-space: nowrap;
+}
+
+.nav-link {
+    color: #343a40;
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+
+.form-group label {
+    width: 100%;
+}
+
+.form-group input {
+    width: 100%;
+}

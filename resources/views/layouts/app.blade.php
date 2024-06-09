@@ -8,30 +8,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Nunito', sans-serif;
-        }
-        .sidebar {
-            background-color: #f8f9fa;
-            padding: 15px;
-            height: 100vh;
-            position: fixed;
-        }
-        .content {
-            margin-left: 200px;
-            padding: 20px;
-        }
-        .card {
-            margin-bottom: 20px;
-        }
-        .navbar {
-            background-color: #343a40;
-        }
-        .navbar-brand {
-            color: #fff;
-        }
-    </style>
 </head>
 <body>
     <div id="app">
@@ -89,7 +65,7 @@
             </div>
         </nav>
 
-        <main class="content py-4">
+        <main class="main-content py-4">
             @yield('content')
         </main>
     </div>

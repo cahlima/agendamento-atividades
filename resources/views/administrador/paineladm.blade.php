@@ -4,107 +4,95 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-2 sidebar">
-            <div class="user-info">
-                <img src="path/to/user/image.jpg" alt="User Image" class="img-fluid rounded-circle mb-3">
-                <h5>Olá, {{ Auth::user()->name }}</h5>
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('paineladm') }}">
+                            {{ __('Gerenciar Atividades') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('usuario.index') }}">
+                            {{ __('Gerenciar Usuários') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('perfil.edit') }}">
+                            {{ __('Meu Perfil') }}
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link active" href="#">Consultar Atividades</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Cadastrar Atividades</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Meu Perfil</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-danger" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                        Sair
-                    </a>
-                </li>
-            </ul>
-        </div>
+        </nav>
 
-        <!-- Main Content -->
-        <div class="col-md-10 content">
-            <div class="card">
-                <div class="card-header">{{ __('Painel Administrativo') }}</div>
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{ __('Painel Administrativo') }}</h1>
+            </div>
 
-                <div class="card-body">
-                    <p>{{ __('Bem-vindo(a) ao painel administrativo! Utilize o menu ao lado para navegar.') }}</p>
+            <h4>{{ __('Atividades Cadastradas') }}</h4>
+            <div class="table-responsive">
+                <table class="table table-striped table-sm">
+                    <thead>
+                        <tr>
+                            <th>{{ __('Atividade') }}</th>
+                            <th>{{ __('Data') }}</th>
+                            <th>{{ __('Hora') }}</th>
+                            <th>{{ __('Instrutor') }}</th>
+                            <th>{{ __('Local') }}</th>
+                            <th>{{ __('Ações') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($atividades as $atividade)
+                        <tr>
+                            <td>{{ $atividade->atividade }}</td>
+                            <td>{{ $atividade->data }}</td>
+                            <td>{{ $atividade->hora }}</td>
+                            <td>{{ $atividade->instrutor }}</td>
+                            <td>{{ $atividade->local }}</td>
+                            <td>
+                                <a href="{{ route('atividades.editar', $atividade->id) }}" class="btn btn-sm btn-primary">{{ __('Editar') }}</a>
+                                <form action="{{ route('atividades.destroy', $atividade->id) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-danger">{{ __('Deletar') }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-                    <div class="mt-4">
-                        <h4>{{ __('Atividades Cadastradas') }}</h4>
-                        @if(isset($atividades) && $atividades->count() > 0)
-                            @foreach ($atividades as $atividade)
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $atividade->nome }}</h5>
-                                        <p class="card-text">{{ $atividade->descricao }}</p>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <p>{{ __('Nenhuma atividade cadastrada.') }}</p>
-                        @endif
-                    </div>
-
-                    <div class="mt-4">
-                        <h4>{{ __('Alunos Cadastrados') }}</h4>
-                        @if(isset($alunos) && $alunos->count() > 0)
-                            @foreach ($alunos as $aluno)
-                                <div class="card mb-3">
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ $aluno->nome }}</h5>
-                                    </div>
-                                </div>
-                            @endforeach
-                        @else
-                            <p>{{ __('Nenhum aluno cadastrado.') }}</p>
-                        @endif
-                    </div>
-
-                    <div class="mt-4">
-                                        <h4>{{ __('Cadastrar Atividades') }}</h4>
-                    <form action="{{ route('atividades.store') }}" method="POST">
-                        @csrf
-                        <div class="form-group">
-                            <label for="titulo">{{ __('Título') }}</label>
-                            <input type="text" class="form-control" id="titulo" name="titulo" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="descricao">{{ __('Descrição') }}</label>
-                            <input type="text" class="form-control" id="descricao" name="descricao" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="atividade">{{ __('Atividade') }}</label>
-                            <input type="text" class="form-control" id="atividade" name="atividade" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="data">{{ __('Data') }}</label>
-                            <input type="date" class="form-control" id="data" name="data" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="hora">{{ __('Hora') }}</label>
-                            <input type="time" class="form-control" id="hora" name="hora" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="instrutor">{{ __('Instrutor') }}</label>
-                            <input type="text" class="form-control" id="instrutor" name="instrutor" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="local">{{ __('Local') }}</label>
-                            <input type="text" class="form-control" id="local" name="local" required>
-                        </div>
-                        <button type="submit" class="btn btn-success mt-3">{{ __('Avançar') }}</button>
-                    </form>
-
-                    </div>
+            <h4>{{ __('Cadastrar Atividades') }}</h4>
+            <form action="{{ route('atividades.store') }}" method="POST">
+                @csrf
+                <div class="form-group">
+                    <label for="atividade">{{ __('Atividade') }}</label>
+                    <input type="text" class="form-control" id="atividade" name="atividade" required>
                 </div>
-            </div>
-        </div>
+                <div class="form-group">
+                    <label for="data">{{ __('Data') }}</label>
+                    <input type="date" class="form-control" id="data" name="data" required>
+                </div>
+                <div class="form-group">
+                    <label for="hora">{{ __('Hora') }}</label>
+                    <input type="time" class="form-control" id="hora" name="hora" required>
+                </div>
+                <div class="form-group">
+                    <label for="instrutor">{{ __('Instrutor') }}</label>
+                    <input type="text" class="form-control" id="instrutor" name="instrutor" required>
+                </div>
+                <div class="form-group">
+                    <label for="local">{{ __('Local') }}</label>
+                    <input type="text" class="form-control" id="local" name="local" required>
+                </div>
+                <button type="submit" class="btn btn-success mt-3">{{ __('Cadastrar') }}</button>
+            </form>
+        </main>
     </div>
 </div>
 @endsection
