@@ -68,7 +68,7 @@ class PainelAdmController extends Controller
             'msg' => "Registro adicionado com sucesso!",
             'class' => "alert-success"
         ]);
-        return redirect()->route('administrador.usuarios.adicionar');
+        return redirect()->route('usuario.adicionar');
     }
 
     // Exibe o formulário para editar um usuário existente
@@ -108,7 +108,7 @@ class PainelAdmController extends Controller
             'class' => "alert-success"
         ]);
 
-        return redirect()->route('administrador.usuarios.index');
+        return redirect()->route('usuario.index');
     }
 
     // Deleta um usuário do banco de dados
@@ -128,6 +128,106 @@ class PainelAdmController extends Controller
                 'class' => "alert-danger"
             ]);
         }
-        return redirect()->route('administrador.usuarios.index');
+        return redirect()->route('usuario.index');
+    }
+
+    // Exibe uma lista paginada de atividades
+    public function listarAtividades()
+    {
+        $atividades = Atividades::paginate(10);
+        return view('administrador.atividades.index', compact('atividades'));
+    }
+
+    // Exibe o formulário para adicionar uma nova atividade
+    public function adicionarAtividade()
+    {
+        return view('administrador.atividades.adicionar');
+    }
+
+    public function salvarAtividade(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'titulo' => 'required|string|max:255',
+        'descricao' => 'required|string',
+        'atividade' => 'required|string|max:255',
+        'data' => 'required|date',
+        'hora' => 'required|date_format:H:i',
+        'instrutor' => 'required|string|max:255',
+        'local' => 'required|string|max:255'
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    Atividades::create($request->only(['titulo', 'descricao', 'atividade', 'data', 'hora', 'instrutor', 'local']));
+
+    Session::flash('flash_message', [
+        'msg' => "Atividade adicionada com sucesso!",
+        'class' => "alert-success"
+    ]);
+    return redirect()->route('atividades.create');
+}
+
+// Atualiza uma atividade no banco de dados
+public function atualizarAtividade(Request $request, $id)
+{
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->back()->withErrors('Atividade não encontrada.');
+    }
+
+    $validator = Validator::make($request->all(), [
+        'titulo' => 'required|string|max:255',
+        'descricao' => 'required|string',
+        'atividade' => 'required|string|max:255',
+        'data' => 'required|date',
+        'hora' => 'required|date_format:H:i',
+        'instrutor' => 'required|string|max:255',
+        'local' => 'required|string|max:255'
+    ]);
+
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $atividade->update($request->only(['titulo', 'descricao', 'atividade', 'data', 'hora', 'instrutor', 'local']));
+    Session::flash('flash_message', [
+        'msg' => "Atividade atualizada com sucesso!",
+        'class' => "alert-success"
+    ]);
+
+    return redirect()->route('atividades.index');
+}
+
+    // Exibe o formulário para editar uma atividade existente
+    public function editarAtividade($id)
+    {
+        $atividade = Atividades::find($id);
+        if (!$atividade) {
+            return redirect()->back()->withErrors('Atividade não encontrada.');
+        }
+        return view('administrador.atividades.editar', compact('atividade'));
+    }
+
+ 
+
+    // Deleta uma atividade do banco de dados
+    public function deletarAtividade($id)
+    {
+        $atividade = Atividades::find($id);
+        if ($atividade) {
+            $atividade->delete();
+            Session::flash('flash_message', [
+                'msg' => "Atividade excluída com sucesso!",
+                'class' => "alert-success"
+            ]);
+        } else {
+            Session::flash('flash_message', [
+                'msg' => "Atividade não encontrada.",
+                'class' => "alert-danger"
+            ]);
+        }
+        return redirect()->route('atividades.index');
     }
 }

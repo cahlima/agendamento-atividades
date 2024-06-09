@@ -8,7 +8,9 @@ class Atividades extends Model
 {
     protected $table = 'atividades';
 
-    protected $fillable = ['nome', 'descricao', 'data_inicio', 'data_termino'];
+    protected $fillable = [
+        'titulo', 'descricao', 'usuario_id', 'atividade', 'data', 'hora', 'instrutor', 'local'
+    ];
 
     public function alunos()
     {

@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AlunoController;
 use App\Http\Controllers\PainelAdmController;
+use App\Http\Controllers\AlunoController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
@@ -32,43 +31,43 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', [AutenticacaoController::class, 'logout'])->name('logout');
 
-    // Rotas de Usuários
-    Route::prefix('usuarios')->name('usuario.')->group(function () {
-        Route::get('/', [UsuariosController::class, 'index'])->name('index');
-        Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('adicionar');
-        Route::post('/salvar', [UsuariosController::class, 'salvar'])->name('salvar');
-        Route::get('/editar/{id}', [UsuariosController::class, 'editar'])->name('editar');
-        Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
-        Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
-    });
+   // Rotas de Usuários
+   Route::prefix('usuarios')->name('usuario.')->group(function () {
+    Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('index');
+    Route::get('/adicionar', [PainelAdmController::class, 'adicionar'])->name('adicionar');
+    Route::post('/salvar', [PainelAdmController::class, 'salvar'])->name('salvar');
+    Route::get('/editar/{id}', [PainelAdmController::class, 'editar'])->name('editar');
+    Route::post('/atualizar/{id}', [PainelAdmController::class, 'atualizar'])->name('atualizar');
+    Route::delete('/deletar/{id}', [PainelAdmController::class, 'deletar'])->name('deletar');
+});
 
     // Rotas para painéis
     Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
     Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
     Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
 
-    // Rotas Admin
-    Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
-        Route::get('/', [AdminController::class, 'index'])->name('index');
-        Route::get('/usuarios', [AdminController::class, 'usuariosIndex'])->name('usuarios.index');
-        Route::get('/usuarios/create', [AdminController::class, 'usuariosCreate'])->name('usuarios.create');
-        Route::post('/usuarios/store', [AdminController::class, 'usuariosStore'])->name('usuarios.store');
-        Route::get('/usuarios/{id}/edit', [AdminController::class, 'usuariosEdit'])->name('usuarios.edit');
-        Route::put('/usuarios/{id}', [AdminController::class, 'usuariosUpdate'])->name('usuarios.update');
-        Route::delete('/usuarios/{id}', [AdminController::class, 'usuariosDestroy'])->name('usuarios.destroy');
+     // Rotas Admin
+     Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
+        Route::get('/', [PainelAdmController::class, 'index'])->name('index');
+        Route::get('/usuarios', [PainelAdmController::class, 'listarUsuarios'])->name('usuarios.index');
+        Route::get('/usuarios/create', [PainelAdmController::class, 'adicionar'])->name('usuarios.create');
+        Route::post('/usuarios/store', [PainelAdmController::class, 'salvar'])->name('usuarios.store');
+        Route::get('/usuarios/{id}/edit', [PainelAdmController::class, 'editar'])->name('usuarios.edit');
+        Route::post('/usuarios/{id}/update', [PainelAdmController::class, 'atualizar'])->name('usuarios.update');
+        Route::delete('/usuarios/{id}', [PainelAdmController::class, 'deletar'])->name('usuarios.destroy');
         Route::get('/administrador', function () {
             return view('administrador.usuario');
         })->name('usuario.index');
     });
 
-    // Rotas de Atividades para Administradores
-    Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {
-        Route::get('/', [AdminController::class, 'atividadesIndex'])->name('index');
-        Route::get('/create', [AdminController::class, 'atividadesCreate'])->name('create');
-        Route::post('/store', [AdminController::class, 'atividadesStore'])->name('store');
-        Route::get('/{id}/edit', [AdminController::class, 'atividadesEdit'])->name('edit');
-        Route::put('/{id}', [AdminController::class, 'atividadesUpdate'])->name('update');
-        Route::delete('/{id}', [AdminController::class, 'atividadesDestroy'])->name('destroy');
+     // Rotas de Atividades para Administradores
+     Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {
+        Route::get('/', [PainelAdmController::class, 'listarAtividades'])->name('index');
+        Route::get('/create', [PainelAdmController::class, 'adicionarAtividade'])->name('create');
+        Route::post('/store', [PainelAdmController::class, 'salvarAtividade'])->name('store');
+        Route::get('/{id}/edit', [PainelAdmController::class, 'editarAtividade'])->name('edit');
+        Route::post('/{id}/update', [PainelAdmController::class, 'atualizarAtividade'])->name('update');
+        Route::delete('/{id}', [PainelAdmController::class, 'deletarAtividade'])->name('destroy');
     });
 
     // Rotas de Atividades para Alunos
@@ -116,6 +115,6 @@ Route::middleware(['auth'])->group(function () {
     });
 
     // Perfil
-    Route::get('/perfil', [AdminController::class, 'perfilEdit'])->name('perfil.edit');
-    Route::post('/perfil', [AdminController::class, 'perfilUpdate'])->name('perfil.update');
+    Route::get('/perfil', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
 });

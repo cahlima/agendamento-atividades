@@ -1,52 +1,99 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laravel</title>
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Styles -->
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <style>
         body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
+            font-family: 'Nunito', sans-serif;
         }
-        #header {
-            background: url('/path/to/your/image.png') no-repeat center center;
-            background-size: cover;
-            height: 200px;
-            width: 100%;
+        .sidebar {
+            background-color: #f8f9fa;
+            padding: 15px;
+            height: 100vh;
+            position: fixed;
         }
-        #sidebar {
-            min-width: 200px;
-            max-width: 200px;
-            background: #343a40;
+        .content {
+            margin-left: 200px;
             padding: 20px;
         }
-        #sidebar .nav-link {
-            color: #ffffff;
+        .card {
+            margin-bottom: 20px;
         }
-        #sidebar .nav-link:hover {
-            background: #495057;
+        .navbar {
+            background-color: #343a40;
         }
-        #content {
-            flex: 1;
-            padding: 20px;
+        .navbar-brand {
+            color: #fff;
         }
     </style>
 </head>
 <body>
-    @auth
-        <div id="header"></div>
-        <div class="d-flex">
-            <div id="content" class="container">
-                @yield('content')
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    {{ config('app.name', 'Laravel') }}
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav me-auto">
+                        <!-- Add your menu items here -->
+                    </ul>
+
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
+
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
             </div>
-        </div>
-    @else
-        <div id="content" class="container">
+        </nav>
+
+        <main class="content py-4">
             @yield('content')
-        </div>
-    @endauth
+        </main>
+    </div>
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>
