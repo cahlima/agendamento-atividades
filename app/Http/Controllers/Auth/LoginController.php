@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -6,8 +7,6 @@ use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Usuarios;
-
 
 class LoginController extends Controller
 {
@@ -31,15 +30,29 @@ class LoginController extends Controller
     protected function redirectTo()
     {
         // Verifica o tipo de usuário para redirecionar adequadamente
-
         if (Auth::usuario()->isAdmin()) {
-            return '/paineladmin'; // Rota para o dashboard administrativo
+            return '/paineladm'; // Rota para o dashboard administrativo
         } elseif (Auth::usuario()->isProfessor()) {
             return '/painelprof'; // Rota para o dashboard de professores
         } elseif (Auth::usuario()->isAluno()){
-                return '/painelaluno'; // rota painel aluno
-            } else  {
-            return RouteServiceProvider::HOME; // Rota padrão para usuários comuns
+            return '/painelaluno'; // Rota para o painel de alunos
+        } else {
+            return RouteServiceProvider::HOME; // Rota padrão para outros usuários
         }
     }
+
+    /**
+     * Handle user logout and redirect to the login page.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
 }
+

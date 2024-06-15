@@ -21,7 +21,7 @@ class AlunoController extends Controller
     {
         $this->authorize('viewAny', Usuarios::class);
         $atividades = Atividades::paginate(10);
-        return view('aluno.atividades.index', compact('atividades'));
+        return view('aluno.atividades.listar', compact('atividades'));
     }
 
     public function atividadesMatriculadas()

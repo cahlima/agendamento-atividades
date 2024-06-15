@@ -27,7 +27,7 @@
                             <a class="nav-link" href="{{ route('matriculageral') }}">{{ __('Matriculas Geral') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.index') }}">{{ __('Atividades Geral') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Geral') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('usuario.index') }}">{{ __('Usuários') }}</a>
@@ -51,7 +51,7 @@
                             <a class="nav-link" href="{{ route('matricula.aluno') }}">{{ __('Meus Matriculamentos') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.index') }}">{{ __('Atividades') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades') }}</a>
                         </li>
                     @endif
                 @endguest

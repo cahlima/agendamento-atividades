@@ -19,11 +19,7 @@ class PainelAdmController extends Controller
     }
 
     // Exibe o painel administrativo
-    public function index()
-    {
-        $atividades = Atividades::all(); // Busca todas as atividades cadastradas
-        return view('administrador.paineladm', compact('atividades'));
-    }
+
 
     // Exibe uma lista paginada de usuários
     public function listarUsuarios()
@@ -127,98 +123,104 @@ class PainelAdmController extends Controller
         return redirect()->route('usuario.index');
     }
 
-   // Exibe uma lista paginada de atividades
-   public function listarAtividades()
-   {
-       $atividades = Atividades::paginate(10);
-       return view('administrador.atividades.index', compact('atividades'));
-   }
 
-   // Exibe o formulário para adicionar uma nova atividade
-   public function adicionarAtividade()
-   {
-       return view('administrador.atividades.adicionar');
-   }
+    public function index()
+    {
+        $atividades = Atividades::all(); // Busca todas as atividades cadastradas
+        return view('administrador.paineladm', compact('atividades'));
+    }
 
-   // Salva uma nova atividade no banco de dados
-   public function salvarAtividade(Request $request)
-   {
-       $validator = Validator::make($request->all(), [
-           'atividade' => 'required|string|max:255',
-           'data' => 'required|date',
-           'hora' => 'required|date_format:H:i',
-           'instrutor' => 'required|string|max:255',
-           'local' => 'required|string|max:255'
-       ]);
 
-       if ($validator->fails()) {
-           return redirect()->back()->withErrors($validator)->withInput();
-       }
+    public function listarAtividades()
+    {
+        $atividades = Atividades::all(); // Busca todas as atividades cadastradas
+        return view('administrador.paineladm', compact('atividades'));
+    }
 
-       Atividades::create($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
+    // Exibe o formulário para adicionar uma nova atividade
+    public function adicionarAtividade()
+    {
+        return view('administrador.atividades.adicionar');
+    }
 
-       Session::flash('flash_message', [
-           'msg' => "Atividade adicionada com sucesso!",
-           'class' => "alert-success"
-       ]);
-       return redirect()->route('atividades.create');
-   }
+    // Salva uma nova atividade no banco de dados
+    public function salvarAtividade(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'atividade' => 'required|string|max:255',
+            'data' => 'required|date',
+            'hora' => 'required|date_format:H:i',
+            'instrutor' => 'required|string|max:255',
+            'local' => 'required|string|max:255'
+        ]);
 
-   // Atualiza uma atividade no banco de dados
-   public function atualizarAtividade(Request $request, $id)
-   {
-       $atividade = Atividades::find($id);
-       if (!$atividade) {
-           return redirect()->back()->withErrors('Atividade não encontrada.');
-       }
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
 
-       $validator = Validator::make($request->all(), [
-           'atividade' => 'required|string|max:255',
-           'data' => 'required|date',
-           'hora' => 'required|date_format:H:i',
-           'instrutor' => 'required|string|max:255',
-           'local' => 'required|string|max:255'
-       ]);
+        Atividades::create($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
 
-       if ($validator->fails()) {
-           return redirect()->back()->withErrors($validator)->withInput();
-       }
+        Session::flash('flash_message', [
+            'msg' => "Atividade adicionada com sucesso!",
+            'class' => "alert-success"
+        ]);
+        return redirect()->route('atividades.listar');
+    }
 
-       $atividade->update($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
-       Session::flash('flash_message', [
-           'msg' => "Atividade atualizada com sucesso!",
-           'class' => "alert-success"
-       ]);
+    // Exibe o formulário para editar uma atividade existente
+    public function editarAtividade($id)
+{
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->route('atividades.listar')->withErrors('Atividade não encontrada.');
+    }
+    return view('administrador.atividades.editar', compact('atividade'));
+}
+public function atualizarAtividade(Request $request, $id)
+{
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->back()->withErrors('Atividade não encontrada.');
+    }
 
-       return redirect()->route('atividades.index');
-   }
+    $validator = Validator::make($request->all(), [
+        'atividade' => 'required|string|max:255',
+        'data' => 'required|date',
+        'hora' => 'required|date_format:H:i',
+        'instrutor' => 'required|string|max:255',
+        'local' => 'required|string|max:255'
+    ]);
 
-   // Exibe o formulário para editar uma atividade existente
-   public function editarAtividade($id)
-   {
-       $atividade = Atividades::find($id);
-       if (!$atividade) {
-           return redirect()->back()->withErrors('Atividade não encontrada.');
-       }
-       return view('administrador.atividades.editar', compact('atividade'));
-   }
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
 
-   // Deleta uma atividade do banco de dados
-   public function deletarAtividade($id)
-   {
-       $atividade = Atividades::find($id);
-       if ($atividade) {
-           $atividade->delete();
-           Session::flash('flash_message', [
-               'msg' => "Atividade excluída com sucesso!",
-               'class' => "alert-success"
-           ]);
-       } else {
-           Session::flash('flash_message', [
-               'msg' => "Atividade não encontrada.",
-               'class' => "alert-danger"
-           ]);
-       }
-       return redirect()->route('atividades.index');
-   }
+    $atividade->update($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
+    Session::flash('flash_message', [
+        'msg' => "Atividade atualizada com sucesso!",
+        'class' => "alert-success"
+    ]);
+
+    return redirect()->route('atividades.listar');
+}
+
+
+    // Deleta uma atividade do banco de dados
+    public function deletarAtividade($id)
+    {
+        $atividade = Atividades::find($id);
+        if ($atividade) {
+            $atividade->delete();
+            Session::flash('flash_message', [
+                'msg' => "Atividade excluída com sucesso!",
+                'class' => "alert-success"
+            ]);
+        } else {
+            Session::flash('flash_message', [
+                'msg' => "Atividade não encontrada.",
+                'class' => "alert-danger"
+            ]);
+        }
+        return redirect()->route('atividades.index');
+    }
 }
