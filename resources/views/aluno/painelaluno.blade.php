@@ -25,7 +25,7 @@
                     </div>
 
                     <div>
-                        <h4>Minhas Atividades</h4>
+                        <h4>Minhas Atividades Matriculadas</h4>
                         @if($atividades->isEmpty())
                             <p>Você ainda não está matriculado em nenhuma atividade.</p>
                         @else

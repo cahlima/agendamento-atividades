@@ -69,22 +69,26 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
     Route::get('/adicionar', [AtividadesController::class, 'adicionarAtividade'])->name('create');
     Route::post('/store', [AtividadesController::class, 'salvarAtividade'])->name('store');
     Route::get('/{id}/editar', [AtividadesController::class, 'editarAtividade'])->name('editar');
-    Route::put('/{id}', [AtividadesController::class, 'atualizarAtividade'])->name('update'); // Ajustado para PUT sem sufixo /atualizar
+    Route::put('/{id}', [AtividadesController::class, 'atualizarAtividade'])->name('update');
     Route::delete('/{id}', [AtividadesController::class, 'deletarAtividade'])->name('destroy');
 });
 
 
 
+// Rotas de Atividades para Alunos
+Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
+    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
+    Route::get('/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
+    Route::post('/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('atividades.matricular');
+    Route::delete('/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('atividades.desmatricular');
+    Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
+});
 
-    // Rotas de Atividades para Alunos
-    Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(function () {
-        Route::get('/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('atividades.listar');
-        Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
-        Route::post('/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('atividades.matricular');
-        Route::delete('/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('atividades.desmatricular');
-        Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
-        Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
-    });
+
+
+
 
     // Rotas de Atividades para Professores
     Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {

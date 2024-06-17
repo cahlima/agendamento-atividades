@@ -101,7 +101,7 @@ public function atualizarAtividade(Request $request, $id)
 
     $result = $atividade->update($data);
 
- 
+
 
     Session::flash('flash_message', [
         'msg' => "Atividade atualizada com sucesso!",
@@ -130,4 +130,6 @@ public function atualizarAtividade(Request $request, $id)
         }
         return redirect()->route('atividades.index');
     }
+
+
 }

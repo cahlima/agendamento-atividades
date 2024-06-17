@@ -20,11 +20,6 @@ class Usuarios extends Authenticatable
 
     protected $hidden = ['senha', 'remember_token'];
 
-    public function getAuthPassword()
-    {
-        return $this->senha;
-    }
-
     public function tipo()
     {
         return $this->belongsTo(Tipos::class, 'tipo_id');
@@ -49,4 +44,11 @@ class Usuarios extends Authenticatable
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
     }
+
+    public function getAuthPassword()
+    {
+        return $this->senha;
+    }
+
+
 }

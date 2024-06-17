@@ -5,17 +5,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Atividades;
 use App\Models\Matricula;
-use App\Models\Usuario;
 use App\Models\Usuarios;
 use App\Notifications\NotificaUsuarioMatricula;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log; // Adicionado Log
 use Illuminate\Support\Facades\Session;
 
 class MatriculaController extends Controller
 {
     public function index()
     {
-        $id_usuario = auth()->usuario()->id;
+        $id_usuario = auth()->user()->id;
         $matriculas = DB::table('matriculas')
             ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
             ->join('atividades', 'matriculas.atividades_id', '=', 'atividades.id')
@@ -37,7 +37,14 @@ class MatriculaController extends Controller
 
     public function matriculaaluno()
     {
-        $id_usuario = auth()->usuario()->id;
+        $usuario = auth()->user();
+
+        if (!$usuario) {
+            Log::error('Usuário não autenticado ao acessar matrículas');
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
+        $id_usuario = $usuario->id;
         $matriculas = DB::table('matriculas')
             ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
             ->join('atividades', 'matriculas.atividades_id', '=', 'atividades.id')
@@ -65,8 +72,15 @@ class MatriculaController extends Controller
 
     public function matricular($id)
     {
+        $usuario = auth()->user();
+
+        if (!$usuario) {
+            Log::error('Usuário não autenticado ao tentar matricular-se');
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
         $atividades = Atividades::find($id);
-        $id_usuario = auth()->usuario()->id;
+        $id_usuario = $usuario->id;
 
         $dados = [
             "atividades_id" => $id,
@@ -78,10 +92,10 @@ class MatriculaController extends Controller
         $id_atividades = $matricula->atividades_id;
         $atividades = Atividades::find($id_atividades);
         $id_professor = $atividades->usuario_id;
-        $usuario = Usuario::find($id_professor);
+        $professor = Usuarios::find($id_professor);
 
         // Notificar o professor
-        $usuario->notify(new NotificaUsuarioMatricula($usuario, $matricula));
+        $professor->notify(new NotificaUsuarioMatricula($professor, $matricula));
 
         $matriculas = DB::table('matriculas')
             ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
@@ -125,13 +139,13 @@ class MatriculaController extends Controller
         $dados = $request->all();
         $matriculas->update($dados);
 
-        $id_usuario = auth()->usuario()->id;
+        $id_usuario = auth()->user()->id;
         $id_atividades = $matriculas->atividades_id;
         $atividades = Atividades::find($id_atividades);
         $id_aluno = $matriculas->usuario_id;
-        $usuario = Usuarios::find($id_aluno);
+        $aluno = Usuarios::find($id_aluno);
 
-        $usuario->notify(new NotificaUsuarioMatricula($usuario, $matriculas));
+        $aluno->notify(new NotificaUsuarioMatricula($aluno, $matriculas));
 
         Session::flash('flash_message', [
             'msg' => "Registro atualizado com sucesso!",

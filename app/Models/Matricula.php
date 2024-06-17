@@ -8,7 +8,7 @@ class Matricula extends Model
 {
     protected $table = 'matriculas';
 
-    protected $fillable = ['usuario_id', 'atividade_id', 'tipo_id'];
+    protected $fillable = ['usuario_id', 'atividade_id', 'status'];
 
     public function usuario()
     {
