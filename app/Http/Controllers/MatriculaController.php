@@ -7,6 +7,7 @@ use App\Models\Atividades;
 use App\Models\Matricula;
 use App\Models\Usuarios;
 use App\Notifications\NotificaUsuarioMatricula;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log; // Adicionado Log
 use Illuminate\Support\Facades\Session;
@@ -72,112 +73,28 @@ class MatriculaController extends Controller
 
     public function matricular($id)
     {
-        $usuario = auth()->user();
+        $usuario = Auth::guard('web')->user();
 
-        if (!$usuario) {
-            Log::error('Usuário não autenticado ao tentar matricular-se');
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        DB::beginTransaction();
+
+        try {
+            $atividade = Atividades::findOrFail($id);
+
+            // Verifica se o usuário já está matriculado na atividade
+            if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
+                return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Você já está matriculado nesta atividade.');
+            }
+
+            // Matricula o usuário na atividade
+            $usuario->atividades()->attach($atividade);
+
+            DB::commit();
+            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado com sucesso.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Erro ao matricular: ' . $e->getMessage());
         }
-
-        $atividades = Atividades::find($id);
-        $id_usuario = $usuario->id;
-
-        $dados = [
-            "atividades_id" => $id,
-            "usuario_id" => $id_usuario,
-            "status" => 1,
-        ];
-
-        $matricula = Matricula::create($dados);
-        $id_atividades = $matricula->atividades_id;
-        $atividades = Atividades::find($id_atividades);
-        $id_professor = $atividades->usuario_id;
-        $professor = Usuarios::find($id_professor);
-
-        // Notificar o professor
-        $professor->notify(new NotificaUsuarioMatricula($professor, $matricula));
-
-        $matriculas = DB::table('matriculas')
-            ->join('usuarios', 'matriculas.usuario_id', '=', 'usuarios.id')
-            ->join('atividades', 'matriculas.atividades_id', '=', 'atividades.id')
-            ->where('usuarios.id', $id_usuario)
-            ->paginate(100);
-
-        return view('matricula.indexaluno', compact('matriculas'));
-    }
-
-    public function salvar(Request $request)
-    {
-        $dados = $request->all();
-        $matriculas = Matricula::create($dados);
-
-        Session::flash('flash_message', [
-            'msg' => "Registro adicionado com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('matricula.adicionar');
-    }
-
-    public function editar($id)
-    {
-        $matriculas = Matricula::find($id);
-
-        return view('matricula.editar', compact('matriculas'));
-    }
-
-    public function editaraluno($id)
-    {
-        $matriculas = Matricula::find($id);
-
-        return view('matricula.editaraluno', compact('matriculas'));
-    }
-
-    public function atualizar(Request $request, $id)
-    {
-        $matriculas = Matricula::find($id);
-        $dados = $request->all();
-        $matriculas->update($dados);
-
-        $id_usuario = auth()->user()->id;
-        $id_atividades = $matriculas->atividades_id;
-        $atividades = Atividades::find($id_atividades);
-        $id_aluno = $matriculas->usuario_id;
-        $aluno = Usuarios::find($id_aluno);
-
-        $aluno->notify(new NotificaUsuarioMatricula($aluno, $matriculas));
-
-        Session::flash('flash_message', [
-            'msg' => "Registro atualizado com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('matricula.index');
-    }
-
-    public function atualizaraluno(Request $request, $id)
-    {
-        $matriculas = Matricula::find($id);
-        $dados = $request->all();
-        $matriculas->update($dados);
-
-        Session::flash('flash_message', [
-            'msg' => "Registro atualizado com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('matricula.aluno');
-    }
-
-    public function deletar($id)
-    {
-        Matricula::find($id)->delete();
-
-        Session::flash('flash_message', [
-            'msg' => "Registro excluído com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('matricula.index');
     }
 }
+
+

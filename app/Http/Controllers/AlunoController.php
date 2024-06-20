@@ -38,12 +38,10 @@ class AlunoController extends Controller
         return view('aluno.atividades.listar', compact('atividades', 'atividadesDisponiveis', 'horariosDisponiveis'));
     }
 
-
     public function atividadesMatriculadas()
     {
         $usuario = Auth::guard('web')->user();
 
-        // Adiciona um log para verificar o usuário autenticado
         if (!$usuario) {
             Log::error('Usuário não autenticado ao acessar atividades matriculadas');
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
@@ -54,9 +52,12 @@ class AlunoController extends Controller
         $atividades = $usuario->atividades()->paginate(10);
         Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
-        return view('aluno.atividades.matriculadas', compact('atividades'));
-    }
+        // Buscar atividades disponíveis
+        $atividadesDisponiveis = Atividades::select('id', 'atividade')->distinct()->get();
+        $horariosDisponiveis = Atividades::select('hora')->distinct()->pluck('hora');
 
+        return view('aluno.atividades.matriculadas', compact('atividades', 'atividadesDisponiveis', 'horariosDisponiveis'));
+    }
 
     public function matricular($id)
     {

@@ -24,4 +24,3 @@ class Atividades extends Model
                     ->wherePivot('tipo_id', 2);
     }
 }
-

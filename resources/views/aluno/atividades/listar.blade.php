@@ -3,7 +3,6 @@
 @section('content')
 <div class="container-fluid">
     <div class="row">
-        <!-- Sidebar -->
         <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
             <div class="position-sticky">
                 <ul class="nav flex-column">
@@ -34,11 +33,9 @@
             </div>
         </nav>
 
-        <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <h2>{{ __('Atividades Disponíveis') }}</h2>
 
-            <!-- Formulário de pesquisa por atividade e horário -->
             <form action="{{ route('aluno.atividades.listar') }}" method="GET" class="mb-4">
                 <div class="row">
                     <div class="col-md-4">
@@ -66,7 +63,6 @@
                 </div>
             </form>
 
-            <!-- Lista de atividades filtradas, se houver -->
             @if(isset($atividades) && $atividades->count() > 0)
                 <div class="table-responsive mt-4">
                     <table class="table table-striped table-sm">
@@ -100,7 +96,6 @@
                     </table>
                 </div>
 
-                <!-- Paginação -->
                 {{ $atividades->links() }}
 
             @else

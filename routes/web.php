@@ -87,6 +87,14 @@ Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
 });
 
 
+Route::middleware(['auth:web'])->group(function () {
+    Route::get('/aluno/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('aluno.atividades.listar');
+    Route::post('/aluno/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('aluno.atividades.matricular');
+    Route::get('/aluno/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('aluno.atividades.matriculadas');
+    Route::post('/aluno/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('aluno.atividades.desmatricular');
+    Route::get('/aluno/perfil', [AlunoController::class, 'perfilEdit'])->name('aluno.perfil.edit');
+    Route::post('/aluno/perfil', [AlunoController::class, 'perfilUpdate'])->name('aluno.perfil.update');
+});
 
 
 
@@ -128,3 +136,5 @@ Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
     Route::get('/perfil', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
 });
+
+
