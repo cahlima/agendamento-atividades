@@ -1,63 +1,38 @@
-@extends('layouts.app')
+<!-- resources/views/usuario/index.blade.php -->
+@extends('layouts.base')
 
-@section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header">{{ __('Listagem de Usuários') }}</div>
-                <!-- @dump(auth()->user()) -->
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Tipo Usuário</th>
-                                <th>Nome</th>
-                                <th>Sobrenome</th>
-                                <th>Login</th>
-                                @can('update', App\Models\Usuarios::class)
-                                    <th>Opções</th>
-                                @endcan
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($usuarios as $usuario)
-                            <tr>
-                                <td>{{ $usuario->id }}</td>
-                                <td>{{ $usuario->tipo_id }}</td>
-                                <td>{{ $usuario->nome }}</td>
-                                <td>{{ $usuario->sobrenome }}</td>
-                                <td>{{ $usuario->login }}</td>
-                                @can('update', [$user, $usuarios])
-                                <td>
-                                    <a href="{{ route('usuario.editar', $usuario->id) }}" class="btn btn-warning">Editar</a>
-                                    <a href="javascript: if(confirm('Realmente deseja deletar?')) { window.location.href = '{{ route('usuario.deletar', $usuario->id) }}'}" class="btn btn-danger">Excluir</a>
-                                </td>
-                                @endcan
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                    @can('create', App\Models\Usuarios::class)
-                    <a href="{{ route('usuario.adicionar') }}" class="btn btn-primary">Adicionar</a>
-                    @endcan
-                </div>
+@section('main-content')
+<h2>{{ __('Lista de Usuários') }}</h2>
 
-                @if(Session::has('flash_message'))
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="alert {{ Session::get('flash_message')['class'] }} text-center">
-                                    {{ Session::get('flash_message')['msg'] }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                @endif
+<a href="{{ route('usuario.adicionar') }}" class="btn btn-primary">{{ __('Adicionar Usuário') }}</a>
 
-            </div>
-        </div>
-    </div>
-</div>
+<table class="table mt-4">
+    <thead>
+        <tr>
+            <th>{{ __('Nome') }}</th>
+            <th>{{ __('Email') }}</th>
+            <th>{{ __('Tipo') }}</th>
+            <th>{{ __('Ações') }}</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach($usuarios as $usuario)
+        <tr>
+            <td>{{ $usuario->nome }}</td>
+            <td>{{ $usuario->email }}</td>
+            <td>{{ $usuario->tipo->nome }}</td>
+            <td>
+                <a href="{{ route('usuario.editar', $usuario->id) }}" class="btn btn-sm btn-warning">{{ __('Editar') }}</a>
+                <form action="{{ route('usuario.deletar', $usuario->id) }}" method="POST" style="display:inline;">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger">{{ __('Deletar') }}</button>
+                </form>
+            </td>
+        </tr>
+        @endforeach
+    </tbody>
+</table>
+
+{{ $usuarios->links() }}
 @endsection

@@ -223,4 +223,32 @@ public function atualizarAtividade(Request $request, $id)
         }
         return redirect()->route('atividades.index');
     }
+
+    public function perfilEdit()
+    {
+        $usuario = Auth::guard('admin')->user();
+        return view('perfil.edit_admin', compact('usuario'));
+    }
+
+    public function perfilUpdate(Request $request)
+    {
+        $usuario = Auth::guard('admin')->user();
+
+        $data = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        } else {
+            unset($data['password']);
+        }
+
+        $usuario->update($data);
+
+        return redirect()->route('admin.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
+    }
+}
 }

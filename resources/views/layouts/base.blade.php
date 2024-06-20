@@ -101,6 +101,41 @@
 </div>
 @endsection
 
+<!-- Modal de Confirmação de Edição de Perfil -->
+<div class="modal fade" id="confirmEditProfileModal" tabindex="-1" aria-labelledby="confirmEditProfileModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmEditProfileModalLabel">{{ __('Confirmar Atualização de Perfil') }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>{{ __('Você está prestes a atualizar seus dados de perfil.') }}</p>
+                <p>{{ __('Tem certeza de que deseja continuar?') }}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
+                <button type="button" class="btn btn-primary" id="confirmEditProfileButton">{{ __('Confirmar') }}</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@section('scripts')
+<script>
+    function showEditProfileModal(form) {
+        var confirmButton = document.getElementById('confirmEditProfileButton');
+        confirmButton.onclick = function() {
+            form.submit();
+        };
+
+        var modal = new bootstrap.Modal(document.getElementById('confirmEditProfileModal'));
+        modal.show();
+    }
+</script>
+@endsection
+
 @section('scripts')
 <script>
     function showMatriculaModal(atividade, dia, horario, form) {

@@ -118,6 +118,8 @@ class AlunoController extends Controller
 
         if ($request->filled('password')) {
             $data['password'] = bcrypt($request->password);
+        } else {
+            unset($data['password']);
         }
 
         $usuario->update($data);

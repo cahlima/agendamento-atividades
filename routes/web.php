@@ -128,4 +128,16 @@ Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
     Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::prefix('usuario')->name('usuario.')->group(function () {
+        Route::get('/', [UsuariosController::class, 'index'])->name('index');
+        Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('adicionar');
+        Route::post('/salvar', [UsuariosController::class, 'salvar'])->name('salvar');
+        Route::get('/editar/{id}', [UsuariosController::class, 'editar'])->name('editar');
+        Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
+        Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
+    });
+});
+
+
 
