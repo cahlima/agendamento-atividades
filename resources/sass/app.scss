@@ -6,3 +6,52 @@
 
 // Bootstrap
 @import 'bootstrap/scss/bootstrap';
+
+
+// Custom Styles
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #E0E5CD;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.login-container {
+    background-color: #F7F7F7;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: #5A5A5A;
+}
+
+.login-container .form-label {
+    font-weight: 500;
+    color: #5A5A5A;
+}
+
+.login-container .btn {
+    background-color: #A4C639;
+    border: none;
+}
+
+.login-container .btn:hover {
+    background-color: #8EBF30;
+}
+
+.login-container a {
+    color: #5A5A5A;
+    text-decoration: none;
+}
+
+.login-container a:hover {
+    text-decoration: underline;
+}
