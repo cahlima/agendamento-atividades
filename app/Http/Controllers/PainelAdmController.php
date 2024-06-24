@@ -251,4 +251,4 @@ public function atualizarAtividade(Request $request, $id)
         return redirect()->route('admin.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
     }
 }
-}
+
