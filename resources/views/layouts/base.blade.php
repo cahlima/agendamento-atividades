@@ -1,169 +1,70 @@
 <!-- resources/views/layouts/base.blade.php -->
-@extends('layouts.app')
-
-@section('sidebar')
-<nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
-    <div class="position-sticky">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
-                    {{ __('Atividades Disponíveis') }}
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ config('app.name', 'Laravel') }}</title>
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <script src="{{ asset('js/app.js') }}" defer></script>
+</head>
+<body>
+    <div id="app">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
+            <div class="container">
+                <a class="navbar-brand" href="{{ url('/') }}">
+                    {{ config('app.name', 'Laravel') }}
                 </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">
-                    {{ __('Minhas Atividades') }}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">
-                    {{ __('Meu Perfil') }}
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    {{ __('Sair') }}
-                </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                    @csrf
-                </form>
-            </li>
-        </ul>
-    </div>
-</nav>
-@endsection
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
 
-@section('header')
-<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-    <h1 class="h2">{{ __('Atividades Disponíveis') }}</h1>
-</div>
-@if(Session::has('flash_message'))
-    <div class="alert {{ Session::get('flash_message.class') }}">
-        {{ Session::get('flash_message.msg') }}
-    </div>
-@endif
-@endsection
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Left Side Of Navbar -->
+                    <ul class="navbar-nav me-auto"></ul>
 
-@section('content')
-<div class="container-fluid">
-    <div class="row">
-        @yield('sidebar')
+                    <!-- Right Side Of Navbar -->
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Authentication Links -->
+                        @guest
+                            @if (Route::has('login'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
+                                </li>
+                            @endif
 
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            @yield('header')
+                            @if (Route::has('register'))
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
+                                </li>
+                            @endif
+                        @else
+                            <li class="nav-item dropdown">
+                                <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
+                                    {{ Auth::user()->name }}
+                                </a>
+
+                                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                       onclick="event.preventDefault();
+                                                     document.getElementById('logout-form').submit();">
+                                        {{ __('Logout') }}
+                                    </a>
+
+                                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                                        @csrf
+                                    </form>
+                                </div>
+                            </li>
+                        @endguest
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main class="py-4">
             @yield('main-content')
         </main>
     </div>
-</div>
-
-<!-- Modal de Confirmação de Matrícula -->
-<div class="modal fade" id="confirmMatriculaModal" tabindex="-1" aria-labelledby="confirmMatriculaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmMatriculaModalLabel">{{ __('Confirmar Matrícula') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>{{ __('Você está prestes a se matricular na atividade:') }}</p>
-                <p id="modal-matricula-atividade"></p>
-                <p id="modal-matricula-dia"></p>
-                <p id="modal-matricula-horario"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-primary" id="confirmMatriculaButton">{{ __('Confirmar') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Confirmação de Desmatrícula -->
-<div class="modal fade" id="confirmDesmatriculaModal" tabindex="-1" aria-labelledby="confirmDesmatriculaModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmDesmatriculaModalLabel">{{ __('Confirmar Desmatrícula') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>{{ __('Você está prestes a se desmatricular da atividade:') }}</p>
-                <p id="modal-desmatricula-atividade"></p>
-                <p id="modal-desmatricula-dia"></p>
-                <p id="modal-desmatricula-horario"></p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-danger" id="confirmDesmatriculaButton">{{ __('Confirmar') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-<!-- Modal de Confirmação de Edição de Perfil -->
-<div class="modal fade" id="confirmEditProfileModal" tabindex="-1" aria-labelledby="confirmEditProfileModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmEditProfileModalLabel">{{ __('Confirmar Atualização de Perfil') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>{{ __('Você está prestes a atualizar seus dados de perfil.') }}</p>
-                <p>{{ __('Tem certeza de que deseja continuar?') }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" class="btn btn-primary" id="confirmEditProfileButton">{{ __('Confirmar') }}</button>
-            </div>
-        </div>
-    </div>
-</div>
-@endsection
-
-@section('scripts')
-<script>
-    function showEditProfileModal(form) {
-        var confirmButton = document.getElementById('confirmEditProfileButton');
-        confirmButton.onclick = function() {
-            form.submit();
-        };
-
-        var modal = new bootstrap.Modal(document.getElementById('confirmEditProfileModal'));
-        modal.show();
-    }
-</script>
-@endsection
-
-@section('scripts')
-<script>
-    function showMatriculaModal(atividade, dia, horario, form) {
-        document.getElementById('modal-matricula-atividade').innerText = `Atividade: ${atividade}`;
-        document.getElementById('modal-matricula-dia').innerText = `Dia: ${dia}`;
-        document.getElementById('modal-matricula-horario').innerText = `Horário: ${horario}`;
-        
-        var confirmButton = document.getElementById('confirmMatriculaButton');
-        confirmButton.onclick = function() {
-            form.submit();
-        };
-
-        var modal = new bootstrap.Modal(document.getElementById('confirmMatriculaModal'));
-        modal.show();
-    }
-
-    function showDesmatriculaModal(atividade, dia, horario, form) {
-        document.getElementById('modal-desmatricula-atividade').innerText = `Atividade: ${atividade}`;
-        document.getElementById('modal-desmatricula-dia').innerText = `Dia: ${dia}`;
-        document.getElementById('modal-desmatricula-horario').innerText = `Horário: ${horario}`;
-        
-        var confirmButton = document.getElementById('confirmDesmatriculaButton');
-        confirmButton.onclick = function() {
-            form.submit();
-        };
-
-        var modal = new bootstrap.Modal(document.getElementById('confirmDesmatriculaModal'));
-        modal.show();
-    }
-</script>
-@endsection
+</body>
+</html>

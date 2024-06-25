@@ -78,13 +78,14 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
 // Rotas de Atividades para Alunos
 Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
     Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
-    Route::get('/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades', [AtividadesController::class, 'listar'])->name('atividades.listar');
     Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
-    Route::post('/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('atividades.matricular');
+    Route::post('/atividades/matricular/{id}', [AtividadesController::class, 'matricular'])->name('atividades.matricular');
     Route::delete('/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('atividades.desmatricular');
     Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
 });
+
 
 
 
