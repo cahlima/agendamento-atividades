@@ -49,16 +49,7 @@
                                 <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
                             @endforeach
                         </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="hora">{{ __('Horário') }}:</label>
-                        <select name="hora" id="hora" class="form-control">
-                            <option value="">{{ __('Selecione o horário') }}</option>
-                            @foreach($horariosDisponiveis as $horario)
-                                <option value="{{ $horario }}">{{ $horario }}</option>
-                            @endforeach
-                        </select>
-                    </div>
+                      </div>
                     <div class="col-md-4 mt-4">
                         <button type="submit" class="btn btn-primary">{{ __('Pesquisar') }}</button>
                         <a href="{{ route('aluno.painel') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
@@ -106,4 +97,66 @@
         </main>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="matriculaModal" tabindex="-1" aria-labelledby="matriculaModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="matriculaForm" method="POST" action="{{ route('aluno.atividades.matricular', ['id' => 0]) }}">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="matriculaModalLabel">{{ __('Confirmar Matrícula') }}</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ __('Você deseja se matricular na atividade') }} <strong id="atividadeNome"></strong> {{ __('no horário') }} <strong id="atividadeHora"></strong>?</p>
+                    <input type="hidden" name="id" id="atividadeId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
+                    <button type="submit" class="btn btn-primary">{{ __('Confirmar') }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    var matriculaModal = document.getElementById('matriculaModal');
+    matriculaModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var atividade = button.getAttribute('data-atividade');
+        var data = button.getAttribute('data-data');
+        var hora = button.getAttribute('data-hora');
+        var id = button.getAttribute('data-id');
+
+        var modalTitle = matriculaModal.querySelector('.modal-title');
+        var modalBodyInputAtividade = matriculaModal.querySelector('#atividadeNome');
+        var modalBodyInputHora = matriculaModal.querySelector('#atividadeHora');
+        var modalForm = matriculaModal.querySelector('#matriculaForm');
+
+        modalTitle.textContent = 'Confirmar Matrícula';
+        modalBodyInputAtividade.textContent = atividade;
+        modalBodyInputHora.textContent = data + ' ' + hora;
+        modalForm.action = '{{ route('aluno.atividades.matricular', '') }}/' + id;
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @endsection
