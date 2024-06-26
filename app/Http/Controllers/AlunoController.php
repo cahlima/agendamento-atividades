@@ -15,9 +15,12 @@ class AlunoController extends Controller
     public function index()
     {
         $usuario = Auth::guard('web')->user();
-        $atividades = $usuario->atividades; // Minhas atividades
+        $atividades = $usuario->atividades()->wherePivot('tipo_id', 3)->get(); // Obtém apenas as atividades onde o tipo_id é 3 (Aluno)
+
         return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
+
+
 
     public function alunoAtividadesIndex(Request $request)
     {

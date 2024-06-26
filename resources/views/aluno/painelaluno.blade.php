@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    <h3>Bem-vindo, {{ Auth::user()->nome }}!</h3>
+                    <h3>Bem-vindo, {{ $usuario->nome }}!</h3>
 
                     <p>Aqui você pode ver suas informações e acessar as funcionalidades disponíveis para os alunos.</p>
 
@@ -31,7 +31,9 @@
                         @else
                             <ul class="list-group">
                                 @foreach($atividades as $atividade)
-                                    <li class="list-group-item">{{ $atividade->nome }} - {{ $atividade->descricao }}</li>
+                                    <li class="list-group-item">
+                                        {{ $atividade->titulo }} - {{ $atividade->descricao }}
+                                    </li>
                                 @endforeach
                             </ul>
                         @endif

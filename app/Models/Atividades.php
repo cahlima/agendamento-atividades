@@ -12,7 +12,7 @@ class Atividades extends Model
         'titulo', 'descricao', 'usuario_id', 'atividade', 'data', 'hora', 'instrutor', 'local'
     ];
 
-    public function alunos()
+    public function aluno()
     {
         return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
                     ->wherePivot('tipo_id', 3);
