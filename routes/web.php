@@ -78,49 +78,44 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
 // Rotas de Atividades para Alunos
 Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
     Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
-    Route::get('/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades', [AtividadesController::class, 'listar'])->name('atividades.listar');
     Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
-    Route::post('/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('atividades.matricular');
+    Route::post('/atividades/matricular/{id}', [MatriculaController::class, 'matricular'])->name('atividades.matricular');
     Route::delete('/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('atividades.desmatricular');
     Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
 });
 
 
-Route::middleware(['auth:web'])->group(function () {
-    Route::get('/aluno/atividades', [AlunoController::class, 'alunoAtividadesIndex'])->name('aluno.atividades.listar');
-    Route::post('/aluno/atividades/matricular/{id}', [AlunoController::class, 'matricular'])->name('aluno.atividades.matricular');
-    Route::get('/aluno/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('aluno.atividades.matriculadas');
-    Route::post('/aluno/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('aluno.atividades.desmatricular');
-    Route::get('/aluno/perfil', [AlunoController::class, 'perfilEdit'])->name('aluno.perfil.edit');
-    Route::post('/aluno/perfil', [AlunoController::class, 'perfilUpdate'])->name('aluno.perfil.update');
+
+// Rotas de Matrículas
+Route::prefix('matriculas')->name('matricula.')->middleware('auth')->group(function () {
+    Route::get('/', [MatriculaController::class, 'index'])->name('index');
+    Route::get('/geral', [MatriculaController::class, 'matriculageral'])->name('geral');
+    Route::get('/aluno', [MatriculaController::class, 'matriculaaluno'])->name('aluno');
+    Route::get('/confirmar/{id}', [MatriculaController::class, 'confirmar'])->name('confirmar');
+    Route::get('/adicionar', [MatriculaController::class, 'adicionar'])->name('adicionar');
+    Route::post('/matricular/{id}', [MatriculaController::class, 'matricular'])->name('matricular');
+    Route::post('/salvar', [MatriculaController::class, 'salvar'])->name('salvar');
+    Route::get('/editar/{id}', [MatriculaController::class, 'editar'])->name('editar');
+    Route::get('/editaraluno/{id}', [MatriculaController::class, 'editaraluno'])->name('editaraluno');
+    Route::post('/atualizar/{id}', [MatriculaController::class, 'atualizar'])->name('atualizar');
+    Route::post('/atualizaraluno/{id}', [MatriculaController::class, 'atualizaraluno'])->name('atualizaraluno');
+    Route::delete('/deletar/{id}', [MatriculaController::class, 'deletar'])->name('deletar');
 });
 
 
 
-    // Rotas de Atividades para Professores
-    Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
-        Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
-        Route::get('/atividades/minhas', [ProfessoresController::class, 'minhasAtividades'])->name('atividades.minhas');
-        Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
-        Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
-    });
 
-    // Rotas de Matrículas
-    Route::prefix('matriculas')->name('matricula.')->group(function () {
-        Route::get('/', [MatriculaController::class, 'index'])->name('index');
-        Route::get('/geral', [MatriculaController::class, 'matriculageral'])->name('geral');
-        Route::get('/aluno', [MatriculaController::class, 'matriculaaluno'])->name('aluno');
-        Route::get('/confirmar/{id}', [MatriculaController::class, 'confirmar'])->name('confirmar');
-        Route::get('/adicionar', [MatriculaController::class, 'adicionar'])->name('adicionar');
-        Route::post('/matricular/{id}', [MatriculaController::class, 'matricular'])->name('matricular');
-        Route::post('/salvar', [MatriculaController::class, 'salvar'])->name('salvar');
-        Route::get('/editar/{id}', [MatriculaController::class, 'editar'])->name('editar');
-        Route::get('/editaraluno/{id}', [MatriculaController::class, 'editaraluno'])->name('editaraluno');
-        Route::post('/atualizar/{id}', [MatriculaController::class, 'atualizar'])->name('atualizar');
-        Route::post('/atualizaraluno/{id}', [MatriculaController::class, 'atualizaraluno'])->name('atualizaraluno');
-        Route::delete('/deletar/{id}', [MatriculaController::class, 'deletar'])->name('deletar');
-    });
+
+// Rotas de Atividades para Professores
+Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
+    Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades/minhas', [ProfessoresController::class, 'minhasAtividades'])->name('atividades.minhas');
+    Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
+});
+
 
     // Rotas de Tipos
     Route::prefix('tipos')->name('tipo.')->group(function () {
@@ -136,5 +131,17 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/perfil', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
 });
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('usuario')->name('usuario.')->group(function () {
+        Route::get('/', [UsuariosController::class, 'index'])->name('index');
+        Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('adicionar');
+        Route::post('/salvar', [UsuariosController::class, 'salvar'])->name('salvar');
+        Route::get('/editar/{id}', [UsuariosController::class, 'editar'])->name('editar');
+        Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
+        Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
+    });
+});
+
 
 

@@ -1,25 +1,27 @@
-@extends('layouts.app')
+<!-- resources/views/perfil/edit_admin.blade.php -->
+@extends('layouts.base')
 
-@section('content')
-<div class="container">
-    <h1>Editar Perfil</h1>
-    @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
-    <form action="{{ route('perfil.update') }}" method="POST">
-        @csrf
-        @method('POST')
-        <div class="form-group">
-            <label for="name">Nome:</label>
-            <input type="text" class="form-control" id="name" name="name" value="{{ $user->name }}" required>
-        </div>
-        <div class="form-group">
-            <label for="email">E-mail:</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ $user->email }}" required>
-        </div>
-        <button type="submit" class="btn btn-primary">Atualizar</button>
-    </form>
-</div>
+@section('main-content')
+<h2>{{ __('Editar Perfil do Administrador') }}</h2>
+
+<form action="{{ route('admin.perfil.update') }}" method="POST" onsubmit="event.preventDefault(); showEditProfileModal(this);">
+    @csrf
+    <div class="mb-3">
+        <label for="nome" class="form-label">{{ __('Nome') }}</label>
+        <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome', $usuario->nome) }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="email" class="form-label">{{ __('Email') }}</label>
+        <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $usuario->email) }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="senha" class="form-label">{{ __('Senha') }}</label>
+        <input type="password" class="form-control" id="senha" name="senha">
+    </div>
+    <div class="mb-3">
+        <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }}</label>
+        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+    </div>
+    <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+</form>
 @endsection

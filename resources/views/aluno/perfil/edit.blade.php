@@ -1,32 +1,40 @@
-@extends('layouts.app')
+@extends('layouts.base')
 
-@section('content')
+@section('title', 'Editar Perfil')
+
+@section('main-content')
 <div class="container">
     <h2>{{ __('Editar Perfil') }}</h2>
-    @if(Session::has('flash_message'))
-        <div class="alert {{ Session::get('flash_message.class') }}">
-            {{ Session::get('flash_message.msg') }}
-        </div>
-    @endif
-    <form action="{{ route('aluno.perfil.update') }}" method="POST">
+    <form method="POST" action="{{ route('aluno.perfil.update') }}">
         @csrf
-        <div class="form-group">
-            <label for="nome">{{ __('Nome') }}</label>
-            <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" required>
+        @method('POST')
+
+        <!-- Nome -->
+        <div class="mb-3">
+            <label for="name" class="form-label">{{ __('Nome') }}</label>
+            <input type="text" name="name" class="form-control" id="name" value="{{ auth()->user()->name }}" required>
         </div>
-        <div class="form-group">
-            <label for="email">{{ __('Email') }}</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" required>
+
+        <!-- Email -->
+        <div class="mb-3">
+            <label for="email" class="form-label">{{ __('Email') }}</label>
+            <input type="email" name="email" class="form-control" id="email" value="{{ auth()->user()->email }}" required>
         </div>
-        <div class="form-group">
-            <label for="password">{{ __('Senha') }}</label>
-            <input type="password" class="form-control" id="password" name="password">
+
+        <!-- Senha -->
+        <div class="mb-3">
+            <label for="password" class="form-label">{{ __('Senha') }}</label>
+            <input type="password" name="password" class="form-control" id="password">
+            <small class="form-text text-muted">{{ __('Deixe em branco se não quiser alterar a senha') }}</small>
         </div>
-        <div class="form-group">
-            <label for="password_confirmation">{{ __('Confirmar Senha') }}</label>
-            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+
+        <!-- Confirmar Senha -->
+        <div class="mb-3">
+            <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }}</label>
+            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation">
         </div>
-        <button type="submit" class="btn btn-success">{{ __('Atualizar') }}</button>
+
+        <button type="button" class="btn btn-primary" onclick="showEditProfileModal(this.form)">{{ __('Salvar') }}</button>
     </form>
 </div>
 @endsection

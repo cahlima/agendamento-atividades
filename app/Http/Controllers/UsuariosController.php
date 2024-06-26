@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Usuarios;
 use App\Models\Tipos;
+use App\Models\Aluno;
+use App\Models\Professor;
 use Illuminate\Support\Facades\Validator;
 
 class UsuariosController extends Controller
@@ -49,7 +51,14 @@ class UsuariosController extends Controller
 
         $dados = $request->only(['nome', 'email', 'tipo_id']);
         $dados['senha'] = bcrypt($request->senha);
-        Usuarios::create($dados);
+        $usuario = Usuarios::create($dados);
+
+        // Adiciona um aluno ou professor conforme o tipo selecionado
+        if ($request->tipo_id == Tipos::where('nome', 'Aluno')->first()->id) {
+            Aluno::create(['usuario_id' => $usuario->id]);
+        } elseif ($request->tipo_id == Tipos::where('nome', 'Professor')->first()->id) {
+            Professor::create(['usuario_id' => $usuario->id]);
+        }
 
         Session::flash('flash_message', [
             'msg' => "Registro adicionado com sucesso!",
@@ -66,7 +75,6 @@ class UsuariosController extends Controller
             return redirect()->back()->withErrors('Usuário não encontrado.');
         }
 
-        // Autorização com o usuário autenticado e a instância de Usuarios
         $this->authorize('update', $usuario);
         $tipos = Tipos::all();
         return view('usuario.editar', compact('usuario', 'tipos'));
@@ -80,7 +88,6 @@ class UsuariosController extends Controller
             return redirect()->back()->withErrors('Usuário não encontrado.');
         }
 
-        // Autorização com o usuário autenticado e a instância de Usuarios
         $this->authorize('update', $usuario);
 
         $validator = Validator::make($request->all(), [
@@ -94,6 +101,18 @@ class UsuariosController extends Controller
         }
 
         $usuario->update($request->only(['nome', 'email', 'tipo_id']));
+
+        // Atualiza o tipo de usuário (aluno ou professor)
+        if ($request->tipo_id == Tipos::where('nome', 'Aluno')->first()->id) {
+            if (!$usuario->aluno) {
+                Aluno::create(['usuario_id' => $usuario->id]);
+            }
+        } elseif ($request->tipo_id == Tipos::where('nome', 'Professor')->first()->id) {
+            if (!$usuario->professor) {
+                Professor::create(['usuario_id' => $usuario->id]);
+            }
+        }
+
         Session::flash('flash_message', [
             'msg' => "Registro atualizado com sucesso!",
             'class' => "alert-success"
@@ -107,7 +126,6 @@ class UsuariosController extends Controller
     {
         $usuario = Usuarios::find($id);
         if ($usuario) {
-            // Autorização com o usuário autenticado e a instância de Usuarios
             $this->authorize('delete', $usuario);
             $usuario->delete();
             Session::flash('flash_message', [
