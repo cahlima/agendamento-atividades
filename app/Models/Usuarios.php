@@ -3,32 +3,66 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
-
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class Usuarios extends Authenticatable
 {
-    use HasFactory,Notifiable;
+    use HasFactory, Notifiable;
 
-    protected $fillable = ['descricao','tipo_id','nome','sobrenome','login','senha'];
-    protected $primaryKey = 'id_usuario';
+    protected $table = 'usuarios';
+    protected $primaryKey = 'id';
+    public $timestamps = true;
 
-    //protected $table = "tipos";
-    //protected $table = "aulas";
+    protected $fillable = [
+        'tipo_id', 'nome', 'sobrenome', 'login', 'senha', 'email', 'data_nascimento', 'telefone'
+    ];
 
-    public function tipos()
+    protected $hidden = ['senha', 'remember_token'];
+
+    // Relação com o modelo Tipos
+    public function tipo()
     {
-        return $this->belongsTo('App\Models\Tipos', 'tipo_id');
+        return $this->belongsTo(Tipos::class, 'tipo_id');
     }
 
-    public function aulas(){
-        return $this->hasMany('App\Models\Aulas', 'usuario_id');
+    // Verificações de tipo de usuário
+    public function isAdmin()
+    {
+        return $this->tipo_id == 1;
     }
 
-    public function agendas(){
-        return $this->hasMany('App\Models\Agenda', 'usuario_id');
+    public function isProfessor()
+    {
+        return $this->tipo_id == 2;
+    }
+
+    public function isAluno()
+    {
+        return $this->tipo_id == 3;
+    }
+
+    // Relação com o modelo Atividades
+    public function atividades()
+    {
+        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
+    }
+
+    // Relação com o modelo Professor
+    public function professor()
+    {
+        return $this->hasOne(Professor::class, 'usuario_id');
+    }
+
+    // Relação com o modelo Aluno
+    public function aluno()
+    {
+        return $this->hasOne(Aluno::class, 'usuario_id');
+    }
+
+    // Método para autenticação
+    public function getAuthPassword()
+    {
+        return $this->senha;
     }
 }

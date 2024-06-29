@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\Tipos;
+use App\Models\User;
 use App\Models\Usuarios;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
@@ -32,9 +33,9 @@ class TiposPolicy
     {
         //
     }
-    public function vermenuAdmin(Usuarios $usuarios)
+    public function vermenuAdmin(User $user)
     {
-        return $usuarios->tipo_id === 1 ;
+        return $user->tipo_id === 1 ;
     }
 
     /**

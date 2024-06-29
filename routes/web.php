@@ -1,79 +1,147 @@
 <?php
 
-use App\Http\Controllers\Atividades;
-use App\Http\Controllers\HomeAluno;
+use App\Http\Controllers\PainelAdmController;
+use App\Http\Controllers\AlunoController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use Illuminate\Support\Facades\Route;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+use App\Http\Controllers\AutenticacaoController;
+use App\Http\Controllers\MatriculaController;
+use App\Http\Controllers\AtividadesController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\TiposController;
+use App\Http\Controllers\ProfessoresController;
 
 Route::get('/', function () {
     return view('welcome');
+})->name('welcome');
+
+// Rotas de Autenticação
+Route::middleware(['guest'])->group(function () {
+    Route::get('/login', [AutenticacaoController::class, 'login'])->name('login');
+    Route::post('/login', [AutenticacaoController::class, 'logindo'])->name('logindo');
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+    Route::get('/password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+    Route::post('/password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+    Route::get('/password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
 });
 
-Route::get('/atividades', [Atividades::class,'index']);
+Route::middleware(['auth'])->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-//Rotas Login Personalizado---------------------------------------------------------------------------------------
-Route::get('/paineladm', [App\Http\Controllers\AutenticacaoController::class, 'index'])->name('paineladm');
-Route::get('/admin', [App\Http\Controllers\AutenticacaoController::class, 'index'])->name('admin');
-Route::get('/login', [App\Http\Controllers\AutenticacaoController::class, 'login'])->name('login');
-Route::post('/logando', [App\Http\Controllers\AutenticacaoController::class, 'logando'])->name('logando');
-Route::post('/logout', [App\Http\Controllers\AutenticacaoController::class, 'logout'])->name('logout');
-
-//Rotas Tipo Usuários---------------------------------------------------------------------------------------------
-Route::get('/tipo', [App\Http\Controllers\TipoController::class, 'index'])->name('tipo');
-Route::get('/tipo/adicionar', [App\Http\Controllers\TipoController::class, 'adicionar'])->name('tipo.adicionar');
-Route::post('/tipo/salvar', [App\Http\Controllers\TipoController::class, 'salvar'])->name('tipo/salvar');
-Route::post('/tipo/salvar', [App\Http\Controllers\TipoController::class, 'salvar'])->name('tipo.salvar');
-Route::get('/tipo/editar/{id}', [App\Http\Controllers\TipoController::class, 'editar'])->name('tipo.editar');
-Route::put('/tipo/atualizar/{id}', [App\Http\Controllers\TipoController::class, 'atualizar'])->name('tipo.atualizar');
-Route::get('/tipo/deletar/{id}', [App\Http\Controllers\TipoController::class, 'deletar'])->name('tipo.deletar');
-
-//RotasUsuários---------------------------------------------------------------------------------------------
-Route::get('/usuario', [App\Http\Controllers\UsuarioController::class, 'index'])->name('usuario');
-Route::get('/usuario/adicionar', [App\Http\Controllers\UsuarioController::class, 'adicionar'])->name('usuario.adicionar');
-Route::post('/usuario/salvar', [App\Http\Controllers\UsuarioController::class, 'salvar'])->name('usuario/salvar');
-Route::post('/usuario/salvar', [App\Http\Controllers\UsuarioController::class, 'salvar'])->name('usuario.salvar');
-Route::get('/usuario/editar/{id_usuario}', [App\Http\Controllers\UsuarioController::class, 'editar'])->name('usuario.editar');
-Route::put('/usuario/atualizar/{id}', [App\Http\Controllers\UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
-Route::get('/usuario/deletar/{id}', [App\Http\Controllers\UsuarioController::class, 'deletar'])->name('usuario.deletar');
-
-//Rotas Aulas---------------------------------------------------------------------------------------------
-Route::get('/aula', [App\Http\Controllers\AulaController::class, 'index'])->name('aula');
-Route::get('/aula/professor', [App\Http\Controllers\AulaController::class, 'professor'])->name('professor');
-Route::get('/aula/adicionar', [App\Http\Controllers\AulaController::class, 'adicionar'])->name('aula.adicionar');
-Route::post('/aula/salvar', [App\Http\Controllers\AulaController::class, 'salvar'])->name('aula/salvar');
-Route::post('/aula/salvar', [App\Http\Controllers\AulaController::class, 'salvar'])->name('aula.salvar');
-Route::get('/aula/editar/{id}', [App\Http\Controllers\AulaController::class, 'editar'])->name('aula.editar');
-Route::put('/aula/atualizar/{id}', [App\Http\Controllers\AulaController::class, 'atualizar'])->name('aula.atualizar');
-Route::get('/aula/deletar/{id}', [App\Http\Controllers\AulaController::class, 'deletar'])->name('aula.deletar');
-
-//Rotas Agendas---------------------------------------------------------------------------------------------
-Route::get('/agendageral', [App\Http\Controllers\AgendaController::class, 'agendageral'])->name('agendageral');
-Route::get('/agenda', [App\Http\Controllers\AgendaController::class, 'index'])->name('agenda');
-Route::get('/agenda/confirmar/{id}', [App\Http\Controllers\AgendaController::class, 'confirmar'])->name('agenda.confirmar');
-Route::get('/agenda/adicionar', [App\Http\Controllers\AgendaController::class, 'adicionar'])->name('agenda.adicionar');
-Route::get('/agenda/agendar/{id}', [App\Http\Controllers\AgendaController::class, 'agendar'])->name('agenda.agendar');
-Route::get('/agenda/agendarconf', [App\Http\Controllers\AgendaController::class, 'agendarconf'])->name('agendarconf.agendarconf');
-Route::post('/agenda/salvar', [App\Http\Controllers\AgendaController::class, 'salvar'])->name('agenda/salvar');
-Route::post('/agenda/salvar', [App\Http\Controllers\AgendaController::class, 'salvar'])->name('agenda.salvar');
-Route::get('/agenda/editar/{id}', [App\Http\Controllers\AgendaController::class, 'editar'])->name('agenda.editar');
-Route::put('/agenda/atualizar/{id}', [App\Http\Controllers\AgendaController::class, 'atualizar'])->name('agenda.atualizar');
-Route::get('/agenda/deletar/{id}', [App\Http\Controllers\AgendaController::class, 'deletar'])->name('agenda.deletar');
-Route::get('/agendaaluno', [App\Http\Controllers\AgendaController::class, 'agendaaluno'])->name('agendaaluno');
-Route::get('/agenda/editaraluno/{id}', [App\Http\Controllers\AgendaController::class, 'editaraluno'])->name('agenda.editaraluno');
-Route::put('/agenda/atualizaraluno/{id}', [App\Http\Controllers\AgendaController::class, 'atualizaraluno'])->name('agenda.atualizaraluno');
+  // Rotas de Usuários para Administradores
+Route::prefix('usuarios')->name('usuarios.')->middleware('can:isAdmin')->group(function () {
+    Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('listar');
+    Route::get('/adicionar', [PainelAdmController::class, 'adicionar'])->name('adicionar');
+    Route::post('/store', [PainelAdmController::class, 'salvar'])->name('store');
+    Route::get('/{id}/editar', [PainelAdmController::class, 'editar'])->name('editar');
+    Route::post('/{id}/atualizar', [PainelAdmController::class, 'atualizar'])->name('update');
+    Route::delete('/{id}', [PainelAdmController::class, 'deletar'])->name('destroy');
+});
 
 
-Route::get('/notification', [App\Http\Controllers\NotificationController::class, 'notification'])->name('notification');
+    // Rotas para painéis
+    Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
+    Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
+    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
+
+  // Rotas de Administradores
+Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
+    Route::get('/painel', [PainelAdmController::class, 'index'])->name('painel');
+
+    // Rotas de Usuários
+    Route::prefix('usuarios')->name('usuarios.')->group(function () {
+        Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('index');
+        Route::get('/adicionar', [PainelAdmController::class, 'adicionarUsuario'])->name('create');
+        Route::post('/store', [PainelAdmController::class, 'salvarUsuario'])->name('store');
+        Route::get('/{id}/editar', [PainelAdmController::class, 'editarUsuario'])->name('edit');
+        Route::post('/{id}/atualizar', [PainelAdmController::class, 'atualizarUsuario'])->name('update');
+        Route::delete('/{id}', [PainelAdmController::class, 'deletarUsuario'])->name('destroy');
+    });
+});
+// Rotas de Atividades para Administradores
+Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {
+    Route::get('/', [AtividadesController::class, 'index'])->name('index');
+    Route::get('/listar', [AtividadesController::class, 'listarAtividades'])->name('listar');
+    Route::get('/adicionar', [AtividadesController::class, 'adicionarAtividade'])->name('create');
+    Route::post('/store', [AtividadesController::class, 'salvarAtividade'])->name('store');
+    Route::get('/{id}/editar', [AtividadesController::class, 'editarAtividade'])->name('editar');
+    Route::put('/{id}', [AtividadesController::class, 'atualizarAtividade'])->name('update');
+    Route::delete('/{id}', [AtividadesController::class, 'deletarAtividade'])->name('destroy');
+});
+
+
+
+// Rotas de Atividades para Alunos
+Route::prefix('aluno')->name('aluno.')->middleware('auth')->group(function () {
+    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
+    Route::get('/atividades', [AtividadesController::class, 'listar'])->name('atividades.listar');
+    Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
+    Route::post('/atividades/matricular/{id}', [MatriculaController::class, 'matricular'])->name('atividades.matricular');
+    Route::delete('/atividades/desmatricular/{id}', [AlunoController::class, 'desmatricular'])->name('atividades.desmatricular');
+    Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
+});
+
+
+
+// Rotas de Matrículas
+Route::prefix('matriculas')->name('matricula.')->middleware('auth')->group(function () {
+    Route::get('/', [MatriculaController::class, 'index'])->name('index');
+    Route::get('/geral', [MatriculaController::class, 'matriculageral'])->name('geral');
+    Route::get('/aluno', [MatriculaController::class, 'matriculaaluno'])->name('aluno');
+    Route::get('/confirmar/{id}', [MatriculaController::class, 'confirmar'])->name('confirmar');
+    Route::get('/adicionar', [MatriculaController::class, 'adicionar'])->name('adicionar');
+    Route::post('/matricular/{id}', [MatriculaController::class, 'matricular'])->name('matricular');
+    Route::post('/salvar', [MatriculaController::class, 'salvar'])->name('salvar');
+    Route::get('/editar/{id}', [MatriculaController::class, 'editar'])->name('editar');
+    Route::get('/editaraluno/{id}', [MatriculaController::class, 'editaraluno'])->name('editaraluno');
+    Route::post('/atualizar/{id}', [MatriculaController::class, 'atualizar'])->name('atualizar');
+    Route::post('/atualizaraluno/{id}', [MatriculaController::class, 'atualizaraluno'])->name('atualizaraluno');
+    Route::delete('/deletar/{id}', [MatriculaController::class, 'deletar'])->name('deletar');
+});
+
+
+
+
+
+// Rotas de Atividades para Professores
+Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
+    Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades/minhas', [ProfessoresController::class, 'minhasAtividades'])->name('atividades.minhas');
+    Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
+});
+
+
+    // Rotas de Tipos
+    Route::prefix('tipos')->name('tipo.')->group(function () {
+        Route::get('/', [TiposController::class, 'index'])->name('index');
+        Route::get('/adicionar', [TiposController::class, 'adicionar'])->name('adicionar');
+        Route::post('/salvar', [TiposController::class, 'salvar'])->name('salvar');
+        Route::get('/editar/{id}', [TiposController::class, 'editar'])->name('editar');
+        Route::post('/atualizar/{id}', [TiposController::class, 'atualizar'])->name('atualizar');
+        Route::delete('/deletar/{id}', [TiposController::class, 'deletar'])->name('deletar');
+    });
+
+    // Perfil
+    Route::get('/perfil', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('usuario')->name('usuario.')->group(function () {
+        Route::get('/', [UsuariosController::class, 'index'])->name('index');
+        Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('adicionar');
+        Route::post('/salvar', [UsuariosController::class, 'salvar'])->name('salvar');
+        Route::get('/editar/{id}', [UsuariosController::class, 'editar'])->name('editar');
+        Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
+        Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
+    });
+});
+
+
 

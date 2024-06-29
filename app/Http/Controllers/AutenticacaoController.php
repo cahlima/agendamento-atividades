@@ -2,120 +2,78 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Models\Usuario;
+use App\Models\Usuarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-//use Illuminate\Contracts\Auth\Authenticatable;
-//use Illuminate\Foundation\Auth\AuthenticatesUsers;
-use Illuminate\Support\Facades\DB;
-use App\Models\Agenda;
-use App\Models\Usuarios;
-use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class AutenticacaoController extends Controller
-
- /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
-
 {
-    public function index(){
+    public function index()
+    {
+        $usuario = Auth::usuario();
+        Log::info('Usuário autenticado redirecionando...', ['usuario' => $usuario]);
 
-    // public const HOME = '/admin';
-    $user = Auth::user()->id_usuario;;
-
-
-
-      $usuario = Usuarios::find($user);
-
-      //$agenda = DB::table('agendas')->get();
-    //     $contador = 0;
-    //     $array = array();
-    //    foreach($usuario->unreadNotifications as $notification){
-    //        var_dump($notification->data);
-
-    //    }
-    //   exit;
-
-        return view('paineladm');
-
-        return redirect()->route('login');
+        if ($usuario->isAdmin()) {
+            return redirect()->route('paineladm');
+        } elseif ($usuario->isProfessor()) {
+            return redirect()->route('painelprof');
+        } elseif ($usuario->isAluno()) {
+            return redirect()->route('painelaluno');
+        } else {
+            return redirect()->route('home');
+        }
     }
 
-    public function login(){
-            return view('login');
+    public function login()
+    {
+        return view('login');
     }
 
-    public function logindo(Request $request){
+    public function logindo(Request $request)
+    {
+        $request->validate([
+            'login' => 'required',
+            'senha' => 'required',
+        ]);
 
+        $login = $request->input('login');
+        $senha = $request->input('senha');
+        $usuario = Usuarios::where('login', $login)->first();
 
-
-
-        $dados = $request->all();
-
-        //dd($dados);
-       /* $credentials = ([
-            'login' => $request->login,
-            'senha' => $request->password
-        ]);*/
-
-
-       // $user = Auth::attempt($request->only("login","senha"));
-        //dd($user);exit;
-
-
-
-        $login = $dados['login'];
-        $senha = $dados['senha'];
-
-        $usuario = Usuarios::where('login',$login)->first();
-
-        if(Auth::check() || ($usuario && Hash::check($senha,$usuario->senha))){
-            //echo "ok";exit;
-            //$usuarios = Usuarios::find($id);
-
-            //$id = Auth::id($usuario->id_usuario);
-            //dd($id);
+        if ($usuario && Hash::check($senha, $usuario->senha)) {
             Auth::login($usuario);
             $request->session()->regenerate();
-            return redirect()->intended('paineladm');
 
-        }else{
-             return redirect()->route('login');
-        };
+            Log::info('Usuário logado com sucesso', ['usuario' => $usuario]);
 
-
-        //if(Auth::attempt($request->only("email","password")))
-        //if(Auth::attempt($credentials))
-
-        //{
-
-            //$request->session()->regenerate();
-            //dd($request);
-       // $_SESSION = $usuario;
-       // dd($_SESSION);
-        //$id= $_SESSION->id;
-        //$usuario = Usuarios::find($id);
-        //$user = Auth::login($usuario);
-        //return redirect()->intended('paineladm');
-          // return view('paineladm');
-
-          //}else{
-            //return redirect()->route('login');
-        //}
-
-
-       //Auth::attempt($dados);
-        //return view('paineladm');
-
-
+            // Redirecionamento baseado no tipo de usuário
+            if ($usuario->isAdmin()) {
+                Log::info('Redirecionando para paineladm');
+                return redirect()->intended('paineladm');
+            } elseif ($usuario->isProfessor()) {
+                Log::info('Redirecionando para painelprof');
+                return redirect()->intended('painelprof');
+            } elseif ($usuario->isAluno()) {
+                Log::info('Redirecionando para painelaluno');
+                return redirect()->intended('painelaluno');
+            } else {
+                Log::info('Redirecionando para home');
+                return redirect()->intended('home');
+            }
+        } else {
+            Log::info('Credenciais inválidas', ['login' => $login]);
+            return redirect()->route('login')->withErrors(['login' => 'As credenciais fornecidas não correspondem aos nossos registros.']);
+        }
     }
-    public function logout(){
-        Auth::logout();
-        return redirect()->route('login');
 
-}
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login')->with('success', 'Você foi deslogado com sucesso.');
+    }
 }
