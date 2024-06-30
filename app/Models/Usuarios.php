@@ -29,6 +29,7 @@ class Usuarios extends Authenticatable
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
     }
+    
 
     public function isAdmin()
     {

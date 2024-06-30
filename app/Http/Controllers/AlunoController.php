@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Atividades;
-use App\Models\Matricula;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class AlunoController extends Controller
@@ -19,8 +16,6 @@ class AlunoController extends Controller
 
         return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
-
-
 
     public function alunoAtividadesIndex(Request $request)
     {
@@ -45,8 +40,8 @@ class AlunoController extends Controller
     {
         $usuario = Auth::guard('web')->user();
 
-        if (!$usuario) {
-            Log::error('Usuário não autenticado ao acessar atividades matriculadas');
+        if (!$usuario || is_null($usuario->email)) {
+            Log::error('Usuário não autenticado ou sem e-mail ao acessar atividades matriculadas', ['user' => $usuario]);
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
         }
 
@@ -60,47 +55,6 @@ class AlunoController extends Controller
         $horariosDisponiveis = Atividades::select('hora')->distinct()->pluck('hora');
 
         return view('aluno.atividades.matriculadas', compact('atividades', 'atividadesDisponiveis', 'horariosDisponiveis'));
-    }
-
-    public function matricular($id)
-    {
-        $usuario = Auth::guard('web')->user();
-
-        DB::beginTransaction();
-
-        try {
-            $atividade = Atividades::findOrFail($id);
-
-            if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
-                return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Você já está matriculado nesta atividade.');
-            }
-
-            $usuario->atividades()->attach($atividade);
-
-            DB::commit();
-            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado com sucesso.');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Erro ao matricular: ' . $e->getMessage());
-        }
-    }
-
-    public function desmatricular($id)
-    {
-        $usuario = Auth::guard('web')->user();
-
-        DB::beginTransaction();
-
-        try {
-            $atividade = Atividades::findOrFail($id);
-            $usuario->atividades()->detach($atividade);
-
-            DB::commit();
-            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Desmatriculado com sucesso.');
-        } catch (\Exception $e) {
-            DB::rollback();
-            return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Erro ao desmatricular: ' . $e->getMessage());
-        }
     }
 
     public function perfilEdit()
