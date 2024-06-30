@@ -8,6 +8,11 @@
             <div class="position-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.painel') }}">
+                            {{ __('Voltar') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
                             {{ __('Atividades Disponíveis') }}
                         </a>
@@ -51,12 +56,11 @@
                     </div>
                     <div class="col-md-4 mt-4">
                         <button type="submit" class="btn btn-primary">{{ __('Pesquisar') }}</button>
-                        <a href="{{ route('aluno.painel') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
                     </div>
                 </div>
             </form>
 
-            @if(isset($atividades) && $atividades->count() > 0)
+            @if(request()->has('atividade_id') && $atividades->count() > 0)
                 <div class="table-responsive mt-4">
                     <table class="table table-striped table-sm">
                         <thead>
@@ -90,7 +94,7 @@
                 </div>
 
                 {{ $atividades->links() }}
-            @else
+            @elseif(request()->has('atividade_id'))
                 <p>{{ __('Nenhuma atividade encontrada com os critérios selecionados.') }}</p>
             @endif
         </main>

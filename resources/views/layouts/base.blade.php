@@ -1,4 +1,3 @@
-<!-- resources/views/layouts/base.blade.php -->
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -7,6 +6,41 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
     <script src="{{ asset('js/app.js') }}" defer></script>
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f7f9fc;
+        }
+
+        .container-fluid {
+            margin-top: 20px;
+        }
+
+        .nav-link {
+            color: #495057;
+        }
+
+        .nav-link:hover {
+            color: #0056b3;
+        }
+
+        .nav-item .active {
+            font-weight: bold;
+        }
+
+        .table {
+            background-color: #fff;
+            border-radius: 5px;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+        }
+
+        .table .btn {
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
     <div id="app">

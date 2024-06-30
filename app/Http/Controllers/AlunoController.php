@@ -8,14 +8,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class AlunoController extends Controller
-{
-    public function index()
+{public function index()
     {
         $usuario = Auth::guard('web')->user();
-        $atividades = $usuario->atividades()->wherePivot('tipo_id', 3)->get(); // Obtém apenas as atividades onde o tipo_id é 3 (Aluno)
+
+        if (!$usuario || is_null($usuario->email)) {
+            Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
+        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+
+        $atividades = $usuario->atividades()->get(); // Obtém todas as atividades do usuário
+
+        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
         return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
+
+
+    
+
 
     public function alunoAtividadesIndex(Request $request)
     {

@@ -1,40 +1,87 @@
 @extends('layouts.base')
 
-@section('title', 'Editar Perfil')
-
 @section('main-content')
-<div class="container">
-    <h2>{{ __('Editar Perfil') }}</h2>
-    <form method="POST" action="{{ route('aluno.perfil.update') }}">
-        @csrf
-        @method('POST')
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
+                            {{ __('Atividades Disponíveis') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">
+                            {{ __('Minhas Atividades') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">
+                            {{ __('Meu Perfil') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            {{ __('Sair') }}
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
-        <!-- Nome -->
-        <div class="mb-3">
-            <label for="name" class="form-label">{{ __('Nome') }}</label>
-            <input type="text" name="name" class="form-control" id="name" value="{{ auth()->user()->name }}" required>
-        </div>
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <h2>{{ __('Editar Perfil') }}</h2>
 
-        <!-- Email -->
-        <div class="mb-3">
-            <label for="email" class="form-label">{{ __('Email') }}</label>
-            <input type="email" name="email" class="form-control" id="email" value="{{ auth()->user()->email }}" required>
-        </div>
-
-        <!-- Senha -->
-        <div class="mb-3">
-            <label for="password" class="form-label">{{ __('Senha') }}</label>
-            <input type="password" name="password" class="form-control" id="password">
-            <small class="form-text text-muted">{{ __('Deixe em branco se não quiser alterar a senha') }}</small>
-        </div>
-
-        <!-- Confirmar Senha -->
-        <div class="mb-3">
-            <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }}</label>
-            <input type="password" name="password_confirmation" class="form-control" id="password_confirmation">
-        </div>
-
-        <button type="button" class="btn btn-primary" onclick="showEditProfileModal(this.form)">{{ __('Salvar') }}</button>
-    </form>
+            <form action="{{ route('aluno.perfil.update') }}" method="POST">
+                @csrf
+                <div class="mb-3 row">
+                    <label for="nome" class="col-sm-2 col-form-label">{{ __('Nome') }}</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" readonly>
+                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('nome')">Editar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="password" class="col-sm-2 col-form-label">{{ __('Senha') }}</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
+                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('password')">Editar</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="password_confirmation" class="col-sm-2 col-form-label">{{ __('Confirmar Senha') }}</label>
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
+                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('password_confirmation')">Editar</button>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+            </form>
+        </main>
+    </div>
 </div>
+
+<script>
+    function enableEditing(fieldId) {
+        document.getElementById(fieldId).removeAttribute('readonly');
+    }
+</script>
 @endsection

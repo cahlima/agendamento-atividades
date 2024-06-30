@@ -8,6 +8,11 @@
             <div class="position-sticky">
                 <ul class="nav flex-column">
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.painel') }}">
+                            {{ __('Voltar') }}
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
                             {{ __('Atividades Disponíveis') }}
                         </a>

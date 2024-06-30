@@ -1,5 +1,14 @@
-import './bootstrap';
+
+import './bootstrap.js';
+
 import Vue from 'vue';
+
+import { createApp } from 'vue';
+import App from './components/App.vue';
+import ExampleComponent from './components/ExampleComponent.vue';
+
+
+
 
 // Component registration
 const files = require.context('./', true, /\.vue$/i);
@@ -10,9 +19,8 @@ files.keys().map(key => {
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 
 // Create Vue instance
-const app = new Vue({
-    el: '#app',
-});
+const app = createApp(App);
+app.mount('#app');
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when

@@ -3,15 +3,56 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Scripts -->
+    <script src="{{ asset('js/app.js') }}" defer></script>
+
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .sidebar {
+            background-color: #f8f9fa;
+        }
+
+        .sidebar .nav-item a {
+            color: #000;
+            font-weight: 500;
+        }
+
+        .sidebar .nav-item a.active {
+            font-weight: bold;
+        }
+
+        .sidebar .nav-item a:hover {
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm">
+        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -23,7 +64,7 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <!-- Left Side Of Navbar -->
                     <ul class="navbar-nav me-auto">
-                        <!-- Add your menu items here -->
+
                     </ul>
 
                     <!-- Right Side Of Navbar -->
@@ -49,8 +90,7 @@
 
                                 <div class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                                     <a class="dropdown-item" href="{{ route('logout') }}"
-                                       onclick="event.preventDefault();
-                                                     document.getElementById('logout-form').submit();">
+                                       onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
 
@@ -65,11 +105,9 @@
             </div>
         </nav>
 
-        <main class="main-content py-4">
+        <main class="py-4">
             @yield('content')
         </main>
     </div>
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
 </body>
 </html>
