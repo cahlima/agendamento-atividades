@@ -30,11 +30,12 @@ class AtividadesController extends Controller
     }
 
     // Exibe o formulário para adicionar uma nova atividade
-    public function adicionarAtividade()
+       public function adicionarAtividade()
     {
-        return view('administrador.atividades.adicionar');
+        $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
+        return view('administrador.atividades.adicionar', compact('instrutores'));
     }
-
+    
     // Salva uma nova atividade no banco de dados
     public function salvarAtividade(Request $request)
     {
@@ -42,63 +43,75 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'instrutor' => 'required|string|max:255',
+            'instrutor' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255'
         ]);
-
+    
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
-
-        Atividades::create($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
-
+    
+        Atividades::create([
+            'atividade' => $request->atividade,
+            'data' => $request->data,
+            'hora' => $request->hora,
+            'instrutor' => $request->instrutor,
+            'local' => $request->local,
+        ]);
+    
         Session::flash('flash_message', [
             'msg' => "Atividade adicionada com sucesso!",
             'class' => "alert-success"
         ]);
-        return redirect()->route('atividades.index');
+        return redirect()->route('atividades.listar');
     }
+    
 
     // Exibe o formulário para editar uma atividade existente
     public function editarAtividade($id)
-    {
-        $atividade = Atividades::find($id);
-        if (!$atividade) {
-            return redirect()->back()->withErrors('Atividade não encontrada.');
-        }
-        return view('administrador.atividades.editar', compact('atividade'));
+{
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->route('atividades.listar')->withErrors('Atividade não encontrada.');
+    }
+    $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
+    return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
+}
+
+public function atualizarAtividade(Request $request, $id)
+{
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->back()->withErrors('Atividade não encontrada.');
     }
 
-    // Atualiza uma atividade no banco de dados
-    public function atualizarAtividade(Request $request, $id)
-    {
-        $atividade = Atividades::find($id);
-        if (!$atividade) {
-            return redirect()->back()->withErrors('Atividade não encontrada.');
-        }
+    $validator = Validator::make($request->all(), [
+        'atividade' => 'required|string|max:255',
+        'data' => 'required|date',
+        'hora' => 'required|date_format:H:i',
+        'instrutor' => 'required|exists:usuarios,id',
+        'local' => 'required|string|max:255'
+    ]);
 
-        $validator = Validator::make($request->all(), [
-            'atividade' => 'required|string|max:255',
-            'data' => 'required|date',
-            'hora' => 'required|date_format:H:i',
-            'instrutor' => 'required|string|max:255',
-            'local' => 'required|string|max:255'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $data = $request->only(['atividade', 'data', 'hora', 'instrutor', 'local']);
-        $atividade->update($data);
-
-        Session::flash('flash_message', [
-            'msg' => "Atividade atualizada com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('atividades.index');
+    if ($validator->fails()) {
+        return redirect()->back()->withErrors($validator)->withInput();
     }
+
+    $atividade->update([
+        'atividade' => $request->atividade,
+        'data' => $request->data,
+        'hora' => $request->hora,
+        'instrutor' => $request->instrutor,
+        'local' => $request->local,
+    ]);
+    Session::flash('flash_message', [
+        'msg' => "Atividade atualizada com sucesso!",
+        'class' => "alert-success"
+    ]);
+
+    return redirect()->route('atividades.listar');
+}
+
 
     // Deleta uma atividade do banco de dados
     public function deletarAtividade($id)

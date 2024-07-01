@@ -11,10 +11,8 @@ class Professor extends Model
 
     protected $fillable = ['usuario_id'];
 
-    // Definindo a relação com o modelo Usuario
     public function usuario()
     {
         return $this->belongsTo(Usuarios::class);
     }
 }
-

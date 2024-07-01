@@ -1,5 +1,6 @@
 <?php
 
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -29,7 +30,6 @@ class Usuarios extends Authenticatable
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
     }
-    
 
     public function isAdmin()
     {
@@ -46,8 +46,6 @@ class Usuarios extends Authenticatable
         return $this->tipo_id == 3;
     }
 
-
-
     public function professor()
     {
         return $this->hasOne(Professor::class, 'usuario_id');
@@ -63,4 +61,3 @@ class Usuarios extends Authenticatable
         return $this->senha;
     }
 }
-

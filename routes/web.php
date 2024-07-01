@@ -43,10 +43,12 @@ Route::prefix('usuarios')->name('usuarios.')->middleware('can:isAdmin')->group(f
 });
 
 
-    // Rotas para painéis
-    Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
-    Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
-    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
+// Rotas para painéis
+Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
+Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
+Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
+
+
 
   // Rotas de Administradores
 Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
@@ -103,12 +105,6 @@ Route::prefix('matriculas')->name('matricula.')->middleware('auth')->group(funct
     Route::delete('/desmatricular/{id}', [MatriculaController::class, 'desmatricular'])->name('desmatricular');
 });
 
-
-
-
-
-
-
 // Rotas de Atividades para Professores
 Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
     Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
@@ -116,7 +112,6 @@ Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->g
     Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
 });
-
 
     // Rotas de Tipos
     Route::prefix('tipos')->name('tipo.')->group(function () {

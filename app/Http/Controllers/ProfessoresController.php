@@ -5,53 +5,49 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Atividades;
 use App\Models\Usuarios;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class ProfessoresController extends Controller
 {
-    public function index()
-    {
-        return view('professor.painelprof');
-    }
-
+    // Listar todas as atividades
     public function profAtividadesIndex()
     {
-        $atividades = Atividades::paginate(10);
+        $atividades = Atividades::all();
         return view('professor.atividades.index', compact('atividades'));
     }
 
-
+    // Listar atividades do professor autenticado
     public function minhasAtividades()
     {
-        $usuario = Auth::user();
-        \Log::info('Usuario: ', ['usuario' => $usuario]);
-        $atividades = $usuario->atividades()->paginate(10);
-        \Log::info('Atividades: ', ['atividades' => $atividades]);
-        return view('professor.atividades.matriculadas', compact('atividades'));
+        $professorId = auth()->user()->id;
+        $minhasAtividades = Atividades::whereHas('professores', function($query) use ($professorId) {
+            $query->where('usuario_id', $professorId);
+        })->get();
+        return view('professor.atividades.minhas', compact('minhasAtividades'));
     }
+
+    // Editar perfil
     public function perfilEdit()
     {
-        $usuario = Auth::user();
-        return view('professor.perfil.edit', compact('usuario'));
+        $professor = auth()->user();
+        return view('professor.perfil.edit', compact('professor'));
     }
 
+    // Atualizar perfil
     public function perfilUpdate(Request $request)
     {
-        $usuario = Auth::user();
-
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $usuario->update($data);
-
+        $professor = auth()->user();
+        $professor->update($request->all());
         return redirect()->route('professor.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
+    }
+
+    // Painel do professor
+    public function index()
+    {
+        $professorId = auth()->user()->id;
+        $minhasAtividades = Atividades::whereHas('professores', function($query) use ($professorId) {
+            $query->where('usuario_id', $professorId);
+        })->get();
+
+        return view('professor.painelprof', compact('minhasAtividades'));
     }
 }
