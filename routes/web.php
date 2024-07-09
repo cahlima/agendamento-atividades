@@ -66,17 +66,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
     Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
     Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
-    
-    // Rotas de Atividades para Administradores
-    Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {
-        Route::get('/', [AtividadesController::class, 'index'])->name('index');
-        Route::get('/listar', [AtividadesController::class, 'listarAtividades'])->name('listar');
-        Route::get('/adicionar', [AtividadesController::class, 'adicionarAtividade'])->name('create');
-        Route::post('/store', [AtividadesController::class, 'salvarAtividade'])->name('store');
-        Route::get('/{id}/editar', [AtividadesController::class, 'editarAtividade'])->name('editar');
-        Route::put('/{id}', [AtividadesController::class, 'atualizarAtividade'])->name('update');
-        Route::delete('/{id}', [AtividadesController::class, 'deletarAtividade'])->name('destroy');
-    });
+
+  // Rotas de Atividades para Administradores
+Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {
+    Route::get('/', [AtividadesController::class, 'index'])->name('index');
+    Route::get('/adicionar', [AtividadesController::class, 'adicionarAtividade'])->name('create');
+    Route::post('/store', [AtividadesController::class, 'salvarAtividade'])->name('store');
+    Route::get('/{id}/editar', [AtividadesController::class, 'editarAtividade'])->name('editar');
+    Route::put('/{id}', [AtividadesController::class, 'atualizarAtividade'])->name('update');
+    Route::delete('/{id}', [AtividadesController::class, 'deletarAtividade'])->name('destroy');
+});
     
     // Rotas de Alunos
     Route::prefix('aluno')->name('aluno.')->group(function () {
@@ -91,6 +90,7 @@ Route::middleware(['auth'])->group(function () {
     
     // Rotas de Professores
     Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
+        Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painel');
         Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
         Route::get('/atividades/minhas', [ProfessoresController::class, 'minhasAtividades'])->name('atividades.minhas');
         Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
@@ -132,4 +132,8 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
         Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
     });
+
+    // Rotas de Atividades que todos os usuários podem acessar
+Route::get('/atividades/listar', [AtividadesController::class, 'listarAtividades'])->name('atividades.listar');
+
 

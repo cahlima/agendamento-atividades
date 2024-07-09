@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
-            {{ config('app.name', 'Laravel') }}
+            {{ config('app.name', '') }}
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
@@ -27,7 +27,7 @@
                             <a class="nav-link" href="{{ route('matricula.geral') }}">{{ __('Matriculas Geral') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Geral') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Cadastradas') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('usuario.index') }}">{{ __('Usuários') }}</a>
@@ -39,19 +39,19 @@
 
                     @if (Auth::user()->isProfessor())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('matricula.index') }}">{{ __('Atividades Aprovação') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Disponiveis') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('professor') }}">{{ __('Gerenciar Atividades') }}</a>
+                            <a class="nav-link" href="{{ route('painelprof') }}">{{ __('Gerenciar Minhas Atividades') }}</a>
                         </li>
                     @endif
 
                     @if (Auth::user()->isAluno())
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('matricula.aluno') }}">{{ __('Meus Matriculamentos') }}</a>
+                            <a class="nav-link" href="{{ route('matricula.aluno') }}">{{ __('Realizar Matricula') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Disponiveis') }}</a>
                         </li>
                     @endif
                 @endguest

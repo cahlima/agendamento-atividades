@@ -12,7 +12,7 @@ class ProfessoresController extends Controller
     public function profAtividadesIndex()
     {
         $atividades = Atividades::all();
-        return view('professor.atividades.index', compact('atividades'));
+        return view('professor.atividades.listar', compact('atividades'));
     }
 
     // Listar atividades do professor autenticado
@@ -22,7 +22,7 @@ class ProfessoresController extends Controller
         $minhasAtividades = Atividades::whereHas('professores', function($query) use ($professorId) {
             $query->where('usuario_id', $professorId);
         })->get();
-        return view('professor.atividades.minhas', compact('minhasAtividades'));
+        return view('professor.atividades.matriculadas', compact('minhasAtividades'));
     }
 
     // Editar perfil
