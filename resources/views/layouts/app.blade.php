@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Painel de Aluno') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
@@ -23,7 +23,15 @@
         </main>
     </div>
 
+    <div id="vue-app"></div>
+
     <!-- Scripts -->
     @vite('resources/js/app.js')
+
+    <script>
+        window.addEventListener('beforeunload', function (e) {
+            navigator.sendBeacon('{{ route("logout") }}', '');
+        });
+    </script>
 </body>
 </html>

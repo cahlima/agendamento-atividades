@@ -60,4 +60,10 @@ class Usuarios extends Authenticatable
     {
         return $this->senha;
     }
+
+    public function atividadesMatriculadas()
+    {
+        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
+    }
 }
+

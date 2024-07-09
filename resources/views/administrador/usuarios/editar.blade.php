@@ -1,14 +1,17 @@
-<!-- resources/views/usuario/editar.blade.php -->
-@extends('layouts.base')
+<!-- editar.blade.php -->
+<h1>Editar Usuário - {{ $usuario->nome }}</h1>
 
-@section('main-content')
-<h2>{{ __('Editar Usuário') }}</h2>
-
-<form action="{{ route('usuario.atualizar', $usuario->id) }}" method="POST">
+<form action="{{ route('usuarios.atualizar', ['id' => $usuario->id]) }}" method="POST">
     @csrf
-    <div class="mb-3">
-        <label for="nome" class="form-label">{{ __('Nome') }}</label>
-        <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome', $usuario->nome) }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="email" class="form-label">{{ __('Email
+    @method('PUT')
+
+    <label for="nome">Nome:</label>
+    <input type="text" id="nome" name="nome" value="{{ $usuario->nome }}" required>
+
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" value="{{ $usuario->email }}" required>
+
+    <!-- Adicione mais campos conforme necessário -->
+
+    <button type="submit">Atualizar</button>
+</form>

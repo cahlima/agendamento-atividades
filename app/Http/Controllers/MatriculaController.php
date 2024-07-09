@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Atividades;
+use App\Models\Usuario;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -21,13 +22,13 @@ class MatriculaController extends Controller
             $atividade = Atividades::findOrFail($id);
 
             // Verifica se o usuário já está matriculado na atividade
-            if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
+            if ($usuario->atividadesMatriculadas()->where('atividades.id', $id)->exists()) {
                 Log::info('Usuário já matriculado na atividade', ['user_id' => $usuario->id, 'atividade_id' => $id]);
                 return redirect()->route('aluno.atividades.listar')->with('error', 'Você já está matriculado nesta atividade.');
             }
 
             // Matricula o usuário na atividade
-            $usuario->atividades()->attach($atividade->id);
+            $usuario->atividadesMatriculadas()->attach($atividade->id);
 
             DB::commit();
             Log::info('Usuário matriculado com sucesso', ['user_id' => $usuario->id, 'atividade_id' => $id]);
@@ -49,13 +50,13 @@ class MatriculaController extends Controller
             $atividade = Atividades::findOrFail($id);
 
             // Verifica se o usuário está matriculado na atividade antes de desmatricular
-            if (!$usuario->atividades()->where('atividades.id', $id)->exists()) {
+            if (!$usuario->atividadesMatriculadas()->where('atividades.id', $id)->exists()) {
                 Log::info('Usuário não está matriculado na atividade', ['user_id' => $usuario->id, 'atividade_id' => $id]);
                 return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Você não está matriculado nesta atividade.');
             }
 
             // Desmatricula o usuário da atividade
-            $usuario->atividades()->detach($atividade->id);
+            $usuario->atividadesMatriculadas()->detach($atividade->id);
 
             DB::commit();
             Log::info('Usuário desmatriculado com sucesso', ['user_id' => $usuario->id, 'atividade_id' => $id]);
@@ -72,5 +73,13 @@ class MatriculaController extends Controller
         // Lógica do método para exibir as matrículas gerais
         $matriculas = Atividades::all(); // Supondo que "Atividades" representa as matrículas gerais
         return view('matriculas.geral', compact('matriculas'));
+    }
+
+    public function matriculaaluno()
+    {
+        $usuario = Auth::guard('web')->user();
+        $atividades = $usuario->atividadesMatriculadas; // Utilizando a relação definida no modelo Usuario
+
+        return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
 }

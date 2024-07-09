@@ -20,7 +20,7 @@
 
                     <div class="list-group mb-4">
                         <a href="{{ route('aluno.atividades.listar') }}" class="list-group-item list-group-item-action">Buscar atividades</a>
-                        <a href="{{ route('aluno.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Ver minhas Atividades</a>
+                        <a href="{{ route('aluno.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Minhas Atividades</a>
                         <a href="{{ route('aluno.perfil.edit') }}" class="list-group-item list-group-item-action">Editar perfil</a>
                     </div>
 

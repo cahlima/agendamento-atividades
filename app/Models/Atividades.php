@@ -28,4 +28,9 @@ class Atividades extends Model
     {
         return $this->belongsTo(Usuarios::class, 'instrutor');
     }
+
+    public function usuariosMatriculados()
+    {
+        return $this->belongsToMany(Usuario::class, 'matriculas', 'atividade_id', 'usuario_id');
+    }
 }
