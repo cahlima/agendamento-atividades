@@ -17,3 +17,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+/vendor
+/node_modules
+/storage/*.key
+/storage/framework/*
+/storage/logs/*

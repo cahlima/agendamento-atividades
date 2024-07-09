@@ -14,17 +14,20 @@ class CreateUsuariosTable extends Migration
     public function up()
     {
         Schema::create('usuarios', function (Blueprint $table) {
-            $table->id(); // Chave primária
-            $table->foreignId('tipo_id')->constrained('tipos')->onDelete('cascade');
+            $table->id();
+            $table->unsignedBigInteger('tipo_id');
             $table->string('nome');
             $table->string('sobrenome');
-            $table->string('login')->unique();
+            $table->string('login');
             $table->string('senha');
-            $table->string('email')->unique();
+            $table->string('email');
             $table->date('data_nascimento');
             $table->string('telefone');
-            $table->rememberToken(); // Adicionando campo para remember token
-            $table->timestamps(); // Campos created_at e updated_at
+            $table->string('remember_token')->nullable();
+            $table->timestamps();
+
+            // Definindo a chave estrangeira
+            $table->foreign('tipo_id')->references('id')->on('tipo_usuarios');
         });
     }
 
