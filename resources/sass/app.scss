@@ -1,57 +1,47 @@
-// Fonts
-@import url('https://fonts.googleapis.com/css?family=Nunito');
-
-// Variables
-@import 'variables';
-
-// Bootstrap
-@import 'bootstrap/scss/bootstrap';
+// Import Bootstrap
+@import "node_modules/bootstrap/scss/bootstrap";
 
 
-// Custom Styles
+// Custom styles
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: #E0E5CD;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+}
+
+.sidebar {
+    background-color: #f8f9fa;
+    padding: 15px;
     height: 100vh;
-    margin: 0;
+    position: fixed;
+    width: 200px;
 }
 
-.login-container {
-    background-color: #F7F7F7;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
 }
 
-.login-container h1 {
-    margin-bottom: 20px;
-    font-size: 24px;
-    color: #5A5A5A;
+.table-responsive {
+    overflow-x: auto;
 }
 
-.login-container .form-label {
-    font-weight: 500;
-    color: #5A5A5A;
+.table {
+    width: 100%;
+    white-space: nowrap;
 }
 
-.login-container .btn {
-    background-color: #A4C639;
-    border: none;
+.nav-link {
+    color: #343a40;
+    font-weight: bold;
 }
 
-.login-container .btn:hover {
-    background-color: #8EBF30;
+.nav-link:hover {
+    color: #007bff;
 }
 
-.login-container a {
-    color: #5A5A5A;
-    text-decoration: none;
+.form-group label {
+    width: 100%;
 }
 
-.login-container a:hover {
-    text-decoration: underline;
+.form-group input {
+    width: 100%;
 }

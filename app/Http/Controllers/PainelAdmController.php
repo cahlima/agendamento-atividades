@@ -227,7 +227,7 @@ public function atualizarAtividade(Request $request, $id)
     public function perfilEdit()
     {
         $usuario = Auth::guard('admin')->user();
-        return view('perfil.edit_admin', compact('usuario'));
+        return view('administrador.perfil.edit', compact('usuario'));
     }
 
     public function perfilUpdate(Request $request)

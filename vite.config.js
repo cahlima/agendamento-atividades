@@ -1,16 +1,21 @@
-cimport { defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
-  plugins: [vue()],
-  resolve: {
-    alias: {
-      '@': '/resources/js',
+    plugins: [
+        vue(),
+        laravel({
+            input: [
+                'resources/js/app.js',
+                'resources/sass/app.scss',  // Caminho correto para SASS
+            ],
+            refresh: true,
+        }),
+    ],
+    resolve: {
+        alias: {
+            'vue': 'vue/dist/vue.esm-bundler.js',
+        },
     },
-  },
-  build: {
-    rollupOptions: {
-      input: '/resources/index.html',
-    },
-  },
 });

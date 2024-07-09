@@ -66,4 +66,11 @@ class MatriculaController extends Controller
             return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Erro ao desmatricular: ' . $e->getMessage());
         }
     }
+
+    public function matriculageral()
+    {
+        // Lógica do método para exibir as matrículas gerais
+        $matriculas = Atividades::all(); // Supondo que "Atividades" representa as matrículas gerais
+        return view('matriculas.geral', compact('matriculas'));
+    }
 }

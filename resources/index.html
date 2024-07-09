@@ -6,7 +6,9 @@
     <title>Laravel Vite</title>
 </head>
 <body>
-    <div id="app"></div>
+    <div id="app">
+        <example-component></example-component>
+    </div>
     <script type="module" src="/js/app.js"></script>
 </body>
 </html>

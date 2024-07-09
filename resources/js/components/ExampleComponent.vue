@@ -1,17 +1,15 @@
 <template>
-    <div class="example-component">
-        <h1>Hello from Vue Component!</h1>
+    <div>
+      <p>Example Component</p>
     </div>
-</template>
+  </template>
 
-<script>
-export default {
+  <script>
+  export default {
     name: 'ExampleComponent'
-}
-</script>
+  };
+  </script>
 
-<style scoped>
-.example-component {
-    color: blue;
-}
-</style>
+  <style>
+  /* Seu estilo aqui */
+  </style>

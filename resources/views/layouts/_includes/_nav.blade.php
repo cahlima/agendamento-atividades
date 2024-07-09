@@ -1,11 +1,11 @@
-<!-- resources/views/nav.blade.php -->
+<!-- resources/views/layouts/_includes/nav.blade.php -->
 
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
             {{ config('app.name', 'Laravel') }}
         </a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
         </button>
 
@@ -24,7 +24,7 @@
                             <a class="nav-link" href="{{ route('paineladm') }}">{{ __('Painel Administrativo') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('matriculageral') }}">{{ __('Matriculas Geral') }}</a>
+                            <a class="nav-link" href="{{ route('matricula.geral') }}">{{ __('Matriculas Geral') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Geral') }}</a>
