@@ -10,6 +10,7 @@ use App\Models\Atividades;
 use App\Models\Matricula;
 use App\Models\Tipos;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 
 class PainelAdmController extends Controller
 {
@@ -37,7 +38,8 @@ class PainelAdmController extends Controller
             return view('administrador.usuarios.listar', compact('usuarios'));
         } catch (\Exception $e) {
             Log::error('Erro ao listar usuários: ' . $e->getMessage());
-            throw $e;
+            // Você pode redirecionar para uma página de erro ou retornar uma mensagem de erro
+            return redirect()->back()->withErrors('Erro ao recuperar usuários.');
         }
     }
 

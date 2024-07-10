@@ -17,7 +17,7 @@
                 <td>{{ $usuario->nome }}</td>
                 <td>{{ $usuario->email }}</td>
                 <td>
-                    <a href="{{ route('usuarios.editar', ['id' => $usuario->id]) }}">Editar</a>
+                    <a href="{{ route('usuario.editar', ['id' => $usuario->id]) }}">Editar</a>
                     <!-- Adicione aqui o link para deletar se necessário -->
                 </td>
             </tr>

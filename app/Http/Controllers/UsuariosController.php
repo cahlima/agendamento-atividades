@@ -12,17 +12,23 @@ use App\Models\Professor;
 use Illuminate\Support\Facades\Validator;
 
 class UsuariosController extends Controller
+
 {
-    public function __construct()
+private $userTypeManager;
+
+
+
+    public function __construct(UserTypeManager $userTypeManager)
     {
         $this->middleware('auth');
+        $this->userTypeManager = $userTypeManager;
     }
 
     // Exibe uma lista paginada de usuários
     public function index()
     {
         $usuarios = Usuarios::paginate(10);
-        return view('usuario.index', compact('usuarios'));
+        return view('administrador.usuarios.index', compact('usuarios'));
     }
 
     // Exibe o formulário para adicionar um novo usuário
@@ -30,114 +36,49 @@ class UsuariosController extends Controller
     {
         $this->authorize('create', Usuarios::class);
         $tipos = Tipos::all();
-        return view('usuario.adicionar', compact('tipos'));
+        return view('administrador.usuarios.adicionar', compact('tipos'));
     }
 
     // Salva um novo usuário no banco de dados
-    public function salvar(Request $request)
+    public function salvar(UserStoreRequest $request)
     {
-        $this->authorize('create', Usuarios::class);
-
-        $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
-            'email' => 'required|email|unique:usuarios,email',
-            'senha' => 'required|string|min:6',
-            'tipo_id' => 'required|exists:tipos,id'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dados = $request->only(['nome', 'email', 'tipo_id']);
-        $dados['senha'] = bcrypt($request->senha);
+        $dados = $request->validated();
+        $dados['senha'] = bcrypt($dados['senha']);
         $usuario = Usuarios::create($dados);
 
-        // Adiciona um aluno ou professor conforme o tipo selecionado
-        if ($request->tipo_id == Tipos::where('nome', 'Aluno')->first()->id) {
-            Aluno::create(['usuario_id' => $usuario->id]);
-        } elseif ($request->tipo_id == Tipos::where('nome', 'Professor')->first()->id) {
-            Professor::create(['usuario_id' => $usuario->id]);
-        }
+        $this->userTypeManager->assignType($usuario, $dados['tipo_id']);
 
-        Session::flash('flash_message', [
-            'msg' => "Registro adicionado com sucesso!",
-            'class' => "alert-success"
-        ]);
-        return redirect()->route('usuario.adicionar');
+        Session::flash('flash_message', 'Registro adicionado com sucesso!');
+        return redirect()->route('usuarios.adicionar');
     }
 
-    // Exibe o formulário para editar um usuário existente
     public function editar($id)
     {
-        $usuario = Usuarios::find($id);
-        if (!$usuario) {
-            return redirect()->back()->withErrors('Usuário não encontrado.');
-        }
-
+        $usuario = Usuarios::findOrFail($id);
         $this->authorize('update', $usuario);
         $tipos = Tipos::all();
-        return view('usuario.editar', compact('usuario', 'tipos'));
+        return view('administrador.usuarios.editar', compact('usuario', 'tipos'));
     }
 
-    // Atualiza um usuário no banco de dados
-    public function atualizar(Request $request, $id)
+    public function atualizar(UserUpdateRequest $request, $id)
     {
-        $usuario = Usuarios::find($id);
-        if (!$usuario) {
-            return redirect()->back()->withErrors('Usuário não encontrado.');
-        }
-
+        $usuario = Usuarios::findOrFail($id);
         $this->authorize('update', $usuario);
+        $dados = $request->validated();
+        $usuario->update($dados);
 
-        $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
-            'email' => 'required|email|unique:usuarios,email,'.$usuario->id,
-            'tipo_id' => 'required|exists:tipos,id'
-        ]);
+        $this->userTypeManager->updateType($usuario, $dados['tipo_id']);
 
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $usuario->update($request->only(['nome', 'email', 'tipo_id']));
-
-        // Atualiza o tipo de usuário (aluno ou professor)
-        if ($request->tipo_id == Tipos::where('nome', 'Aluno')->first()->id) {
-            if (!$usuario->aluno) {
-                Aluno::create(['usuario_id' => $usuario->id]);
-            }
-        } elseif ($request->tipo_id == Tipos::where('nome', 'Professor')->first()->id) {
-            if (!$usuario->professor) {
-                Professor::create(['usuario_id' => $usuario->id]);
-            }
-        }
-
-        Session::flash('flash_message', [
-            'msg' => "Registro atualizado com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('usuario.index');
+        Session::flash('flash_message', 'Registro atualizado com sucesso!');
+        return redirect()->route('usuarios.index');
     }
 
-    // Deleta um usuário do banco de dados
     public function deletar($id)
     {
-        $usuario = Usuarios::find($id);
-        if ($usuario) {
-            $this->authorize('delete', $usuario);
-            $usuario->delete();
-            Session::flash('flash_message', [
-                'msg' => "Registro excluído com sucesso!",
-                'class' => "alert-success"
-            ]);
-        } else {
-            Session::flash('flash_message', [
-                'msg' => "Usuário não encontrado.",
-                'class' => "alert-danger"
-            ]);
-        }
-        return redirect()->route('usuario.index');
+        $usuario = Usuarios::findOrFail($id);
+        $this->authorize('delete', $usuario);
+        $usuario->delete();
+        Session::flash('flash_message', 'Registro excluído com sucesso!');
+        return redirect()->route('usuarios.index');
     }
 }

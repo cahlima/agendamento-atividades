@@ -1,9 +1,14 @@
 <!-- editar.blade.php -->
 <h1>Editar Usuário - {{ $usuario->nome }}</h1>
 
-<form action="{{ route('usuarios.atualizar', ['id' => $usuario->id]) }}" method="POST">
+
+
+    <form action="{{ route('usuario.atualizar', ['id' => $usuario->id]) }}" method="POST">
     @csrf
-    @method('PUT')
+    <!-- Outros campos do formulário -->
+    <button type="submit">Atualizar</button>
+</form>
+
 
     <label for="nome">Nome:</label>
     <input type="text" id="nome" name="nome" value="{{ $usuario->nome }}" required>

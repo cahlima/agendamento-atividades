@@ -85,7 +85,7 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
 
 
     // Rotas de Alunos
-    Route::prefix('aluno')->name('aluno.')->group(function () {
+    Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(function () {
         Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
         Route::get('/atividades', [AtividadesController::class, 'listar'])->name('atividades.listar');
         Route::get('/atividades/matriculadas', [AtividadesController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
@@ -138,4 +138,7 @@ Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->g
         Route::get('/editar/{id}', [UsuariosController::class, 'editar'])->name('editar');
         Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
         Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
+        Route::post('/usuario/atualizar/{id}', [UsuarioController::class, 'atualizar'])->name('usuario.atualizar');
+        
+
     });

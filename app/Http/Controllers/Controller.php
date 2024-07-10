@@ -11,3 +11,13 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 }
+
+
+class UserTypeManager
+{
+    public function manage()
+    {
+        // Sua lógica aqui
+    }
+}
+
