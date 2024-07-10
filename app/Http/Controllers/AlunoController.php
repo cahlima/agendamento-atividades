@@ -22,11 +22,15 @@ public function index()
     // Supondo que 'atividades' é uma relação definida no modelo do usuário
     $atividades = $usuario->atividades()->get();
 
+    Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
+
     Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
     Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
     // Garanta que a variável 'atividades' não seja nula ao passar para a view
     return view('aluno.painelaluno', compact('usuario', 'atividades'));
+
+    dd($usuario,$atividades);
 }
 
     public function perfilEdit()

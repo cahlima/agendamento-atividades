@@ -1,6 +1,6 @@
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
@@ -8,6 +8,39 @@
             <div class="position-sticky">
                 <ul class="nav flex-column">
                     <!-- Outros itens de navegação -->
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('painelaluno') }}">
+                            {{ __('Inicio') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
+                            {{ __('Buscar Atividades') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">
+                            {{ __('Minhas Atividades') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">
+                            {{ __('Meu Perfil') }}
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}"
+                           onclick="event.preventDefault();
+                           document.getElementById('logout-form').submit();">
+                            {{ __('Sair') }}
+                        </a>
+                        </a>
+                    </li>
                 </ul>
             </div>
         </nav>

@@ -1,6 +1,6 @@
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
@@ -47,11 +47,17 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="atividade_id">{{ __('Atividade') }}:</label>
+
                         <select name="atividade_id" id="atividade_id" class="form-control">
                             <option value="">{{ __('Selecione a atividade') }}</option>
-                            @foreach($atividadesDisponiveis as $atividade)
-                                <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
+                            @if(isset($atividadesDisponiveis))
+                            @foreach($atividadesDisponiveis as $atividades)
+                                <option value="{{ $atividade->id }}">{{ $atividades->$atividades }}</option>
                             @endforeach
+
+                            @else
+    <option value="">{{ __('Nenhuma atividade disponível') }}</option>
+@endif
                         </select>
                     </div>
                     <div class="col-md-4 mt-4">

@@ -1,7 +1,7 @@
 <!-- resources/views/usuario/adicionar.blade.php -->
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <h2>{{ __('Adicionar Usuário') }}</h2>
 
 <form action="{{ route('usuario.salvar') }}" method="POST">

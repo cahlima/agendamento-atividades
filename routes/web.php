@@ -39,7 +39,7 @@ Route::middleware(['guest'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::post('/logout', function () {
         Auth::logout();
-        return response()->json(['message' => 'Logged out']);
+        return redirect('/login')->with('success', 'Você foi deslogado');
     })->name('logout');
 });
 
@@ -88,7 +88,7 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
     Route::prefix('aluno')->name('aluno.')->group(function () {
         Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
         Route::get('/atividades', [AtividadesController::class, 'listar'])->name('atividades.listar');
-        Route::get('/atividades/matriculadas', [AlunoController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
+        Route::get('/atividades/matriculadas', [AtividadesController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
         Route::post('/atividades/matricular/{id}', [MatriculaController::class, 'matricular'])->name('atividades.matricular');
         Route::delete('/atividades/desmatricular/{id}', [MatriculaController::class, 'desmatricular'])->name('atividades.desmatricular');
         Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
@@ -98,8 +98,8 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
    // Rotas de Professores
 Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
     Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painel');
-    Route::get('/atividades', [ProfessoresController::class, 'profAtividadesIndex'])->name('atividades.listar');
-    Route::get('/atividades/minhas', [ProfessoresController::class, 'minhasAtividades'])->name('atividades.minhas');
+    Route::get('/atividades', [AtividadesController::class, 'profAtividadesIndex'])->name('atividades.listar');
+    Route::get('/atividades/minhas', [AtividadesController::class, 'minhasAtividades'])->name('atividades.minhas');
     Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
 });
@@ -139,6 +139,3 @@ Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->g
         Route::post('/atualizar/{id}', [UsuariosController::class, 'atualizar'])->name('atualizar');
         Route::delete('/deletar/{id}', [UsuariosController::class, 'deletar'])->name('deletar');
     });
-
-
-

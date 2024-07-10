@@ -148,21 +148,60 @@ class AtividadesController extends Controller
     }
 
     // Lista atividades para os alunos e professores
-    public function listar(Request $request)
+    public function listar()
     {
         $usuario = Auth::user();
 
-        $query = Atividades::query();
+        // Definindo atividades disponíveis para todos os usuários, ajuste conforme necessário
+    $atividadesDisponiveis = Atividades::select('id', 'atividade')->get();
 
-        if ($usuario->isAluno()) {
-            $atividadesDisponiveis = $query->get();
-            $atividades = $query->paginate(10);
-            return view('aluno.atividades.listar', compact('atividades', 'atividadesDisponiveis'));
-        }
-
-        if ($usuario->isProfessor()) {
-            $atividades = $query->where('instrutor', $usuario->id)->paginate(10);
+        if ($usuario->isAdmin()) {
+            $atividades = Atividades::all();
+            return view('administrador.atividades.listar', compact('atividades'));
+        } elseif ($usuario->isProfessor()) {
+            $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
             return view('professor.atividades.listar', compact('atividades'));
+        } elseif ($usuario->isAluno()) {
+            $atividades = Atividades::all();
+            return view('aluno.atividades.listar', compact('atividades'));
         }
+
+        return redirect()->back()->with('error', 'Permissão negada.');
     }
-}
+
+    // Lista as atividades matriculadas para o aluno
+    public function atividadesMatriculadas()
+    {
+        $usuario = Auth::user();
+        if ($usuario->isAluno()) {
+            $atividades = $usuario->atividades()->get();
+            return view('aluno.atividades.matriculadas', compact('atividades'));
+        }
+        return redirect()->back()->with('error', 'Acesso não autorizado.');
+    }
+
+
+    // Matricula e desmatricula aluno em atividades
+    public function matricular(Request $request, $id)
+    {
+        $usuario = Auth::user();
+        if ($usuario->isAluno()) {
+            $atividade = Atividades::findOrFail($id);
+            $usuario->atividades()->attach($atividade);
+            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado na atividade com sucesso!');
+        }
+        return redirect()->back()->with('error', 'Operação não permitida.');
+    }
+
+    public function desmatricular($id)
+    {
+        $usuario = Auth::user();
+        if ($usuario->isAluno()) {
+            $usuario->atividades()->detach($id);
+            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Desmatriculado da atividade com sucesso!');
+        }
+        return redirect()->back()->with('error', 'Operação não permitida.');
+    }
+
+    }
+

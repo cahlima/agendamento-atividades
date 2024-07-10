@@ -1,7 +1,7 @@
 <!-- resources/views/aluno/atividades/index.blade.php -->
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <div class="table-responsive">
     <table class="table table-striped table-sm">
         <thead>

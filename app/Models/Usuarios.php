@@ -31,10 +31,8 @@ class Usuarios extends Authenticatable
         return $this->belongsTo(Tipos::class, 'tipo_id');
     }
 
-    public function atividades()
-    {
-        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
-    }
+    
+    
 
     public function isAdmin()
     {
@@ -61,7 +59,7 @@ class Usuarios extends Authenticatable
         return $this->hasOne(Aluno::class, 'usuario_id');
     }
 
-    public function atividadesMatriculadas()
+    public function atividades()
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
     }

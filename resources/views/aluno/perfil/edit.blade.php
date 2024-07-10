@@ -1,6 +1,6 @@
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->

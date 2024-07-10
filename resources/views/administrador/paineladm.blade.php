@@ -7,6 +7,8 @@
         <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
             <div class="position-sticky">
                 <ul class="nav flex-column">
+
+                  <!-- Outros itens de navegação -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('paineladm') }}">
                             {{ __('Inicio') }}
@@ -30,12 +32,15 @@
                             {{ __('Meu Perfil') }}
                         </a>
                     </li>
+
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('logout') }}"
                            onclick="event.preventDefault();
                            document.getElementById('logout-form').submit();">
                             {{ __('Sair') }}
                         </a>
+
+
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
