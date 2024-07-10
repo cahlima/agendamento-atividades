@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -20,6 +19,12 @@ class Usuarios extends Authenticatable
     ];
 
     protected $hidden = ['senha', 'remember_token'];
+
+
+    public function getAuthPassword()
+    {
+        return $this->senha;
+    }
 
     public function tipo()
     {
@@ -56,14 +61,14 @@ class Usuarios extends Authenticatable
         return $this->hasOne(Aluno::class, 'usuario_id');
     }
 
-    public function getAuthPassword()
-    {
-        return $this->senha;
-    }
-
     public function atividadesMatriculadas()
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
+    }
+    // Método update personalizado
+    public function update(array $attributes = [], array $options = [])
+    {
+        return parent::update($attributes, $options);
     }
 }
 

@@ -12,6 +12,8 @@ class Atividades extends Model
         'titulo', 'descricao', 'usuario_id', 'atividade', 'data', 'hora', 'instrutor', 'local'
     ];
 
+    protected $dates = ['data', 'hora'];  // Adicionando 'data' e 'hora' para conversão automática para Carbon
+
     public function alunos()
     {
         return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
@@ -31,6 +33,6 @@ class Atividades extends Model
 
     public function usuariosMatriculados()
     {
-        return $this->belongsToMany(Usuario::class, 'matriculas', 'atividade_id', 'usuario_id');
+        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id');
     }
 }

@@ -60,7 +60,7 @@
                 </div>
             </form>
 
-            @if(request()->has('atividade_id') && $atividades->count() > 0)
+            @if($atividades->isNotEmpty())
                 <div class="table-responsive mt-4">
                     <table class="table table-striped table-sm">
                         <thead>
@@ -94,7 +94,7 @@
                 </div>
 
                 {{ $atividades->links() }}
-            @elseif(request()->has('atividade_id'))
+            @else
                 <p>{{ __('Nenhuma atividade encontrada com os critérios selecionados.') }}</p>
             @endif
         </main>

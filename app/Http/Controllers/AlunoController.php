@@ -3,72 +3,31 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Atividades;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class AlunoController extends Controller
-{public function index()
-    {
-        $usuario = Auth::guard('web')->user();
+{
 
-        if (!$usuario || is_null($usuario->email)) {
-            Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
-        }
 
-        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+public function index()
+{
+    $usuario = Auth::guard('web')->user();
 
-        $atividades = $usuario->atividades()->get(); // Obtém todas as atividades do usuário
-
-        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
-
-        return view('aluno.painelaluno', compact('usuario', 'atividades'));
+    if (!$usuario || is_null($usuario->email)) {
+        Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
+        return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
     }
 
+    // Supondo que 'atividades' é uma relação definida no modelo do usuário
+    $atividades = $usuario->atividades()->get();
 
-    
+    Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+    Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
-
-    public function alunoAtividadesIndex(Request $request)
-    {
-        $query = Atividades::query();
-
-        if ($request->filled('atividade_id')) {
-            $query->where('id', $request->atividade_id);
-        }
-
-        if ($request->filled('hora')) {
-            $query->where('hora', $request->hora);
-        }
-
-        $atividades = $query->paginate(10);
-        $atividadesDisponiveis = Atividades::select('id', 'atividade')->distinct()->get();
-        $horariosDisponiveis = Atividades::select('hora')->distinct()->pluck('hora');
-
-        return view('aluno.atividades.listar', compact('atividades', 'atividadesDisponiveis', 'horariosDisponiveis'));
-    }
-
-    public function atividadesMatriculadas()
-    {
-        $usuario = Auth::guard('web')->user();
-
-        if (!$usuario || is_null($usuario->email)) {
-            Log::error('Usuário não autenticado ou sem e-mail ao acessar atividades matriculadas', ['user' => $usuario]);
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
-        }
-
-        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
-
-        $atividades = $usuario->atividades()->paginate(10);
-        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
-
-        // Buscar atividades disponíveis
-        $atividadesDisponiveis = Atividades::select('id', 'atividade')->distinct()->get();
-        $horariosDisponiveis = Atividades::select('hora')->distinct()->pluck('hora');
-
-        return view('aluno.atividades.matriculadas', compact('atividades', 'atividadesDisponiveis', 'horariosDisponiveis'));
-    }
+    // Garanta que a variável 'atividades' não seja nula ao passar para a view
+    return view('aluno.painelaluno', compact('usuario', 'atividades'));
+}
 
     public function perfilEdit()
     {

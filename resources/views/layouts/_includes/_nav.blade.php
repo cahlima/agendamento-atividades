@@ -3,7 +3,7 @@
 <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
     <div class="container">
         <a class="navbar-brand" href="{{ url('/') }}">
-            {{ config('app.name', '') }}
+            <!-- Removido para não exibir 'Laravel' -->
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
             <span class="navbar-toggler-icon"></span>
@@ -20,7 +20,8 @@
                     @endif
                 @else
                     @if (Auth::user()->isAdmin())
-                        <li class="nav-item">
+                        <!-- Links removidos para administradores -->
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="{{ route('paineladm') }}">{{ __('Painel Administrativo') }}</a>
                         </li>
                         <li class="nav-item">
@@ -34,25 +35,27 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('tipo.index') }}">{{ __('Tipos Usuários') }}</a>
-                        </li>
+                        </li> -->
                     @endif
 
                     @if (Auth::user()->isProfessor())
-                        <li class="nav-item">
+                        <!-- Links removidos para professores -->
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Disponiveis') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('painelprof') }}">{{ __('Gerenciar Minhas Atividades') }}</a>
-                        </li>
+                        </li> -->
                     @endif
 
                     @if (Auth::user()->isAluno())
-                        <li class="nav-item">
+                        <!-- Links removidos para alunos -->
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="{{ route('matricula.aluno') }}">{{ __('Realizar Matricula') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Disponiveis') }}</a>
-                        </li>
+                        </li> -->
                     @endif
                 @endguest
             </ul>

@@ -18,12 +18,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('usuarios.listar') }}">
+                        <a class="nav-link" href="{{ route('usuarios.index') }}">
                             {{ __('Gerenciar Usuários') }}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('perfil.edit') }}">
+                        <a class="nav-link" href="{{ route('admin.perfil.edit') }}">
                             {{ __('Meu Perfil') }}
                         </a>
                     </li>
