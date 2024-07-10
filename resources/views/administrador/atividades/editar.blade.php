@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Editar Atividade') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('atividades.atualizar', $atividade->id) }}">
+                    <form method="POST" action="{{ route('atividades.update', $atividade->id) }}">
                         @csrf
                         @method('PUT')
 
