@@ -53,7 +53,7 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'instrutor' => 'required|exists:usuarios,id',
+            'professor' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255'
         ]);
 
@@ -65,7 +65,7 @@ class AtividadesController extends Controller
             'atividade' => $request->atividade,
             'data' => $request->data,
             'hora' => $request->hora,
-            'instrutor' => $request->instrutor,
+            'professor' => $request->instrutor,
             'local' => $request->local,
         ]);
 
@@ -86,7 +86,7 @@ class AtividadesController extends Controller
             return redirect()->route('atividades.index')->withErrors('Atividade não encontrada.');
         }
         $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
-        return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
+        return view('administrador.atividades.editar', compact('atividade', 'professor'));
     }
 
     // Atualiza uma atividade existente no banco de dados
@@ -103,7 +103,7 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'instrutor' => 'required|exists:usuarios,id',
+            'professor' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255'
         ]);
 
@@ -159,7 +159,7 @@ class AtividadesController extends Controller
             $atividades = Atividades::all();
             return view('administrador.atividades.listar', compact('atividades'));
         } elseif ($usuario->isProfessor()) {
-            $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
+            $atividades = Atividades::where('professor_id', $usuario->id)->get();
             return view('professor.atividades.listar', compact('atividades'));
         } elseif ($usuario->isAluno()) {
             $atividades = Atividades::all();
@@ -203,5 +203,28 @@ class AtividadesController extends Controller
         return redirect()->back()->with('error', 'Operação não permitida.');
     }
 
-    }
+    public function instrutor()
+{
+    return $this->belongsTo(Usuarios::class, 'professor_id');
+}
+// Método fictício para mostrar redirecionamento
 
+public function profAtividadesIndex()
+{
+    if (Auth::user()->can('isProfessor')) {
+        $atividades = Atividades::where('instrutor_id', Auth::id())->get();
+        return view('professor.atividades.listar', compact('atividades'));
+    }
+    return redirect()->route('atividades.listar')->with('error', 'Acesso não autorizado.');
+}
+
+public function profAtividadesIndextividadesMatriculadas()
+{
+    if (Auth::user()->can('isProfessor')) {
+        $atividades = Auth::user()->atividades()->get(); // Supondo que 'atividades' é uma relação definida no modelo do usuário
+        return view('professor.atividades.matriculadas', compact('atividades'));
+    }
+    return redirect()->back()->with('error', 'Acesso não autorizado.');
+}
+
+}

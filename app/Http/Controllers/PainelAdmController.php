@@ -165,7 +165,7 @@ class PainelAdmController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        Atividades::create($request->only(['atividade', 'data', 'hora', 'instrutor', 'local']));
+        Atividades::create($request->only(['atividade', 'data', 'hora', 'professor', 'local']));
 
         Session::flash('flash_message', [
             'msg' => "Atividade adicionada com sucesso!",

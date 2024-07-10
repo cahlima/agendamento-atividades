@@ -3,51 +3,60 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Atividades;
-use App\Models\Usuarios;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProfessoresController extends Controller
 {
-    // Listar todas as atividades
-    public function profAtividadesIndex()
-    {
-        $atividades = Atividades::all();
-        return view('professor.atividades.listar', compact('atividades'));
-    }
-
-    // Listar atividades do professor autenticado
-    public function minhasAtividades()
-    {
-        $professorId = auth()->user()->id;
-        $minhasAtividades = Atividades::whereHas('professores', function($query) use ($professorId) {
-            $query->where('usuario_id', $professorId);
-        })->get();
-        return view('professor.atividades.matriculadas', compact('minhasAtividades'));
-    }
-
-    // Editar perfil
-    public function perfilEdit()
-    {
-        $professor = auth()->user();
-        return view('professor.perfil.edit', compact('professor'));
-    }
-
-    // Atualizar perfil
-    public function perfilUpdate(Request $request)
-    {
-        $professor = auth()->user();
-        $professor->update($request->all());
-        return redirect()->route('professor.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
-    }
-
-    // Painel do professor
+    // Exibe o painel do professor com suas atividades matriculadas
     public function index()
     {
-        $professorId = auth()->user()->id;
-        $minhasAtividades = Atividades::whereHas('professores', function($query) use ($professorId) {
-            $query->where('usuario_id', $professorId);
-        })->get();
+        $usuario = Auth::guard('web')->user();
 
-        return view('professor.painelprof', compact('minhasAtividades'));
+        if (!$usuario || is_null($usuario->email)) {
+            Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
+        // Supondo que 'atividades' é uma relação definida no modelo do usuário
+        $atividades = $usuario->atividades()->get();
+
+        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
+
+        return view('professor.painelprof', compact('usuario', 'atividades'));
+    }
+
+    // Exibe a página para editar o perfil do professor
+    public function perfilEdit()
+    {
+        $usuario = Auth::guard('web')->user();
+        if (!$usuario) {
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
+        return view('professor.perfil.edit', compact('usuario'));
+    }
+
+    // Atualiza os dados do perfil do professor
+    public function perfilUpdate(Request $request)
+    {
+        $usuario = Auth::guard('web')->user();
+
+        $data = $request->validate([
+            'nome' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
+            'password' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->filled('password')) {
+            $data['password'] = bcrypt($request->password);
+        } else {
+            unset($data['password']);
+        }
+
+        $usuario->update($data);
+
+        return redirect()->route('professor.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
     }
 }

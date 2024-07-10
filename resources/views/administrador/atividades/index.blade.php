@@ -94,7 +94,7 @@
                     <input type="time" class="form-control" id="hora" name="hora" required>
                 </div>
                 <div class="form-group">
-                    <label for="instrutor">{{ __('Instrutor') }}</label>
+                    <label for="professor">{{ __('Instrutor') }}</label>
                     <input type="text" class="form-control" id="instrutor" name="instrutor" required>
                 </div>
                 <div class="form-group">

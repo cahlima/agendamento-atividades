@@ -99,7 +99,7 @@ Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->gro
 Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
     Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painel');
     Route::get('/atividades', [AtividadesController::class, 'profAtividadesIndex'])->name('atividades.listar');
-    Route::get('/atividades/minhas', [AtividadesController::class, 'minhasAtividades'])->name('atividades.minhas');
+    Route::get('/atividades/matriculadas', [AtividadesController::class, 'profAtividadesMatriculadas'])->name('atividades.matriculadas');
     Route::get('/perfil', [ProfessoresController::class, 'perfilEdit'])->name('perfil.edit');
     Route::post('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
 });

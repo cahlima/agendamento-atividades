@@ -29,14 +29,15 @@
                 <label for="hora" class="form-label">Hora</label>
                 <input type="time" class="form-control" id="hora" name="hora" value="{{ old('hora') }}" required>
             </div>
-            <div class="mb-3">
-                <label for="instrutor" class="form-label">Instrutor</label>
-                <select class="form-control" id="instrutor" name="instrutor" required>
-                    <option value="">Selecione um instrutor</option>
-                    @foreach ($instrutores as $instrutor)
-                        <option value="{{ $instrutor->id }}">{{ $instrutor->nome }}</option>
-                    @endforeach
-                </select>
+            <select name="professor_id" class="form-control">
+    <option value="">Selecione um Instrutor</option>
+    @foreach($professores as $professor)
+        <option value="{{ $professor->id }}" @if(isset($atividade) && $atividade->professor_id == $professor->id) selected @endif>
+            {{ $professor->usuario->nome }} <!-- Assumindo que você tem um relacionamento com a tabela de usuários -->
+        </option>
+    @endforeach
+</select>
+
             </div>
             <div class="mb-3">
                 <label for="local" class="form-label">Local</label>

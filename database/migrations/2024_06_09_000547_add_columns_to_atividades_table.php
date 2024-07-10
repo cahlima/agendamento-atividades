@@ -12,7 +12,7 @@ class AddColumnsToAtividadesTable extends Migration
             $table->string('atividade')->nullable();
             $table->date('data')->nullable();
             $table->time('hora')->nullable();
-            $table->string('instrutor')->nullable();
+            $table->string('professor')->nullable();
             $table->string('local')->nullable();
         });
     }
@@ -20,7 +20,7 @@ class AddColumnsToAtividadesTable extends Migration
     public function down()
     {
         Schema::table('atividades', function (Blueprint $table) {
-            $table->dropColumn(['atividade', 'data', 'hora', 'instrutor', 'local']);
+            $table->dropColumn(['atividade', 'data', 'hora', 'professor', 'local']);
         });
     }
 }
