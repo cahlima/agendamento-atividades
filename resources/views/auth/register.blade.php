@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Register') }}</div>
+                <div class="card-header">{{ __('Cadastro') }}</div>
 
                 <div class="card-body">
                     @if(session('success'))
@@ -78,7 +78,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="senha">{{ __('Password') }}</label>
+                            <label for="senha">{{ __('Senha') }}</label>
                             <input id="senha" type="password" class="form-control @error('senha') is-invalid @enderror" name="senha" required>
                             @error('senha')
                                 <span class="invalid-feedback" role="alert">
@@ -88,7 +88,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="password-confirm">{{ __('Confirm Password') }}</label>
+                            <label for="password-confirm">{{ __('Confirme a Senha') }}</label>
                             <input id="password-confirm" type="password" class="form-control" name="senha_confirmation" required>
                         </div>
 

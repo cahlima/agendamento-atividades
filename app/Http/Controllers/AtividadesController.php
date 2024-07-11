@@ -210,21 +210,20 @@ class AtividadesController extends Controller
 // Método fictício para mostrar redirecionamento
 
 public function profAtividadesIndex()
-{
-    if (Auth::user()->can('isProfessor')) {
-        $atividades = Atividades::where('instrutor_id', Auth::id())->get();
-        return view('professor.atividades.listar', compact('atividades'));
+    {
+        if (Auth::user()->isProfessor()) {
+            $atividades = Atividades::where('instrutor_id', Auth::id())->get();
+            return view('professor.atividades.listar', compact('atividades'));
+        }
+        return redirect()->route('professor.atividades.listar')->with('error', 'Acesso não autorizado.');
     }
-    return redirect()->route('atividades.listar')->with('error', 'Acesso não autorizado.');
-}
 
-public function profAtividadesIndextividadesMatriculadas()
-{
-    if (Auth::user()->can('isProfessor')) {
-        $atividades = Auth::user()->atividades()->get(); // Supondo que 'atividades' é uma relação definida no modelo do usuário
-        return view('professor.atividades.matriculadas', compact('atividades'));
+    public function profAtividadesMatriculadas()
+    {
+        if (Auth::user()->isProfessor()) {
+            $atividades = Auth::user()->atividades()->get(); // Supondo que 'atividades' é uma relação definida no modelo do usuário
+            return view('professor.atividades.matriculadas', compact('atividades'));
+        }
+        return redirect()->back()->with('error', 'Acesso não autorizado.');
     }
-    return redirect()->back()->with('error', 'Acesso não autorizado.');
-}
-
 }

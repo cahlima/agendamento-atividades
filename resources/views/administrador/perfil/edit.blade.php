@@ -1,7 +1,7 @@
 <!-- resources/views/perfil/edit_admin.blade.php -->
 @extends('layouts.base')
 
-@section('main-content')
+@section('content')
 <h2>{{ __('Editar Perfil do Administrador') }}</h2>
 
 <form action="{{ route('admin.perfil.update') }}" method="POST" onsubmit="event.preventDefault(); showEditProfileModal(this);">

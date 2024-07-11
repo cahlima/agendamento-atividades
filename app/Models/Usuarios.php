@@ -68,5 +68,12 @@ class Usuarios extends Authenticatable
     {
         return parent::update($attributes, $options);
     }
+
+    public function atividadesAlocadas()
+    {
+        return $this->hasMany(Atividades::class, 'instrutor_id', 'id');
+    }
+
+
 }
 
