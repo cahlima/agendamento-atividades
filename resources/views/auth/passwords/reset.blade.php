@@ -6,14 +6,18 @@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-header">{{ __('Redefinir Senha) }}</div>
-
                 <div class="card-body">
-                    <form method="POST" action="{{ route('password.update') }}">
-                        @csrf
+                <!-- resources/views/auth/passwords/reset.blade.php -->
+<form method="POST" action="{{ route('password.update') }}">
+    @csrf
+    <input type="hidden" name="token" value="{{ $token }}">
+    <input type="hidden" name="email" value="{{ $email }}">
+    <!-- Outros campos de formulário -->
+</form>
 
-                        <input type="hidden" name="token" value="{{ $token }}">
 
-                        <div class="form-group row">
+              
+                                     <div class="form-group row">
                             <label for="email" class="col-md-4 col-form-label text-md-right">{{ __('E-Mail Cadastrado') }}</label>
 
                             <div class="col-md-6">
