@@ -23,8 +23,8 @@ Route::get('/', function () {
 // Rotas de Redefinição de Senha
 Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::get('password/reset/{token}', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset');
-Route::post('password/reset', [ForgotPasswordController::class, 'reset'])->name('password.update');
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset.token'); // Nome ajustado para evitar duplicação
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 
 // Rotas de Autenticação
 Route::middleware(['guest'])->group(function () {
@@ -54,7 +54,7 @@ Route::middleware(['auth'])->group(function () {
     // Rotas de Usuários
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
         Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('index');
-        Route::get('/listar', [PainelAdmController::class, 'listarUsuarios'])->name('usuarios.listar'); 
+        Route::get('/listar', [PainelAdmController::class, 'listarUsuarios'])->name('listar'); // Nome ajustado para evitar duplicação
         Route::get('/adicionar', [PainelAdmController::class, 'adicionarUsuario'])->name('create');
         Route::post('/store', [PainelAdmController::class, 'salvarUsuario'])->name('store');
         Route::get('/{id}/editar', [PainelAdmController::class, 'editarUsuario'])->name('edit');

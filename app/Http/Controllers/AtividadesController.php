@@ -43,7 +43,6 @@ class AtividadesController extends Controller
         $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
         return view('administrador.atividades.adicionar', compact('instrutores'));
     }
-
     // Salva uma nova atividade no banco de dados
     public function salvarAtividade(Request $request)
     {

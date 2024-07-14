@@ -90,4 +90,15 @@ class UsuarioPolicy
     {
         return $user->isAdmin();
     }
+
+    /**
+     * Determine whether the user is an admin.
+     *
+     * @param  \App\Models\Usuarios  $user
+     * @return mixed
+     */
+    public function isAdmin(Usuarios $user)
+    {
+        return $user->isAdmin();
+    }
 }
