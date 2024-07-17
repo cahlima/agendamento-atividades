@@ -43,13 +43,12 @@ class PainelAdmController extends Controller
         }
     }
 
-
     // Exibe o formulário para adicionar um novo usuário
     public function adicionarUsuario()
     {
         $this->authorize('create', Usuarios::class);
         $tipos = Tipos::all();
-        return view('administrador.usuarios.adicionar', compact('tipos'));
+        return view('administrador.usuarios.criar', compact('tipos'));
     }
 
     // Salva um novo usuário no banco de dados
@@ -59,8 +58,12 @@ class PainelAdmController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nome' => 'required|string|max:255',
+            'sobrenome' => 'required|string|max:255',
+            'login' => 'required|string|max:255|unique:usuarios,login',
             'email' => 'required|email|unique:usuarios,email',
-            'senha' => 'required|string|min:6',
+            'senha' => 'required|string|min:6|confirmed',
+            'data_nascimento' => 'required|date',
+            'telefone' => 'required|string|max:20',
             'tipo_id' => 'required|exists:tipos,id'
         ]);
 
@@ -68,7 +71,7 @@ class PainelAdmController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $dados = $request->only(['nome', 'email', 'tipo_id']);
+        $dados = $request->only(['nome', 'sobrenome', 'login', 'email', 'data_nascimento', 'telefone', 'tipo_id']);
         $dados['senha'] = bcrypt($request->senha);
         Usuarios::create($dados);
 
@@ -76,11 +79,12 @@ class PainelAdmController extends Controller
             'msg' => "Registro adicionado com sucesso!",
             'class' => "alert-success"
         ]);
-        return redirect()->route('admin.usuarios.create');
+        return redirect()->route('usuarios.index');
     }
-
     // Exibe o formulário para editar um usuário existente
-    public function editarUsuario($id)
+  
+
+   public function editarUsuario($id)
     {
         $usuario = Usuarios::find($id);
         if (!$usuario) {
@@ -91,7 +95,6 @@ class PainelAdmController extends Controller
         return view('administrador.usuarios.editar', compact('usuario', 'tipos'));
     }
 
-    // Atualiza um usuário no banco de dados
     public function atualizarUsuario(Request $request, $id)
     {
         $usuario = Usuarios::find($id);
@@ -102,7 +105,12 @@ class PainelAdmController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nome' => 'required|string|max:255',
+            'sobrenome' => 'required|string|max:255',
+            'login' => 'required|string|max:255|unique:usuarios,login,'.$usuario->id,
             'email' => 'required|email|unique:usuarios,email,'.$usuario->id,
+            'senha' => 'nullable|string|min:6|confirmed',
+            'data_nascimento' => 'required|date',
+            'telefone' => 'required|string|max:20',
             'tipo_id' => 'required|exists:tipos,id'
         ]);
 
@@ -110,13 +118,18 @@ class PainelAdmController extends Controller
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
-        $usuario->update($request->only(['nome', 'email', 'tipo_id']));
+        $dados = $request->only(['nome', 'sobrenome', 'login', 'email', 'data_nascimento', 'telefone', 'tipo_id']);
+        if ($request->filled('senha')) {
+            $dados['senha'] = bcrypt($request->senha);
+        }
+        $usuario->update($dados);
+
         Session::flash('flash_message', [
             'msg' => "Registro atualizado com sucesso!",
             'class' => "alert-success"
         ]);
 
-        return redirect()->route('admin.usuarios.index');
+        return redirect()->route('usuarios.index');
     }
 
     // Deleta um usuário do banco de dados
@@ -136,7 +149,7 @@ class PainelAdmController extends Controller
                 'class' => "alert-danger"
             ]);
         }
-        return redirect()->route('admin.usuarios.index');
+        return redirect()->route('usuarios.index');
     }
 
     // Exibe a lista de atividades

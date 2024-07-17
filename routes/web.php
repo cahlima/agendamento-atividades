@@ -51,16 +51,17 @@ Route::middleware(['auth'])->group(function () {
         Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
     });
 
-    // Rotas de Usuários
-    Route::prefix('usuarios')->name('usuarios.')->group(function () {
-        Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('index');
-        Route::get('/listar', [PainelAdmController::class, 'listarUsuarios'])->name('listar'); // Nome ajustado para evitar duplicação
-        Route::get('/adicionar', [PainelAdmController::class, 'adicionarUsuario'])->name('create');
-        Route::post('/store', [PainelAdmController::class, 'salvarUsuario'])->name('store');
-        Route::get('/{id}/editar', [PainelAdmController::class, 'editarUsuario'])->name('edit');
-        Route::post('/{id}/atualizar', [PainelAdmController::class, 'atualizarUsuario'])->name('update');
-        Route::delete('/{id}', [PainelAdmController::class, 'deletarUsuario'])->name('destroy');
-    });
+  
+// Rotas de Usuários
+Route::prefix('usuarios')->name('usuarios.')->group(function () {
+    Route::get('/', [PainelAdmController::class, 'listarUsuarios'])->name('index');
+    Route::get('/listar', [PainelAdmController::class, 'listarUsuarios'])->name('listar'); // Nome ajustado para evitar duplicação
+    Route::get('/adicionar', [PainelAdmController::class, 'adicionarUsuario'])->name('create');
+    Route::post('/store', [PainelAdmController::class, 'salvarUsuario'])->name('store');
+    Route::get('/{id}/editar', [PainelAdmController::class, 'editarUsuario'])->name('edit');
+    Route::post('/{id}/atualizar', [PainelAdmController::class, 'atualizarUsuario'])->name('update');
+    Route::delete('/{id}', [PainelAdmController::class, 'deletarUsuario'])->name('destroy');
+});
 
     // Rotas para painéis
     Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');

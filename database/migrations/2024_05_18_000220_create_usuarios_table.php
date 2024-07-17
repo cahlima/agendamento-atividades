@@ -27,7 +27,7 @@ class CreateUsuariosTable extends Migration
             $table->timestamps();
 
             // Definindo a chave estrangeira
-            $table->foreign('tipo_id')->references('id')->on('tipo_usuarios');
+            $table->foreign('tipo_id')->references('id')->on('tipos'); // Ajustar para a tabela correta
         });
     }
 

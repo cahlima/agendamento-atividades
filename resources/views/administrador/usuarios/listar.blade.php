@@ -1,7 +1,12 @@
-<!-- listar.blade.php -->
+<!-- resources/views/administrador/usuarios/listar.blade.php -->
+@extends('layouts.base')
+
+@section('content')
 <h1>Lista de Usuários</h1>
 
-<table>
+<a href="{{ route('usuarios.create') }}" class="btn btn-success">Adicionar Usuário</a>
+
+<table class="table">
     <thead>
         <tr>
             <th>ID</th>
@@ -17,10 +22,15 @@
                 <td>{{ $usuario->nome }}</td>
                 <td>{{ $usuario->email }}</td>
                 <td>
-                    <a href="{{ route('usuario.editar', ['id' => $usuario->id]) }}">Editar</a>
-                    <!-- Adicione aqui o link para deletar se necessário -->
+                    <a href="{{ route('usuarios.edit', ['id' => $usuario->id]) }}" class="btn btn-primary">Editar</a>
+                    <form action="{{ route('usuarios.destroy', ['id' => $usuario->id]) }}" method="POST" style="display:inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
                 </td>
             </tr>
         @endforeach
     </tbody>
 </table>
+@endsection

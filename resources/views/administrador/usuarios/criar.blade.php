@@ -1,14 +1,22 @@
-<!-- resources/views/usuario/adicionar.blade.php -->
+<!-- resources/views/usuarios/criar.blade.php -->
 @extends('layouts.base')
 
 @section('content')
 <h2>{{ __('Adicionar Usuário') }}</h2>
 
-<form action="{{ route('usuario.salvar') }}" method="POST">
+<form action="{{ route('usuarios.store') }}" method="POST">
     @csrf
     <div class="mb-3">
         <label for="nome" class="form-label">{{ __('Nome') }}</label>
         <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome') }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="sobrenome" class="form-label">{{ __('Sobrenome') }}</label>
+        <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ old('sobrenome') }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="login" class="form-label">{{ __('Login') }}</label>
+        <input type="text" class="form-control" id="login" name="login" value="{{ old('login') }}" required>
     </div>
     <div class="mb-3">
         <label for="email" class="form-label">{{ __('Email') }}</label>
@@ -21,6 +29,14 @@
     <div class="mb-3">
         <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }}</label>
         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
+    </div>
+    <div class="mb-3">
+        <label for="data_nascimento" class="form-label">{{ __('Data de Nascimento') }}</label>
+        <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ old('data_nascimento') }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="telefone" class="form-label">{{ __('Telefone') }}</label>
+        <input type="text" class="form-control" id="telefone" name="telefone" value="{{ old('telefone') }}" required>
     </div>
     <div class="mb-3">
         <label for="tipo_id" class="form-label">{{ __('Tipo') }}</label>
