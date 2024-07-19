@@ -6,6 +6,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Fortify\Contracts\ResetPasswordViewResponse;
+use App\Actions\Fortify\ResetPasswordResponse;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Registra a implementação do contrato ResetPasswordViewResponse
+        $this->app->singleton(ResetPasswordViewResponse::class, ResetPasswordResponse::class);
     }
 
     /**
