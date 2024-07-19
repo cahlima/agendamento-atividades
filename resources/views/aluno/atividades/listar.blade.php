@@ -47,17 +47,15 @@
                 <div class="row">
                     <div class="col-md-4">
                         <label for="atividade_id">{{ __('Atividade') }}:</label>
-
                         <select name="atividade_id" id="atividade_id" class="form-control">
                             <option value="">{{ __('Selecione a atividade') }}</option>
                             @if(isset($atividadesDisponiveis))
-                            @foreach($atividadesDisponiveis as $atividades)
-                                <option value="{{ $atividade->id }}">{{ $atividades->$atividades }}</option>
-                            @endforeach
-
+                                @foreach($atividadesDisponiveis as $atividade)
+                                    <option value="{{ $atividade->id }}">{{ $atividade->titulo }}</option>
+                                @endforeach
                             @else
-    <option value="">{{ __('Nenhuma atividade disponível') }}</option>
-@endif
+                                <option value="">{{ __('Nenhuma atividade disponível') }}</option>
+                            @endif
                         </select>
                     </div>
                     <div class="col-md-4 mt-4">
@@ -82,10 +80,10 @@
                         <tbody>
                             @foreach($atividades as $atividade)
                                 <tr>
-                                    <td>{{ $atividade->atividade }}</td>
+                                    <td>{{ $atividade->titulo }}</td>
                                     <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
                                     <td>{{ $atividade->hora }}</td>
-                                    <td>{{ $atividade->instrutor }}</td>
+                                    <td>{{ $atividade->professor->nome }}</td>
                                     <td>{{ $atividade->local }}</td>
                                     <td>
                                         <form action="{{ route('aluno.atividades.matricular', $atividade->id) }}" method="POST">

@@ -12,19 +12,12 @@ class TiposTableSeeder extends Seeder
      *
      * @return void
      */
-
     public function run()
     {
-
-
         DB::table('tipos')->insert([
-            'descricao'=>'Administrador'
-        ]);
-        DB::table('tipos')->insert([
-            'descricao'=>'Professor'
-        ]);
-        DB::table('tipos')->insert([
-            'descricao'=>'Aluno'
+            ['nome' => 'Administrador'],
+            ['nome' => 'Professor'],
+            ['nome' => 'Aluno'],
         ]);
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 
 class Usuarios extends Authenticatable
 {
@@ -20,7 +21,6 @@ class Usuarios extends Authenticatable
 
     protected $hidden = ['senha', 'remember_token'];
 
-
     public function getAuthPassword()
     {
         return $this->senha;
@@ -30,9 +30,6 @@ class Usuarios extends Authenticatable
     {
         return $this->belongsTo(Tipos::class, 'tipo_id');
     }
-
-    
-    
 
     public function isAdmin()
     {
@@ -63,17 +60,19 @@ class Usuarios extends Authenticatable
     {
         return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
     }
-    // Método update personalizado
-    public function update(array $attributes = [], array $options = [])
-    {
-        return parent::update($attributes, $options);
-    }
 
     public function atividadesAlocadas()
     {
         return $this->hasMany(Atividades::class, 'instrutor_id', 'id');
     }
 
+    // Método update personalizado
+    public function update(array $attributes = [], array $options = [])
+    {
+        if (isset($attributes['senha'])) {
+            $attributes['senha'] = Hash::make($attributes['senha']);
+        }
 
+        return parent::update($attributes, $options);
+    }
 }
-

@@ -74,6 +74,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+                <a href="{{ route('professor.atividades.listar') }}" class="btn btn-secondary">{{ __('Voltar') }}</a> <!-- Botão Voltar adicionado -->
             </form>
         </main>
     </div>

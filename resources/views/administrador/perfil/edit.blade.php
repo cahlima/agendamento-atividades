@@ -1,4 +1,3 @@
-<!-- resources/views/perfil/edit_admin.blade.php -->
 @extends('layouts.base')
 
 @section('content')
@@ -23,5 +22,6 @@
         <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
     </div>
     <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+    <a href="{{ route('paineladm') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
 </form>
 @endsection

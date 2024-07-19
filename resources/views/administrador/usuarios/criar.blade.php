@@ -1,4 +1,3 @@
-<!-- resources/views/usuarios/criar.blade.php -->
 @extends('layouts.base')
 
 @section('content')
@@ -47,5 +46,6 @@
         </select>
     </div>
     <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+    <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
 </form>
 @endsection

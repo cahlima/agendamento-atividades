@@ -7,16 +7,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Usuarios;
 use App\Models\Tipos;
-use App\Models\Aluno;
-use App\Models\Professor;
 use Illuminate\Support\Facades\Validator;
 
 class UsuariosController extends Controller
-
 {
-private $userTypeManager;
-
-
+    private $userTypeManager;
 
     public function __construct(UserTypeManager $userTypeManager)
     {
@@ -36,7 +31,7 @@ private $userTypeManager;
     {
         $this->authorize('create', Usuarios::class);
         $tipos = Tipos::all();
-        return view('administrador.usuarios.adicionar', compact('tipos'));
+        return view('administrador.usuarios.criar', compact('tipos'));
     }
 
     // Salva um novo usuário no banco de dados
@@ -52,6 +47,7 @@ private $userTypeManager;
         return redirect()->route('usuarios.adicionar');
     }
 
+    // Exibe o formulário para editar um usuário existente
     public function editar($id)
     {
         $usuario = Usuarios::findOrFail($id);
@@ -60,11 +56,19 @@ private $userTypeManager;
         return view('administrador.usuarios.editar', compact('usuario', 'tipos'));
     }
 
+    // Atualiza os dados de um usuário existente
     public function atualizar(UserUpdateRequest $request, $id)
     {
         $usuario = Usuarios::findOrFail($id);
         $this->authorize('update', $usuario);
         $dados = $request->validated();
+
+        if (isset($dados['senha']) && $dados['senha']) {
+            $dados['senha'] = bcrypt($dados['senha']); // Criptografa a nova senha, se fornecida
+        } else {
+            unset($dados['senha']); // Remove a senha do array de dados se estiver vazia
+        }
+
         $usuario->update($dados);
 
         $this->userTypeManager->updateType($usuario, $dados['tipo_id']);
@@ -73,6 +77,7 @@ private $userTypeManager;
         return redirect()->route('usuarios.index');
     }
 
+    // Exclui um usuário existente
     public function deletar($id)
     {
         $usuario = Usuarios::findOrFail($id);

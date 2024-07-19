@@ -118,14 +118,12 @@ Route::prefix('usuarios')->name('usuarios.')->group(function () {
     });
 
     // Rotas de Tipos
-    Route::prefix('tipos')->name('tipo.')->group(function () {
-        Route::get('/', [TiposController::class, 'index'])->name('index');
-        Route::get('/adicionar', [TiposController::class, 'adicionar'])->name('adicionar');
-        Route::post('/salvar', [TiposController::class, 'salvar'])->name('salvar');
-        Route::get('/editar/{id}', [TiposController::class, 'editar'])->name('editar');
-        Route::post('/atualizar/{id}', [TiposController::class, 'atualizar'])->name('atualizar');
-        Route::delete('/deletar/{id}', [TiposController::class, 'deletar'])->name('deletar');
-    });
+    Route::get('tipos', [TiposController::class, 'index'])->name('tipo.index');
+    Route::get('tipos/adicionar', [TiposController::class, 'adicionar'])->name('tipo.adicionar');
+    Route::post('tipos/salvar', [TiposController::class, 'salvar'])->name('tipo.salvar');
+    Route::get('tipos/{id}/editar', [TiposController::class, 'editar'])->name('tipo.editar');
+    Route::put('tipos/{id}', [TiposController::class, 'atualizar'])->name('tipo.atualizar');
+    Route::delete('tipos/{id}', [TiposController::class, 'deletar'])->name('tipo.deletar');
 
     // Rotas de Usuários
     Route::prefix('usuario')->name('usuario.')->group(function () {
