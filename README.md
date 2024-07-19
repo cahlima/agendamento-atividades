@@ -70,3 +70,15 @@ Instalar Bootstrap
  Inst Node
  Inst Laravel
  Rodar Servidorcomposer create-project laravel/agendamentos-atividades
+
+ intalar boostrap
+npm install bootstrap@latest
+npm install @popperjs/core --save
+npm install jquery --save
+
+compilar assets
+
+npm run dev
+
+
+RODAR MIGRATE E SEED
