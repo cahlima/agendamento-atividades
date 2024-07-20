@@ -65,7 +65,7 @@
                             <td>{{ $atividade->instrutor }}</td>
                             <td>{{ $atividade->local }}</td>
                             <td>
-                                <a href="{{ route('atividades.editar', $atividade->id) }}" class="btn btn-sm btn-primary">{{ __('Editar') }}</a>
+                                <a href="{{ route('atividades.edit', $atividade->id) }}" class="btn btn-sm btn-primary">{{ __('Editar') }}</a>
                                 <form action="{{ route('atividades.destroy', $atividade->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('{{ __('Tem certeza que deseja deletar esta atividade?') }}')">
                                     @csrf
                                     @method('DELETE')

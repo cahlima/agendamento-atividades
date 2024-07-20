@@ -26,8 +26,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Forçar HTTPS se o ambiente não for local
-        if (env('APP_ENV') !== 'local') {
-            URL::forceScheme('https');
-        }
+        //if (env('APP_ENV') !== 'local') {
+        //    URL::forceScheme('https');
+       // }
     }
 }

@@ -75,7 +75,7 @@ class AtividadesController extends Controller
         return redirect()->route('atividades.index');
     }
 
-    // Exibe o formulário para editar uma atividade existente
+    // Exibe o formulário para editar uma atividade existentepublic function editarAtividade($id)
     public function editarAtividade($id)
     {
         $this->authorize('isAdmin', Auth::user());
@@ -85,8 +85,9 @@ class AtividadesController extends Controller
             return redirect()->route('atividades.index')->withErrors('Atividade não encontrada.');
         }
         $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
-        return view('administrador.atividades.editar', compact('atividade', 'professor'));
+        return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
     }
+
 
     // Atualiza uma atividade existente no banco de dados
     public function atualizarAtividade(Request $request, $id)

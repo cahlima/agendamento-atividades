@@ -16,53 +16,11 @@
 </head>
 <body>
     <div id="app">
-        <!-- Header -->
-        @include('layouts._includes.nav')
+        @include('layouts._includes._nav')
 
-        <div class="container-fluid">
-            <div class="row">
-                <!-- Sidebar -->
-                <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
-                    <div class="position-sticky">
-                        <ul class="nav flex-column">
-                            <li class="nav-item">
-                                <a class="nav-link active" aria-current="page" href="#">
-                                    <span data-feather="home"></span>
-                                    Dashboard
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="file"></span>
-                                    Minhas Atividades
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="shopping-cart"></span>
-                                    Notas
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="#">
-                                    <span data-feather="users"></span>
-                                    Competências
-                                </a>
-                            </li>
-                            <!-- Adicione mais itens conforme necessário -->
-                        </ul>
-                    </div>
-                </nav>
-
-                <!-- Main content -->
-                <main class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
-                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                        <h1 class="h2">Dashboard</h1>
-                    </div>
-                    @yield('content')
-                </main>
-            </div>
-        </div>
+        <main class="py-4">
+            @yield('content')
+        </main>
     </div>
 
     <div id="vue-app"></div>

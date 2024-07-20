@@ -23,7 +23,7 @@ class UsuariosController extends Controller
     public function index()
     {
         $usuarios = Usuarios::paginate(10);
-        return view('administrador.usuarios.index', compact('usuarios'));
+        return view('administrador.usuarios.listar', compact('usuarios'));
     }
 
     // Exibe o formulário para adicionar um novo usuário
