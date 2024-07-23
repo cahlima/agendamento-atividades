@@ -153,40 +153,28 @@ class AtividadesController extends Controller
         $usuario = Auth::user();
 
         if ($usuario->isAdmin()) {
-            $atividades = Atividades::all();
+            $atividades = Atividades::with('professor')->paginate(10);
             return view('administrador.atividades.listar', compact('atividades'));
         } elseif ($usuario->isProfessor()) {
-            $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
+            $atividades = Atividades::with('professor')->where('instrutor_id', $usuario->id)->paginate(10);
             return view('professor.atividades.listar', compact('atividades'));
         } elseif ($usuario->isAluno()) {
-            $atividades = Atividades::all();
+            $atividades = Atividades::with('professor')->paginate(10);
             return view('aluno.atividades.listar', compact('atividades'));
         }
 
         return redirect()->back()->with('error', 'Permissão negada.');
     }
-
     // Lista as atividades matriculadas para o aluno
     public function atividadesMatriculadas()
     {
         $usuario = Auth::user();
         if ($usuario->isAluno()) {
-            $atividades = $usuario->atividades()->get();
+            // Usar paginação aqui
+            $atividades = $usuario->atividades()->with('professor')->paginate(10);
             return view('aluno.atividades.matriculadas', compact('atividades'));
         }
         return redirect()->back()->with('error', 'Acesso não autorizado.');
-    }
-
-    // Matricula e desmatricula aluno em atividades
-    public function matricular(Request $request, $id)
-    {
-        $usuario = Auth::user();
-        if ($usuario->isAluno()) {
-            $atividade = Atividades::findOrFail($id);
-            $usuario->atividades()->attach($atividade);
-            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado na atividade com sucesso!');
-        }
-        return redirect()->back()->with('error', 'Operação não permitida.');
     }
 
     public function desmatricular($id)
