@@ -39,8 +39,8 @@ return [
             'host' => env('MAIL_HOST', 'sandbox.smtp.mailtrap.io'),
             'port' => env('MAIL_PORT', 2525),
             'encryption' => env('MAIL_ENCRYPTION', null),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'username' => env('MAIL_USERNAME', '079a5f05fdf971'),
+            'password' => env('MAIL_PASSWORD', '9f9966bee27cbe'),
             'timeout' => null,
             'auth_mode' => null,
         ],
@@ -75,7 +75,7 @@ return [
         'address' => env('MAIL_FROM_ADDRESS', 'from@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),
     ],
-    
+
 
     /*
     |--------------------------------------------------------------------------
@@ -99,4 +99,4 @@ return [
 ];
 
 
- 
+

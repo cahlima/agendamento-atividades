@@ -1,19 +1,23 @@
 <?php
-// App\Http\Controllers\Auth\ResetPasswordController.php
-
-// App\Http\Controllers\Auth\ResetPasswordController.php
-
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class ResetPasswordController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    // Exibe o formulário para redefinir a senha
     public function showResetForm(Request $request, $token = null)
     {
         return view('auth.passwords.reset')->with(
@@ -21,25 +25,31 @@ class ResetPasswordController extends Controller
         );
     }
 
+    // Reseta a senha do usuário
     public function reset(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $status = Password::broker('users')->reset(
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
                 $user->forceFill([
-                    'senha' => Hash::make($password), // Ajustar para usar o nome correto da coluna
+                    'password' => Hash::make($password),
                     'remember_token' => Str::random(60),
                 ])->save();
             }
         );
 
         if ($status == Password::PASSWORD_RESET) {
+            Session::flash('flash_message', 'Senha redefinida com sucesso!');
             return redirect()->route('login')->with('status', __($status));
         }
 

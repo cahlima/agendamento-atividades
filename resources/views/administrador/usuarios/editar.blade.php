@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.app')
 
 @section('content')
 <div class="container-fluid">
@@ -18,12 +18,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('usuarios.index') }}">
+                        <a class="nav-link" href="{{ route('usuarios.index') }}">
                             {{ __('Gerenciar Usuários') }}
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.perfil.edit') }}">
+                        <a class="nav-link active" aria-current="page" href="{{ route('admin.perfil.edit') }}">
                             {{ __('Meu Perfil') }}
                         </a>
                     </li>
@@ -33,65 +33,37 @@
 
         <!-- Main content -->
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <h2>{{ __('Editar Usuário') }} - {{ $usuario->nome }}</h2>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">{{ __('Editar Perfil do Administrador') }}</h1>
+            </div>
 
-            <form action="{{ route('usuarios.update', ['id' => $usuario->id]) }}" method="POST">
+            @if(Session::has('flash_message'))
+                <div class="alert {{ Session::get('flash_message.class') }}">
+                    {{ Session::get('flash_message.msg') }}
+                </div>
+            @endif
+
+            <form action="{{ route('admin.perfil.update') }}" method="POST">
                 @csrf
-                @method('POST') <!-- Usando PUT para atualização -->
-
-                <div class="mb-3">
-                    <label for="nome" class="form-label">{{ __('Nome') }}:</label>
-                    <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" required>
+                @method('PUT')
+                <div class="form-group">
+                    <label for="nome">{{ __('Nome') }}</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ Auth::user()->nome }}" required>
                 </div>
-
-                <div class="mb-3">
-                    <label for="sobrenome" class="form-label">{{ __('Sobrenome') }}:</label>
-                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" required>
+                <div class="form-group">
+                    <label for="email">{{ __('Email') }}</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ Auth::user()->email }}" required>
                 </div>
-
-                <div class="mb-3">
-                    <label for="login" class="form-label">{{ __('Login') }}:</label>
-                    <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">{{ __('Email') }}:</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="senha" class="form-label">{{ __('Senha') }}:</label>
+                <div class="form-group">
+                    <label for="senha">{{ __('Senha') }}</label>
                     <input type="password" class="form-control" id="senha" name="senha">
-                    <small class="form-text text-muted">{{ __('Deixe em branco para manter a senha atual.') }}</small>
                 </div>
-
-                <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">{{ __('Confirmar Senha') }}:</label>
+                <div class="form-group">
+                    <label for="password_confirmation">{{ __('Confirmar Senha') }}</label>
                     <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
                 </div>
-
-                <div class="mb-3">
-                    <label for="data_nascimento" class="form-label">{{ __('Data de Nascimento') }}:</label>
-                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="telefone" class="form-label">{{ __('Telefone') }}:</label>
-                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" required>
-                </div>
-
-                <div class="mb-3">
-                    <label for="tipo_id" class="form-label">{{ __('Tipo') }}:</label>
-                    <select class="form-control" id="tipo_id" name="tipo_id" required>
-                        <option value="" disabled>{{ __('Selecione um tipo') }}</option>
-                        @foreach($tipos as $tipo)
-                            <option value="{{ $tipo->id }}" {{ $usuario->tipo_id == $tipo->id ? 'selected' : '' }}>{{ $tipo->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <button type="submit" class="btn btn-primary">{{ __('Atualizar') }}</button>
-                <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+                <button type="submit" class="btn btn-success mt-3">{{ __('Salvar') }}</button>
+                <a href="{{ route('paineladm') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
             </form>
         </main>
     </div>

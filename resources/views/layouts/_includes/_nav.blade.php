@@ -21,12 +21,12 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('admin.painel') }}">{{ __('Painel Administrativo') }}</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- Removido: <li class="nav-item">
                             <a class="nav-link" href="{{ route('usuarios.index') }}">{{ __('Usuários') }}</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('atividades.index') }}">{{ __('Atividades') }}</a>
-                        </li>
+                        </li> -->
                     @endif
 
                     @if (Auth::user()->isProfessor())

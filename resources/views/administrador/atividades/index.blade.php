@@ -79,7 +79,7 @@
             </div>
 
             <h4>{{ __('Cadastrar Atividades') }}</h4>
-            <form action="{{ route('atividades.store') }}" method="POST">
+            <form action="{{ route('atividades.create') }}" method="POST">
                 @csrf
                 <div class="form-group">
                     <label for="atividade">{{ __('Atividade') }}</label>

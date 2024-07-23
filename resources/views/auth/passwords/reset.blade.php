@@ -11,8 +11,8 @@
                     <form method="POST" action="{{ route('password.update') }}">
                         @csrf
 
-                        <input type="hidden" name="token" value="{{ $token }}">
-                        <input type="hidden" name="email" value="{{ $email }}">
+                        <input type="hidden" name="token" value="{{ $token ?? '' }}">
+                        <input type="hidden" name="email" value="{{ $email ?? '' }}">
 
                         <div class="form-group row">
                             <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Senha') }}</label>

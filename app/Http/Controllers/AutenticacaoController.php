@@ -23,7 +23,7 @@ class AutenticacaoController extends Controller
         } elseif ($usuario->isAluno()) {
             return redirect()->route('painelaluno');
         } else {
-            return redirect()->route('home');
+            return redirect()->route('login');
         }
     }
 

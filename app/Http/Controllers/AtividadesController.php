@@ -43,6 +43,7 @@ class AtividadesController extends Controller
         $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
         return view('administrador.atividades.adicionar', compact('instrutores'));
     }
+
     // Salva uma nova atividade no banco de dados
     public function salvarAtividade(Request $request)
     {
@@ -52,7 +53,7 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'professor' => 'required|exists:usuarios,id',
+            'instrutor' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255'
         ]);
 
@@ -64,7 +65,7 @@ class AtividadesController extends Controller
             'atividade' => $request->atividade,
             'data' => $request->data,
             'hora' => $request->hora,
-            'professor' => $request->instrutor,
+            'instrutor_id' => $request->instrutor, // Atualizar para 'instrutor_id'
             'local' => $request->local,
         ]);
 
@@ -75,7 +76,7 @@ class AtividadesController extends Controller
         return redirect()->route('atividades.index');
     }
 
-    // Exibe o formulário para editar uma atividade existentepublic function editarAtividade($id)
+    // Exibe o formulário para editar uma atividade existente
     public function editarAtividade($id)
     {
         $this->authorize('isAdmin', Auth::user());
@@ -87,7 +88,6 @@ class AtividadesController extends Controller
         $instrutores = Usuarios::where('tipo_id', 2)->get(); // Carregar apenas os instrutores (tipo_id = 2)
         return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
     }
-
 
     // Atualiza uma atividade existente no banco de dados
     public function atualizarAtividade(Request $request, $id)
@@ -103,7 +103,7 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data' => 'required|date',
             'hora' => 'required|date_format:H:i',
-            'professor' => 'required|exists:usuarios,id',
+            'instrutor' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255'
         ]);
 
@@ -115,7 +115,7 @@ class AtividadesController extends Controller
             'atividade' => $request->atividade,
             'data' => $request->data,
             'hora' => $request->hora,
-            'instrutor' => $request->instrutor,
+            'instrutor_id' => $request->instrutor, // Atualizar para 'instrutor_id'
             'local' => $request->local,
         ]);
         Session::flash('flash_message', [
@@ -152,14 +152,11 @@ class AtividadesController extends Controller
     {
         $usuario = Auth::user();
 
-        // Definindo atividades disponíveis para todos os usuários, ajuste conforme necessário
-    $atividadesDisponiveis = Atividades::select('id', 'atividade')->get();
-
         if ($usuario->isAdmin()) {
             $atividades = Atividades::all();
             return view('administrador.atividades.listar', compact('atividades'));
         } elseif ($usuario->isProfessor()) {
-            $atividades = Atividades::where('professor_id', $usuario->id)->get();
+            $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
             return view('professor.atividades.listar', compact('atividades'));
         } elseif ($usuario->isAluno()) {
             $atividades = Atividades::all();
@@ -179,7 +176,6 @@ class AtividadesController extends Controller
         }
         return redirect()->back()->with('error', 'Acesso não autorizado.');
     }
-
 
     // Matricula e desmatricula aluno em atividades
     public function matricular(Request $request, $id)
@@ -203,13 +199,8 @@ class AtividadesController extends Controller
         return redirect()->back()->with('error', 'Operação não permitida.');
     }
 
-    public function instrutor()
-{
-    return $this->belongsTo(Usuarios::class, 'professor_id');
-}
-// Método fictício para mostrar redirecionamento
-
-public function profAtividadesIndex()
+    // Método fictício para mostrar redirecionamento
+    public function profAtividadesIndex()
     {
         if (Auth::user()->isProfessor()) {
             $atividades = Atividades::where('instrutor_id', Auth::id())->get();

@@ -27,6 +27,7 @@ Route::middleware(['guest'])->group(function () {
     Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
 });
 
+
 // Rotas de Autenticação
 Route::middleware(['guest'])->group(function () {
     Route::get('/login', [AutenticacaoController::class, 'login'])->name('login');
