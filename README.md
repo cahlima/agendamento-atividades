@@ -82,3 +82,23 @@ npm run dev
 
 
 RODAR MIGRATE E SEED
+
+usuario cadastrados
+
+ALUNO 
+login: maria 
+senha: senha123
+email: maria@maria.com
+
+PROFESSOR
+
+login: joao 
+senha: senha123
+email: joao@joaa.com
+
+ADMINISTRADOR
+login: admin 
+senha: senha123
+]email: admin@admin.com
+
+

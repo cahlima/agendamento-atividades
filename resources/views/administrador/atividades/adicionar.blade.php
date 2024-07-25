@@ -1,49 +1,55 @@
-<!-- resources/views/administrador/atividades/adicionar.blade.php -->
-@extends('layouts.base')
+@extends('layouts.app')
 
-@section('main-content')
-    <div class="container">
-        <h2>Adicionar Nova Atividade</h2>
+@section('content')
+<div class="container">
+    <h2>{{ __('Adicionar Atividade') }}</h2>
 
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        <form action="{{ route('atividades.store') }}" method="POST">
-            @csrf
-            <div class="mb-3">
-                <label for="atividade" class="form-label">Nome da Atividade</label>
-                <input type="text" class="form-control" id="atividade" name="atividade" value="{{ old('atividade') }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="data" class="form-label">Data</label>
-                <input type="date" class="form-control" id="data" name="data" value="{{ old('data') }}" required>
-            </div>
-            <div class="mb-3">
-                <label for="hora" class="form-label">Hora</label>
-                <input type="time" class="form-control" id="hora" name="hora" value="{{ old('hora') }}" required>
-            </div>
-            <select name="professor_id" class="form-control">
-    <option value="">Selecione um Instrutor</option>
-    @foreach($professores as $professor)
-        <option value="{{ $professor->id }}" @if(isset($atividade) && $atividade->professor_id == $professor->id) selected @endif>
-            {{ $professor->usuario->nome }} <!-- Assumindo que você tem um relacionamento com a tabela de usuários -->
-        </option>
-    @endforeach
-</select>
+    <form method="POST" action="{{ route('atividades.store') }}">
+        @csrf
 
-            </div>
-            <div class="mb-3">
-                <label for="local" class="form-label">Local</label>
-                <input type="text" class="form-control" id="local" name="local" value="{{ old('local') }}" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </form>
-    </div>
+        <div class="form-group">
+            <label for="atividade">{{ __('Atividade') }}</label>
+            <input id="atividade" type="text" class="form-control" name="atividade" value="{{ old('atividade') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="data">{{ __('Data') }}</label>
+            <input id="data" type="date" class="form-control" name="data" value="{{ old('data') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="hora">{{ __('Hora') }}</label>
+            <input id="hora" type="time" class="form-control" name="hora" value="{{ old('hora') }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="instrutor">{{ __('Instrutor') }}</label>
+            <select id="instrutor" class="form-control" name="instrutor" required>
+                @foreach($instrutores as $instrutor)
+                    <option value="{{ $instrutor->id }}">{{ $instrutor->nome }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="local">{{ __('Local') }}</label>
+            <input id="local" type="text" class="form-control" name="local" value="{{ old('local') }}" required>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">{{ __('Adicionar Atividade') }}</button>
+            <a href="{{ route('atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+        </div>
+    </form>
+</div>
 @endsection

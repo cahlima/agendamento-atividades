@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Usuarios;
 use App\Models\Tipos;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\UserStoreRequest; // Importar a classe UserStoreRequest
+use App\Http\Requests\UserUpdateRequest; // Importar a classe UserUpdateRequest
 
 class UsuariosController extends Controller
 {
@@ -37,9 +39,15 @@ class UsuariosController extends Controller
     // Salva um novo usuário no banco de dados
     public function salvar(UserStoreRequest $request)
     {
+        // Verificar dados recebidos
         $dados = $request->validated();
+        // dd($dados); // Verifique se os dados estão corretos (descomente para debug)
+
         $dados['senha'] = bcrypt($dados['senha']);
         $usuario = Usuarios::create($dados);
+
+        // Verificar se o usuário foi criado
+        // dd($usuario); // Verifique se o usuário foi criado corretamente (descomente para debug)
 
         $this->userTypeManager->assignType($usuario, $dados['tipo_id']);
 

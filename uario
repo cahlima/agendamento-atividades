@@ -1,0 +1,14 @@
+[90m= [39m[34;4mApp\Models\Usuarios[39;24m {#5245
+    [34mnome[39m: "[32mAdministrador[39m",
+    [34msobrenome[39m: "[32mSistema[39m",
+    [34mlogin[39m: "[32madmin[39m",
+    [34memail[39m: "[32madmin@example.com[39m",
+    #[33msenha[39m: "[32m$2y$12$huypJbmrDxEH3QINQI6VDOpZI4eMC6yh4h3iB/uW9oND1nDYUkMqC[39m",
+    [34mdata_nascimento[39m: "[32m1980-01-01[39m",
+    [34mtelefone[39m: "[32m1234567890[39m",
+    [34mtipo_id[39m: [35m1[39m,
+    [34mupdated_at[39m: "[32m2024-07-24 23:49:38[39m",
+    [34mcreated_at[39m: "[32m2024-07-24 23:49:38[39m",
+    [34mid[39m: [35m13[39m,
+  }
+
