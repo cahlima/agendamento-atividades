@@ -2,6 +2,8 @@
 @import "node_modules/bootstrap/scss/bootstrap";
 
 
+// Your custom styles here
+
 // Custom styles
 body {
     font-family: 'Nunito', sans-serif;
@@ -38,10 +40,66 @@ body {
     color: #007bff;
 }
 
-.form-group label {
-    width: 100%;
+.form-group {
+    margin-bottom: 1.5rem;
+
+    label {
+        width: 100%;
+    }
+
+    input,
+    select {
+        width: 100%;
+    }
 }
 
-.form-group input {
-    width: 100%;
+.form-check {
+    margin-bottom: 10px; // Espaçamento entre os checkboxes
+
+    .form-check-input {
+        width: auto;
+        height: auto;
+    }
+
+    .form-check-label {
+        margin-left: 15px;
+    }
 }
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+
+    &:hover {
+        background-color: darken(#007bff, 10%);
+        border-color: darken(#007bff, 10%);
+    }
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+
+    &:hover {
+        background-color: darken(#6c757d, 10%);
+        border-color: darken(#6c757d, 10%);
+    }
+}
+
+.container {
+    max-width: 600px;
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.card {
+    margin-bottom: 20px;
+}
+
+.form-check-input {
+    display: inline-block;
+}
+

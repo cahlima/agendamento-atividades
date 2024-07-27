@@ -1,12 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Atividades;
 use App\Models\Horarios;
+use App\Models\Usuarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
-use App\Models\Atividades;
-use App\Models\Usuarios;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
@@ -25,51 +24,52 @@ class AtividadesController extends Controller
         return view('administrador.atividades.index', compact('atividades'));
     }
 
-
-
     public function listarAtividades()
     {
         $this->authorize('isAdmin', Auth::user());
-
-        $atividades = Atividades::whereDate('data', Carbon::today())->get();
+        $atividades = Atividades::whereDate('data_inicio', Carbon::today())->get();
         return view('administrador.atividades.listar', compact('atividades'));
     }
 
     public function adicionarAtividade()
     {
         $this->authorize('isAdmin', Auth::user());
-
-        $instrutores = Usuarios::where('tipo_id', 2)->get();
+        $instrutores = Usuarios::where('tipo_id', 3)->get(); // Supondo que tipo_id 3 é para instrutores
         return view('administrador.atividades.adicionar', compact('instrutores'));
     }
+// app/Http/Controllers/AtividadesController.php
 
-    public function salvarAtividade(Request $request)
+public function salvarAtividade(Request $request)
 {
     $this->authorize('isAdmin', Auth::user());
 
-    // Validação dos dados
     $validator = Validator::make($request->all(), [
         'atividade' => 'required|string|max:255',
-        'data' => 'required|date',
+        'data_inicio' => 'required|date',
+        'data_fim' => 'required|date|after_or_equal:data_inicio',
         'hora' => 'required|date_format:H:i',
         'instrutor' => 'required|exists:usuarios,id',
-        'local' => 'required|string|max:255'
+        'local' => 'required|string|max:255',
+        'dias' => 'required|array',
+        'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
     ]);
 
     if ($validator->fails()) {
         return redirect()->back()->withErrors($validator)->withInput();
     }
 
-    // Criação da nova atividade
+    $dias = implode(',', $request->dias);
+
     Atividades::create([
         'atividade' => $request->atividade,
-        'data' => $request->data,
+        'data_inicio' => $request->data_inicio,
+        'data_fim' => $request->data_fim,
         'hora' => $request->hora,
         'instrutor_id' => $request->instrutor,
         'local' => $request->local,
+        'dias' => $dias,
     ]);
 
-    // Mensagem de sucesso
     Session::flash('flash_message', [
         'msg' => "Atividade adicionada com sucesso!",
         'class' => "alert-success"
@@ -77,6 +77,8 @@ class AtividadesController extends Controller
 
     return redirect()->route('atividades.index');
 }
+
+
     public function editarAtividade($id)
     {
         $this->authorize('isAdmin', Auth::user());
@@ -85,7 +87,7 @@ class AtividadesController extends Controller
         if (!$atividade) {
             return redirect()->route('atividades.index')->withErrors('Atividade não encontrada.');
         }
-        $instrutores = Usuarios::where('tipo_id', 2)->get();
+        $instrutores = Usuarios::where('tipo_id', 3)->get();
         return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
     }
 
@@ -100,23 +102,31 @@ class AtividadesController extends Controller
 
         $validator = Validator::make($request->all(), [
             'atividade' => 'required|string|max:255',
-            'data' => 'required|date',
+            'data_inicio' => 'required|date',
+            'data_fim' => 'required|date|after_or_equal:data_inicio',
             'hora' => 'required|date_format:H:i',
             'instrutor' => 'required|exists:usuarios,id',
-            'local' => 'required|string|max:255'
+            'local' => 'required|string|max:255',
+            'dias' => 'required|array',
+            'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        $dias = implode(',', $request->dias);
+
         $atividade->update([
             'atividade' => $request->atividade,
-            'data' => $request->data,
+            'data_inicio' => $request->data_inicio,
+            'data_fim' => $request->data_fim,
             'hora' => $request->hora,
             'instrutor_id' => $request->instrutor,
             'local' => $request->local,
+            'dias' => $dias,
         ]);
+
         Session::flash('flash_message', [
             'msg' => "Atividade atualizada com sucesso!",
             'class' => "alert-success"
@@ -146,32 +156,32 @@ class AtividadesController extends Controller
     }
 
     public function listar(Request $request)
-{
-    $usuario = Auth::user();
-    $query = Atividades::query();
+    {
+        $usuario = Auth::user();
+        $query = Atividades::query();
 
-    if ($usuario->isAdmin()) {
-        if ($request->has('search')) {
-            $query->where('atividade', 'like', '%' . $request->search . '%');
+        if ($usuario->isAdmin()) {
+            if ($request->has('search')) {
+                $query->where('atividade', 'like', '%' . $request->search . '%');
+            }
+            $atividades = $query->with('professor')->paginate(10);
+            return view('administrador.atividades.listar', compact('atividades'));
+        } elseif ($usuario->isProfessor()) {
+            if ($request->has('search')) {
+                $query->where('atividade', 'like', '%' . $request->search . '%');
+            }
+            $atividades = $query->with('professor')->where('instrutor_id', $usuario->id)->paginate(10);
+            return view('professor.atividades.listar', compact('atividades'));
+        } elseif ($usuario->isAluno()) {
+            if ($request->has('search')) {
+                $query->where('atividade', 'like', '%' . $request->search . '%');
+            }
+            $atividades = $query->with('professor')->paginate(10);
+            return view('aluno.atividades.listar', compact('atividades'));
+        } else {
+            return redirect()->back()->with('error', 'Permissão negada.');
         }
-        $atividades = $query->with('professor')->paginate(10);
-        return view('administrador.atividades.listar', compact('atividades'));
-    } elseif ($usuario->isProfessor()) {
-        if ($request->has('search')) {
-            $query->where('atividade', 'like', '%' . $request->search . '%');
-        }
-        $atividades = $query->with('professor')->where('instrutor_id', $usuario->id)->paginate(10);
-        return view('professor.atividades.listar', compact('atividades'));
-    } elseif ($usuario->isAluno()) {
-        if ($request->has('search')) {
-            $query->where('atividade', 'like', '%' . $request->search . '%');
-        }
-        $atividades = $query->with('professor')->paginate(10);
-        return view('aluno.atividades.listar', compact('atividades'));
-    } else {
-       return redirect()->back()->with('error', 'Permissão negada.');
-}
-}
+    }
 
     public function atividadesMatriculadas()
     {
@@ -223,4 +233,3 @@ class AtividadesController extends Controller
         return response()->json([$atividade]);
     }
 }
-

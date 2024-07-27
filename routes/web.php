@@ -44,14 +44,23 @@ Route::middleware(['auth'])->group(function () {
         return redirect('/login')->with('success', 'Você foi deslogado');
     })->name('logout');
 
-    // Rotas de Administradores
-    Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
-        Route::get('/painel', [PainelAdmController::class, 'index'])->name('painel');
+    /// Rotas para painéis
+Route::middleware(['auth'])->group(function () {
+    Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
+    Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
+    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
+});
 
-        // Perfil
-        Route::get('/perfil', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
-        Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
-    });
+
+// Rotas de Administradores
+Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(function () {
+    Route::get('/painel', [PainelAdmController::class, 'index'])->name('painel');
+
+    // Perfil
+    Route::get('/perfil', [PainelAdmController::class, 'perfilIndex'])->name('perfil.index');
+    Route::get('/perfil/edit', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
+    Route::post('/perfil', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
+});
 
     // Rotas de Usuários
     Route::prefix('usuarios')->name('usuarios.')->group(function () {
@@ -63,10 +72,6 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/{id}', [UsuariosController::class, 'deletar'])->name('destroy');
     });
 
-    // Rotas para painéis
-    Route::get('/paineladm', [PainelAdmController::class, 'index'])->name('paineladm');
-    Route::get('/painelprof', [ProfessoresController::class, 'index'])->name('painelprof');
-    Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painelaluno');
 
     // Rotas de Atividades para Administradores
     Route::prefix('atividades')->name('atividades.')->middleware('can:isAdmin')->group(function () {

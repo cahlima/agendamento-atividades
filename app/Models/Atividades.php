@@ -9,12 +9,12 @@ class Atividades extends Model
     protected $table = 'atividades';
 
     protected $fillable = [
-        'titulo', 'descricao', 'professor_id', 'data', 'hora', 'local'
+        'titulo', 'descricao', 'professor_id', 'data_inicio', 'data_fim', 'hora', 'local', 'dias'
     ];
 
-    protected $dates = ['data', 'hora'];
+    protected $dates = ['data_inicio', 'data_fim', 'hora'];
 
-    // Relação com o professor
+    // Relação com o professor (usuário)
     public function professor()
     {
         return $this->belongsTo(Usuarios::class, 'professor_id');
@@ -27,13 +27,6 @@ class Atividades extends Model
                     ->wherePivot('tipo_id', 3);  // Confirme o tipo_id correto para alunos
     }
 
-    // Pode ser removido se não for mais usado
-    public function professores()
-    {
-        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
-                    ->wherePivot('tipo_id', 2);  // Confirme o tipo_id correto para professores
-    }
-
     // Usuários matriculados na atividade (incluindo alunos e professores)
     public function usuariosMatriculados()
     {
@@ -43,6 +36,6 @@ class Atividades extends Model
     // Relação com os horários da atividade
     public function horarios()
     {
-        return $this->hasMany(Horarios::class); // Ajuste conforme necessário, certifique-se de que há um modelo Horarios
+        return $this->hasMany(Horarios::class, 'atividade_id'); // Ajuste conforme necessário, certifique-se de que há um modelo Horarios
     }
 }

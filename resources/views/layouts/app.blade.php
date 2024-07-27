@@ -5,33 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Painel de Aluno') }}</title>
+    <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 
     <!-- Styles -->
-    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    @vite(['resources/sass/app.scss'])
 </head>
 <body>
     <div id="app">
         @include('layouts._includes._nav')
-
         <main class="py-4">
             @yield('content')
         </main>
     </div>
 
+    <!-- Vue App Mount Point -->
     <div id="vue-app"></div>
 
     <!-- Scripts -->
-    @vite('resources/js/app.js')
+    @vite(['resources/js/app.js'])
 
-    <script>
-        window.addEventListener('beforeunload', function (e) {
-            navigator.sendBeacon('{{ route("logout") }}', '');
-        });
-    </script>
+    @yield('scripts')
 </body>
 </html>

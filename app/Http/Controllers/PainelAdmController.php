@@ -22,8 +22,50 @@ class PainelAdmController extends Controller
     // Exibe o painel administrativo
     public function index()
     {
+        Log::info('Método index do PainelAdmController chamado');
         $atividades = Atividades::all(); // Busca todas as atividades cadastradas
         return view('administrador.paineladm', compact('atividades'));
+    }
+
+
+    // Exibe o perfil do administrador
+    public function perfilIndex()
+    {
+        $usuario = Auth::user();
+        return view('administrador.perfil.index', compact('usuario'));
+    }
+
+    // Exibe o formulário para editar o perfil do administrador
+    public function perfilEdit()
+    {
+        $usuario = Auth::user(); // Assumindo que o admin é autenticado pelo guard padrão
+        return view('administrador.perfil.edit', compact('usuario'));
+    }
+
+    // Atualiza o perfil do administrador
+    public function perfilUpdate(Request $request)
+    {
+        $usuario = Auth::user(); // Assumindo que o admin é autenticado pelo guard padrão
+
+        $data = $request->validate([
+            'nome' => 'required|string|max:255',
+            'sobrenome' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
+            'data_nascimento' => 'required|date',
+            'telefone' => 'required|string|max:20',
+            'login' => 'required|string|max:255|unique:usuarios,login,' . $usuario->id,
+            'senha' => 'nullable|string|min:8|confirmed',
+        ]);
+
+        if ($request->filled('senha')) {
+            $data['senha'] = bcrypt($request->senha);
+        } else {
+            unset($data['senha']);
+        }
+
+        $usuario->update($data);
+
+        return redirect()->route('admin.perfil.index')->with('success', 'Perfil atualizado com sucesso.');
     }
 
     public function listarUsuarios()
@@ -82,7 +124,7 @@ class PainelAdmController extends Controller
         return redirect()->route('usuarios.index');
     }
     // Exibe o formulário para editar um usuário existente
-  
+
 
    public function editarUsuario($id)
     {
@@ -247,32 +289,5 @@ class PainelAdmController extends Controller
         return redirect()->route('atividades.index');
     }
 
-    // Exibe o formulário para editar o perfil do administrador
-    public function perfilEdit()
-    {
-        $usuario = Auth::user(); // Assumindo que o admin é autenticado pelo guard padrão
-        return view('administrador.perfil.edit', compact('usuario'));
-    }
 
-    // Atualiza o perfil do administrador
-    public function perfilUpdate(Request $request)
-    {
-        $usuario = Auth::user(); // Assumindo que o admin é autenticado pelo guard padrão
-
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
-
-        if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
-        } else {
-            unset($data['password']);
-        }
-
-        $usuario->update($data);
-
-        return redirect()->route('admin.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
-    }
 }

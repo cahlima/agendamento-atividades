@@ -3,7 +3,8 @@
     "type": "module",
     "scripts": {
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "watch": "vite build --watch"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.0.5",
@@ -16,12 +17,14 @@
         "vue-loader": "^16.8.3"
     },
     "dependencies": {
+        "2": "^3.0.0",
         "@popperjs/core": "^2.11.8",
         "boostrap": "^2.0.0",
         "bootstrap": "^5.3.3",
         "jquery": "^3.7.1",
         "laravel-echo": "^1.16.1",
         "pusher-js": "^8.4.0-rc2",
+        "select": "^1.1.2",
         "vue": "^3.4.31"
     }
 }
