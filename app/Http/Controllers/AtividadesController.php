@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Atividades;
-use App\Models\Horarios;
-use App\Models\Usuarios;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use App\Models\Atividades;
+use App\Models\Usuarios;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Carbon\Carbon;
 
@@ -17,38 +18,111 @@ class AtividadesController extends Controller
         $this->middleware('auth');
     }
 
-    public function index()
-    {
-        $this->authorize('isAdmin', Auth::user());
-        $atividades = Atividades::with('professor')->get();
-        return view('administrador.atividades.index', compact('atividades'));
-    }
-
     public function listarAtividades()
     {
         $this->authorize('isAdmin', Auth::user());
-        $atividades = Atividades::whereDate('data_inicio', Carbon::today())->get();
-        return view('administrador.atividades.listar', compact('atividades'));
+        $atividades = Atividades::with('instrutor')->get();
+        return view('administrador.atividades.index', compact('atividades'));
     }
-
     public function adicionarAtividade()
     {
         $this->authorize('isAdmin', Auth::user());
-        $instrutores = Usuarios::where('tipo_id', 3)->get(); // Supondo que tipo_id 3 é para instrutores
+        $instrutores = Usuarios::where('tipo_id', 3)->get();
         return view('administrador.atividades.adicionar', compact('instrutores'));
     }
-// app/Http/Controllers/AtividadesController.php
 
-public function salvarAtividade(Request $request)
+    public function editarAtividade($id)
+    {
+        $this->authorize('isAdmin', Auth::user());
+
+        $atividade = Atividades::find($id);
+        if (!$atividade) {
+            return redirect()->route('admin.atividades.index')->withErrors('Atividade não encontrada.');
+        }
+        $instrutores = Usuarios::where('tipo_id', 3)->get();
+        return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
+    }
+
+
+
+    public function salvarAtividade(Request $request)
 {
     $this->authorize('isAdmin', Auth::user());
+
+    Log::info('Iniciando validação dos dados da atividade.', ['dados' => $request->all()]);
 
     $validator = Validator::make($request->all(), [
         'atividade' => 'required|string|max:255',
         'data_inicio' => 'required|date',
         'data_fim' => 'required|date|after_or_equal:data_inicio',
         'hora' => 'required|date_format:H:i',
-        'instrutor' => 'required|exists:usuarios,id',
+        'instrutor_id' => 'required|exists:usuarios,id',
+        'local' => 'required|string|max:255',
+        'dias' => 'required|array',
+        'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
+    ]);
+
+    if ($validator->fails()) {
+        Log::error('Validação dos dados falhou.', ['erros' => $validator->errors()]);
+        return redirect()->back()->withErrors($validator)->withInput();
+    }
+
+    $dias = implode(',', $request->dias);
+    $instrutor = Usuarios::find($request->instrutor_id)->nome; // Obter o nome do instrutor
+
+    try {
+        Log::info('Tentando criar nova atividade.', [
+            'atividade' => $request->atividade,
+            'data_inicio' => $request->data_inicio,
+            'data_fim' => $request->data_fim,
+            'hora' => $request->hora,
+            'instrutor_id' => $request->instrutor_id,
+            'instrutor' => $instrutor, // Adicionar o nome do instrutor
+            'local' => $request->local,
+            'dias' => $dias,
+        ]);
+
+        Atividades::create([
+            'atividade' => $request->atividade,
+            'data_inicio' => $request->data_inicio,
+            'data_fim' => $request->data_fim,
+            'hora' => $request->hora,
+            'instrutor_id' => $request->instrutor_id,
+            'instrutor' => $instrutor, // Adicionar o nome do instrutor
+            'local' => $request->local,
+            'dias' => $dias,
+        ]);
+
+        Log::info('Atividade criada com sucesso.');
+
+        Session::flash('flash_message', [
+            'msg' => "Atividade adicionada com sucesso!",
+            'class' => "alert-success"
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Erro ao criar atividade.', ['erro' => $e->getMessage()]);
+        return redirect()->back()->withErrors('Erro ao criar atividade. Por favor, tente novamente.')->withInput();
+    }
+
+    return redirect()->route('admin.atividades.index');
+}
+
+
+    public function update(Request $request, $id)
+{
+    $this->authorize('isAdmin', Auth::user());
+
+    $atividade = Atividades::find($id);
+    if (!$atividade) {
+        return redirect()->back()->withErrors('Atividade não encontrada.');
+    }
+
+    $validator = Validator::make($request->all(), [
+        'atividade' => 'required|string|max:255',
+        'data_inicio' => 'required|date',
+        'data_fim' => 'required|date|after_or_equal:data_inicio',
+        'hora' => 'required|date_format:H:i',
+        'instrutor_id' => 'required|exists:usuarios,id',
         'local' => 'required|string|max:255',
         'dias' => 'required|array',
         'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
@@ -59,81 +133,26 @@ public function salvarAtividade(Request $request)
     }
 
     $dias = implode(',', $request->dias);
+    $instrutor = Usuarios::find($request->instrutor_id)->nome; // Obter o nome do instrutor
 
-    Atividades::create([
+    $atividade->update([
         'atividade' => $request->atividade,
         'data_inicio' => $request->data_inicio,
         'data_fim' => $request->data_fim,
         'hora' => $request->hora,
-        'instrutor_id' => $request->instrutor,
+        'instrutor_id' => $request->instrutor_id,
+        'instrutor' => $instrutor,
         'local' => $request->local,
         'dias' => $dias,
     ]);
 
     Session::flash('flash_message', [
-        'msg' => "Atividade adicionada com sucesso!",
+        'msg' => "Atividade atualizada com sucesso!",
         'class' => "alert-success"
     ]);
 
-    return redirect()->route('atividades.index');
+    return redirect()->route('admin.atividades.index');
 }
-
-
-    public function editarAtividade($id)
-    {
-        $this->authorize('isAdmin', Auth::user());
-
-        $atividade = Atividades::find($id);
-        if (!$atividade) {
-            return redirect()->route('atividades.index')->withErrors('Atividade não encontrada.');
-        }
-        $instrutores = Usuarios::where('tipo_id', 3)->get();
-        return view('administrador.atividades.editar', compact('atividade', 'instrutores'));
-    }
-
-    public function atualizarAtividade(Request $request, $id)
-    {
-        $this->authorize('isAdmin', Auth::user());
-
-        $atividade = Atividades::find($id);
-        if (!$atividade) {
-            return redirect()->back()->withErrors('Atividade não encontrada.');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'atividade' => 'required|string|max:255',
-            'data_inicio' => 'required|date',
-            'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'hora' => 'required|date_format:H:i',
-            'instrutor' => 'required|exists:usuarios,id',
-            'local' => 'required|string|max:255',
-            'dias' => 'required|array',
-            'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dias = implode(',', $request->dias);
-
-        $atividade->update([
-            'atividade' => $request->atividade,
-            'data_inicio' => $request->data_inicio,
-            'data_fim' => $request->data_fim,
-            'hora' => $request->hora,
-            'instrutor_id' => $request->instrutor,
-            'local' => $request->local,
-            'dias' => $dias,
-        ]);
-
-        Session::flash('flash_message', [
-            'msg' => "Atividade atualizada com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('atividades.index');
-    }
 
     public function deletarAtividade($id)
     {
@@ -152,84 +171,52 @@ public function salvarAtividade(Request $request)
                 'class' => "alert-danger"
             ]);
         }
-        return redirect()->route('atividades.index');
-    }
-
-    public function listar(Request $request)
-    {
-        $usuario = Auth::user();
-        $query = Atividades::query();
-
-        if ($usuario->isAdmin()) {
-            if ($request->has('search')) {
-                $query->where('atividade', 'like', '%' . $request->search . '%');
-            }
-            $atividades = $query->with('professor')->paginate(10);
-            return view('administrador.atividades.listar', compact('atividades'));
-        } elseif ($usuario->isProfessor()) {
-            if ($request->has('search')) {
-                $query->where('atividade', 'like', '%' . $request->search . '%');
-            }
-            $atividades = $query->with('professor')->where('instrutor_id', $usuario->id)->paginate(10);
-            return view('professor.atividades.listar', compact('atividades'));
-        } elseif ($usuario->isAluno()) {
-            if ($request->has('search')) {
-                $query->where('atividade', 'like', '%' . $request->search . '%');
-            }
-            $atividades = $query->with('professor')->paginate(10);
-            return view('aluno.atividades.listar', compact('atividades'));
-        } else {
-            return redirect()->back()->with('error', 'Permissão negada.');
-        }
-    }
-
-    public function atividadesMatriculadas()
-    {
-        $usuario = Auth::user();
-        if ($usuario->isAluno()) {
-            $atividades = $usuario->atividades()->with('professor')->paginate(10);
-            return view('aluno.atividades.matriculadas', compact('atividades'));
-        }
-        return redirect()->back()->with('error', 'Acesso não autorizado.');
-    }
-
-    public function desmatricular($id)
-    {
-        $usuario = Auth::user();
-        if ($usuario->isAluno()) {
-            $usuario->atividades()->detach($id);
-            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Desmatriculado da atividade com sucesso!');
-        }
-        return redirect()->back()->with('error', 'Operação não permitida.');
-    }
-
-    public function profAtividadesIndex()
-    {
-        if (Auth::user()->isProfessor()) {
-            $atividades = Atividades::where('instrutor_id', Auth::id())->get();
-            return view('professor.atividades.listar', compact('atividades'));
-        }
-        return redirect()->route('professor.atividades.listar')->with('error', 'Acesso não autorizado.');
-    }
-
-    public function profAtividadesMatriculadas()
-    {
-        if (Auth::user()->isProfessor()) {
-            $atividades = Auth::user()->atividades()->get();
-            return view('professor.atividades.matriculadas', compact('atividades'));
-        }
-        return redirect()->back()->with('error', 'Acesso não autorizado.');
+        return redirect()->route('admin.atividades.index');
     }
 
     public function buscarHorarios($id)
     {
-        $horarios = Horarios::where('atividade_id', $id)->get();
-        return response()->json($horarios);
+        // Implemente a lógica para buscar horários de uma atividade específica
     }
 
     public function buscarAtividades($id)
     {
-        $atividade = Atividades::with('professor')->find($id);
-        return response()->json([$atividade]);
+        // Implemente a lógica para buscar uma atividade específica
+    }
+
+    public function listarAtividadesPublicas()
+    {
+        $atividades = Atividades::all();
+        return view('atividades.listar', compact('atividades'));
+    }
+   
+
+    public function index()
+{
+    $atividades = Atividades::all()->map(function($atividade) {
+        $diasSemana = explode(',', $atividade->dias);
+        $proximasAtividades = $this->calcularProximasAtividades($atividade->data_inicio, $atividade->data_fim, $diasSemana);
+        $atividade->proximas_atividades = $proximasAtividades ?? [];
+        return $atividade;
+    });
+
+    return view('administrador.atividades.index', compact('atividades'));
+}
+
+
+    private function calcularProximasAtividades($dataInicio, $dataFim, $diasSemana)
+    {
+        $proximasAtividades = [];
+        $dataAtual = Carbon::parse($dataInicio);
+        $dataFim = Carbon::parse($dataFim);
+
+        while ($dataAtual->lte($dataFim)) {
+            if (in_array($dataAtual->format('l'), $diasSemana)) {
+                $proximasAtividades[] = $dataAtual->format('d/m/Y');
+            }
+            $dataAtual->addDay();
+        }
+
+        return $proximasAtividades;
     }
 }

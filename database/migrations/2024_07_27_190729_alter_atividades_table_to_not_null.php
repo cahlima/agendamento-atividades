@@ -34,3 +34,4 @@ class AlterAtividadesTableToNotNull extends Migration
         });
     }
 }
+

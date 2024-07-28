@@ -8,7 +8,7 @@
                 <div class="card-header">{{ __('Editar Atividade') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('atividades.update', $atividade->id) }}">
+                    <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}">
                         @csrf
                         @method('PUT')
 
@@ -22,19 +22,30 @@
                             @enderror
                         </div>
 
-                        <div class="form-group">
-                            <label for="data">Data</label>
-                            <input type="date" class="form-control @error('data') is-invalid @enderror" id="data" name="data" value="{{ $atividade->data }}" required>
-                            @error('data')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="data_inicio">Data de Início</label>
+                                <input type="date" class="form-control @error('data_inicio') is-invalid @enderror" id="data_inicio" name="data_inicio" value="{{ $atividade->data_inicio }}" required>
+                                @error('data_inicio')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="data_fim">Data de Fim</label>
+                                <input type="date" class="form-control @error('data_fim') is-invalid @enderror" id="data_fim" name="data_fim" value="{{ $atividade->data_fim }}" required>
+                                @error('data_fim')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label for="hora">Hora</label>
-                            <input type="time" class="form-control @error('hora') is-invalid @enderror" id="hora" name="hora" value="{{ $atividade->hora }}" required>
+                            <input type="time" class="form-control @error('hora') is-invalid @enderror" id="hora" name="hora" value="{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}" required>
                             @error('hora')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -44,13 +55,13 @@
 
                         <div class="form-group">
                             <label for="instrutor">Instrutor</label>
-                            <select class="form-control @error('instrutor') is-invalid @enderror" id="instrutor" name="instrutor" required>
+                            <select class="form-control @error('instrutor_id') is-invalid @enderror" id="instrutor" name="instrutor_id" required>
                                 <option value="">Selecione o instrutor</option>
                                 @foreach($instrutores as $instrutor)
-                                    <option value="{{ $instrutor->id }}" {{ $instrutor->id == $atividade->instrutor ? 'selected' : '' }}>{{ $instrutor->nome }}</option>
+                                    <option value="{{ $instrutor->id }}" {{ $instrutor->id == $atividade->instrutor_id ? 'selected' : '' }}>{{ $instrutor->nome }}</option>
                                 @endforeach
                             </select>
-                            @error('instrutor')
+                            @error('instrutor_id')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
@@ -61,6 +72,26 @@
                             <label for="local">Local</label>
                             <input type="text" class="form-control @error('local') is-invalid @enderror" id="local" name="local" value="{{ $atividade->local }}" required>
                             @error('local')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dias">Dias da Semana</label>
+                            <select id="dias" class="form-control @error('dias') is-invalid @enderror" name="dias[]" multiple required>
+                                @php
+                                    $dias_semana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+                                    $dias_selecionados = explode(',', $atividade->dias);
+                                @endphp
+                                @foreach($dias_semana as $dia)
+                                    <option value="{{ $dia }}" {{ in_array($dia, $dias_selecionados) ? 'selected' : '' }}>
+                                        {{ ucfirst($dia) }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('dias')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

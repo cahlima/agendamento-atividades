@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.app')
 
 @section('content')
 <div class="container mt-5">
@@ -17,7 +17,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('atividades.store') }}">
+            <form method="POST" action="{{ route('admin.atividades.store') }}">
                 @csrf
 
                 <div class="form-group">
@@ -43,7 +43,7 @@
 
                 <div class="form-group">
                     <label for="instrutor">{{ __('Instrutor') }}</label>
-                    <select id="instrutor" class="form-control" name="instrutor" required>
+                    <select id="instrutor" class="form-control" name="instrutor_id" required>
                         @foreach($instrutores as $instrutor)
                             <option value="{{ $instrutor->id }}">{{ $instrutor->nome }}</option>
                         @endforeach
@@ -71,7 +71,7 @@
 
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">{{ __('Adicionar Atividade') }}</button>
-                    <a href="{{ route('atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+                    <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
                 </div>
             </form>
         </div>

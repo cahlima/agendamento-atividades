@@ -9,15 +9,15 @@ class Atividades extends Model
     protected $table = 'atividades';
 
     protected $fillable = [
-        'titulo', 'descricao', 'professor_id', 'data_inicio', 'data_fim', 'hora', 'local', 'dias'
+        'atividade', 'instrutor', 'instrutor_id', 'data_inicio', 'data_fim', 'hora', 'local', 'dias'
     ];
 
-    protected $dates = ['data_inicio', 'data_fim', 'hora'];
+    protected $dates = ['data_inicio', 'data_fim'];
 
     // Relação com o professor (usuário)
-    public function professor()
+    public function instrutor()
     {
-        return $this->belongsTo(Usuarios::class, 'professor_id');
+        return $this->belongsTo(Usuarios::class, 'instrutor_id');
     }
 
     // Relação com os alunos matriculados na atividade
