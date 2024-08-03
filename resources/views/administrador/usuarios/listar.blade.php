@@ -1,50 +1,29 @@
-@extends('layouts.base')
+@extends('layouts.app')
+
+@section('title', 'Lista de Usuários')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('paineladm') }}">
-                            {{ __('Início') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('atividades.index') }}">
-                            {{ __('Gerenciar Atividades') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ route('usuarios.index') }}">
-                            {{ __('Gerenciar Usuários') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.perfil.edit') }}">
-                            {{ __('Meu Perfil') }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
             <h2>{{ __('Lista de Usuários') }}</h2>
-
-            <a href="{{ route('usuarios.create') }}" class="btn btn-primary">{{ __('Adicionar Usuário') }}</a>
-
-            @if(session('success'))
-                <div class="alert alert-success mt-2">
-                    {{ session('success') }}
-                </div>
+        </div>
+        <div class="card-body">
+            @if(Session::has('flash_message'))
+                @php
+                    $flashMessage = Session::get('flash_message');
+                @endphp
+                @if(is_array($flashMessage) && isset($flashMessage['msg']))
+                    <div class="alert alert-success">{{ $flashMessage['msg'] }}</div>
+                @else
+                    <div class="alert alert-success">{{ $flashMessage }}</div>
+                @endif
             @endif
 
-            <div class="table-responsive mt-4">
-                <table class="table table-striped table-sm">
+            <a href="{{ route('usuarios.create') }}" class="btn btn-success mb-3">{{ __('Adicionar Usuário') }}</a>
+
+            <div class="table-responsive">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -62,23 +41,21 @@
                                 <td>{{ $usuario->email }}</td>
                                 <td>{{ $usuario->tipo->nome }}</td>
                                 <td>
-                                    <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-sm btn-warning">{{ __('Editar') }}</a>
-                                    <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline;">
+                                    <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary">{{ __('Editar') }}</a>
+                                    <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline-block;">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">{{ __('Deletar') }}</button>
+                                        <button type="submit" class="btn btn-danger">{{ __('Deletar') }}</button>
                                     </form>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
+
+                {{ $usuarios->links() }}
             </div>
-
-            {{ $usuarios->links() }}
-
-            <a href="{{ route('paineladm') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
-        </main>
+        </div>
     </div>
 </div>
 @endsection

@@ -1,69 +1,19 @@
 @extends('layouts.app')
 
+@section('title', 'Dashboard')
+
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-
-                  <!-- Outros itens de navegação -->
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('paineladm') }}">
-                            {{ __('Inicio') }}
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('atividades.index') }}">
-                            {{ __('Gerenciar Atividades') }}
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('usuarios.index') }}">
-                            {{ __('Gerenciar Usuários') }}
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.perfil.edit') }}">
-                            {{ __('Meu Perfil') }}
-                        </a>
-                    </li>
-
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                           onclick="event.preventDefault();
-                           document.getElementById('logout-form').submit();">
-                            {{ __('Sair') }}
-                        </a>
-
-
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h2>Olá, {{ Auth::user()->nome }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title">{{ __('Atividades de Hoje') }}</h5>
             </div>
-        </nav>
-
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h1 class="h2">{{ __('Painel Administrativo') }}</h1>
-            </div>
-
-            @if(Session::has('flash_message'))
-                <div class="alert {{ Session::get('flash_message.class') }}">
-                    {{ Session::get('flash_message.msg') }}
-                </div>
-            @endif
-
-            <h4>{{ __('Atividades de Hoje') }}</h4>
             <div class="table-responsive">
-                <table class="table table-striped table-sm">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>{{ __('Atividade') }}</th>
@@ -74,21 +24,19 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($atividades as $atividade)
-                            @if(\Carbon\Carbon::parse($atividade->data)->isToday())
-                                <tr>
-                                    <td>{{ $atividade->atividade }}</td>
-                                    <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
-                                    <td>{{ $atividade->hora }}</td>
-                                    <td>{{ $atividade->instrutor }}</td>
-                                    <td>{{ $atividade->local }}</td>
-                                </tr>
-                            @endif
+                        @foreach ($atividades as $atividade)
+                            <tr>
+                                <td>{{ $atividade->atividade }}</td>
+                                <td>{{ now()->format('d/m/Y') }}</td>
+                                <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td> 
+                                <td>{{ $atividade->instrutor }}</td>
+                                <td>{{ $atividade->local }}</td>
+                            </tr>
                         @endforeach
                     </tbody>
                 </table>
             </div>
-        </main>
+        </div>
     </div>
 </div>
 @endsection

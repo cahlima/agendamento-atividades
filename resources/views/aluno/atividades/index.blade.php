@@ -1,5 +1,7 @@
 <!-- resources/views/aluno/atividades/index.blade.php -->
-@extends('layouts.base')
+@extends('layouts.app')
+
+@section('title', 'Dashboard')
 
 @section('content')
 <div class="table-responsive">

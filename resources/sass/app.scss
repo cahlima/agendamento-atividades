@@ -1,25 +1,45 @@
 // Import Bootstrap
 @import "node_modules/bootstrap/scss/bootstrap";
 
-
 // Your custom styles here
 
-// Custom styles
 body {
     font-family: 'Nunito', sans-serif;
 }
 
-.sidebar {
-    background-color: #f8f9fa;
-    padding: 15px;
-    height: 100vh;
-    position: fixed;
-    width: 200px;
+.navbar {
+    background-color: #fff;
+    border-bottom: 1px solid #e3e6f0;
+    padding: 1rem 2rem;
 }
 
-.main-content {
-    margin-left: 220px;
-    padding: 20px;
+.navbar-brand {
+    font-weight: bold;
+}
+
+.navbar-nav {
+    margin-left: auto;
+}
+
+.nav-item {
+    margin-left: 1rem;
+}
+
+.container {
+    max-width: 100%;
+    margin-top: 20px;
+}
+
+.card {
+    border: 1px solid #e3e6f0;
+    border-radius: .35rem;
+    background-color: #fff;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+    margin-bottom: 20px;
+}
+
+.card-body {
+    padding: 1.25rem;
 }
 
 .table-responsive {
@@ -29,15 +49,34 @@ body {
 .table {
     width: 100%;
     white-space: nowrap;
+
+    th, td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid #dee2e6;
+    }
+
+    thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+    }
+
+    tbody + tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .btn {
+        margin: 0 5px;
+    }
 }
 
 .nav-link {
     color: #343a40;
     font-weight: bold;
-}
 
-.nav-link:hover {
-    color: #007bff;
+    &:hover {
+        color: #007bff;
+    }
 }
 
 .form-group {
@@ -54,7 +93,7 @@ body {
 }
 
 .form-check {
-    margin-bottom: 10px; // Espaçamento entre os checkboxes
+    margin-bottom: 10px;
 
     .form-check-input {
         width: auto;
@@ -84,22 +123,5 @@ body {
         background-color: darken(#6c757d, 10%);
         border-color: darken(#6c757d, 10%);
     }
-}
-
-.container {
-    max-width: 600px;
-}
-
-.card-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.card {
-    margin-bottom: 20px;
-}
-
-.form-check-input {
-    display: inline-block;
 }
 

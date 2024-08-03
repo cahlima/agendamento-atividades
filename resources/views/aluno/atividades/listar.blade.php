@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('title', 'Dashboard')
+
 @section('content')
 <div class="container">
     <h2>{{ __('Atividades Disponíveis') }}</h2>

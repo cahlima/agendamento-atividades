@@ -38,4 +38,12 @@ class Atividades extends Model
     {
         return $this->hasMany(Horarios::class, 'atividade_id'); // Ajuste conforme necessário, certifique-se de que há um modelo Horarios
     }
+
+    // Verifica se a atividade ocorre no dia da semana atual
+    public function ocorreHoje()
+    {
+        $diasSemana = explode(',', $this->dias);
+        $diaSemanaHoje = strtolower(now()->locale('pt_BR')->isoFormat('dddd')); // exemplo: 'segunda'
+        return in_array($diaSemanaHoje, $diasSemana);
+    }
 }

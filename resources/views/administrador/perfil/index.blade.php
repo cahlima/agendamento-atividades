@@ -1,5 +1,6 @@
-<!-- resources/views/perfil/index.blade.php -->
-@extends('layouts.base')
+@extends('layouts.app')
+
+@section('title', 'Meu Perfil')
 
 @section('content')
 <div class="container mt-5">
@@ -8,37 +9,43 @@
             <h2>{{ __('Meu Perfil') }}</h2>
         </div>
         <div class="card-body">
-            <table class="table table-bordered">
-                <tr>
-                    <th>{{ __('Tipo') }}</th>
-                    <td>{{ $usuario->tipo->descricao }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Nome') }}</th>
-                    <td>{{ $usuario->nome }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Sobrenome') }}</th>
-                    <td>{{ $usuario->sobrenome }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Email') }}</th>
-                    <td>{{ $usuario->email }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Data de Nascimento') }}</th>
-                    <td>{{ $usuario->data_nascimento }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Telefone') }}</th>
-                    <td>{{ $usuario->telefone }}</td>
-                </tr>
-                <tr>
-                    <th>{{ __('Login') }}</th>
-                    <td>{{ $usuario->login }}</td>
-                </tr>
-            </table>
-            <a href="{{ route('admin.perfil.edit') }}" class="btn btn-primary">{{ __('Editar Perfil') }}</a>
+            @if(Session::has('flash_message'))
+                @php
+                    $flashMessage = Session::get('flash_message');
+                @endphp
+                @if(is_array($flashMessage) && isset($flashMessage['msg']))
+                    <div class="alert alert-success">{{ $flashMessage['msg'] }}</div>
+                @else
+                    <div class="alert alert-success">{{ $flashMessage }}</div>
+                @endif
+            @endif
+
+            <div class="form-group">
+                <label for="nome">{{ __('Nome') }}</label>
+                <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="sobrenome">{{ __('Sobrenome') }}</label>
+                <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="email">{{ __('Email') }}</label>
+                <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="login">{{ __('Login') }}</label>
+                <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
+                <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" disabled>
+            </div>
+            <div class="form-group">
+                <label for="telefone">{{ __('Telefone') }}</label>
+                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
+            </div>
+
+            <a href="{{ route('admin.perfil.edit', ['id' => $usuario->id]) }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
         </div>
     </div>
 </div>

@@ -25,43 +25,43 @@ class PainelAdmController extends Controller
         return view('administrador.paineladm', compact('atividades'));
     }
 
-
     public function perfilIndex()
-    {
-        $usuario = Auth::user();
-        return view('administrador.perfil.index', compact('usuario'));
+{
+    $usuario = Auth::user();
+    return view('administrador.perfil.index', compact('usuario'));
+}
+
+
+public function perfilEdit($id)
+{
+    $usuario = Usuarios::findOrFail($id);
+    return view('administrador.perfil.edit', compact('usuario'));
+}
+
+public function perfilUpdate(Request $request, $id)
+{
+    $usuario = Usuarios::findOrFail($id);
+
+    $request->validate([
+        'nome' => 'required|string|max:255',
+        'sobrenome' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:usuarios,email,' . $id,
+        'login' => 'required|string|max:255|unique:usuarios,login,' . $id,
+        'data_nascimento' => 'required|date',
+        'telefone' => 'required|string|max:15',
+        'senha' => 'nullable|string|min:8|confirmed',
+    ]);
+
+    $usuario->update($request->only('nome', 'sobrenome', 'email', 'login', 'data_nascimento', 'telefone'));
+
+    if ($request->filled('senha')) {
+        $usuario->update(['senha' => bcrypt($request->senha)]);
     }
 
-    public function perfilEdit()
-    {
-        $usuario = Auth::user();
-        return view('administrador.perfil.edit', compact('usuario'));
-    }
+    Session::flash('flash_message', 'Perfil atualizado com sucesso!');
+    return redirect()->route('admin.perfil.index');
+}
 
-    public function perfilUpdate(Request $request)
-    {
-        $usuario = Auth::user();
-
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'sobrenome' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
-            'data_nascimento' => 'required|date',
-            'telefone' => 'required|string|max:20',
-            'login' => 'required|string|max:255|unique:usuarios,login,' . $usuario->id,
-            'senha' => 'nullable|string|min:8|confirmed',
-        ]);
-
-        if ($request->filled('senha')) {
-            $data['senha'] = bcrypt($request->senha);
-        } else {
-            unset($data['senha']);
-        }
-
-        $usuario->update($data);
-
-        return redirect()->route('admin.perfil.index')->with('success', 'Perfil atualizado com sucesso.');
-    }
 
     public function listarUsuarios()
     {
@@ -118,10 +118,7 @@ class PainelAdmController extends Controller
 
     public function editarUsuario($id)
     {
-        $usuario = Usuarios::find($id);
-        if (!$usuario) {
-            return redirect()->back()->withErrors('Usuário não encontrado.');
-        }
+        $usuario = Usuarios::findOrFail($id);
         $this->authorize('update', $usuario);
         $tipos = Tipos::all();
         return view('administrador.usuarios.editar', compact('usuario', 'tipos'));
@@ -129,10 +126,7 @@ class PainelAdmController extends Controller
 
     public function atualizarUsuario(Request $request, $id)
     {
-        $usuario = Usuarios::find($id);
-        if (!$usuario) {
-            return redirect()->back()->withErrors('Usuário não encontrado.');
-        }
+        $usuario = Usuarios::findOrFail($id);
         $this->authorize('update', $usuario);
 
         $validator = Validator::make($request->all(), [
@@ -166,20 +160,15 @@ class PainelAdmController extends Controller
 
     public function deletarUsuario($id)
     {
-        $usuario = Usuarios::find($id);
-        if ($usuario) {
-            $this->authorize('delete', $usuario);
-            $usuario->delete();
-            Session::flash('flash_message', [
-                'msg' => "Registro excluído com sucesso!",
-                'class' => "alert-success"
-            ]);
-        } else {
-            Session::flash('flash_message', [
-                'msg' => "Usuário não encontrado.",
-                'class' => "alert-danger"
-            ]);
-        }
+        $usuario = Usuarios::findOrFail($id);
+        $this->authorize('delete', $usuario);
+        $usuario->delete();
+
+        Session::flash('flash_message', [
+            'msg' => "Registro excluído com sucesso!",
+            'class' => "alert-success"
+        ]);
+
         return redirect()->route('usuarios.index');
     }
 }

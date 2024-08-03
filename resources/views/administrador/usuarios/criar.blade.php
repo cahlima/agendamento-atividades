@@ -1,46 +1,16 @@
 @extends('layouts.app')
 
+@section('title', 'Adicionar Usuário')
+
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('paineladm') }}">
-                            {{ __('Início') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('atividades.index') }}">
-                            {{ __('Gerenciar Atividades') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="{{ route('usuarios.index') }}">
-                            {{ __('Gerenciar Usuários') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('admin.perfil.edit') }}">
-                            {{ __('Meu Perfil') }}
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-                <h2>{{ __('Adicionar Usuário') }}</h2>
-            </div>
-
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h2>{{ __('Adicionar Usuário') }}</h2>
+        </div>
+        <div class="card-body">
             @if(Session::has('flash_message'))
-                <div class="alert {{ Session::get('flash_message.class') }}">
-                    {{ Session::get('flash_message.msg') }}
-                </div>
+                <div class="alert alert-success">{{ Session::get('flash_message')['msg'] }}</div>
             @endif
 
             <form action="{{ route('usuarios.store') }}" method="POST">
@@ -88,7 +58,7 @@
                 <button type="submit" class="btn btn-success">{{ __('Salvar') }}</button>
                 <a href="{{ route('usuarios.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
             </form>
-        </main>
+        </div>
     </div>
 </div>
 @endsection

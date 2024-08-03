@@ -1,7 +1,5 @@
 <template>
-    <div>
-      <p>Example Component</p>
-    </div>
+    
   </template>
 
   <script>
