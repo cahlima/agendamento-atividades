@@ -17,25 +17,52 @@
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
-            <a class="navbar-brand" href="{{ route('paineladm') }}">Painel Administrativo</a>
+            <a class="navbar-brand" href="{{ route('paineladm') }}">Centro Cultural</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ml-auto">
+                <ul class="navbar-nav ms-auto">
                     @if(Auth::check())
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('paineladm') }}">Início</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.atividades.index') }}">Gerenciar Atividades</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('usuarios.index') }}">Gerenciar Usuários</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{{ route('admin.perfil.index', ['id' => Auth::user()->id]) }}">Meu Perfil</a>
-                        </li>
+                        @can('isAdmin')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('paineladm') }}">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.atividades.index') }}">Gerenciar Atividades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('usuarios.index') }}">Gerenciar Usuários</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.perfil.index', ['id' => Auth::user()->id]) }}">Meu Perfil</a>
+                            </li>
+                        @endcan
+                        @can('isAluno')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('aluno.painel') }}">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">Buscar Atividades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">Minhas Atividades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">Meu Perfil</a>
+                            </li>
+                        @endcan
+                        @can('isProfessor')
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('professor.painel') }}">Início</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('professor.atividades.listar') }}">Minhas Atividades</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('professor.perfil.edit') }}">Meu Perfil</a>
+                            </li>
+                        @endcan
                         <li class="nav-item">
                             <a class="nav-link" href="{{ route('logout') }}"
                                onclick="event.preventDefault();
@@ -60,8 +87,6 @@
 
         <main class="py-4">
             @yield('content')
-            <!-- Remover ou comentar essa linha -->
-            <!-- <example-component></example-component> -->
         </main>
     </div>
 

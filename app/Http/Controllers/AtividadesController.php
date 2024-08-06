@@ -9,7 +9,6 @@ use App\Models\Atividades;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
-use Carbon\Carbon;
 
 class AtividadesController extends Controller
 {
@@ -18,6 +17,7 @@ class AtividadesController extends Controller
         $this->middleware('auth');
     }
 
+    // Funções para administradores
     public function listarAtividades()
     {
         $this->authorize('isAdmin', Auth::user());
@@ -175,11 +175,15 @@ class AtividadesController extends Controller
     public function buscarHorarios($id)
     {
         // Implemente a lógica para buscar horários de uma atividade específica
+        $horarios = Atividades::find($id)->horarios;
+        return response()->json($horarios);
     }
 
     public function buscarAtividades($id)
     {
         // Implemente a lógica para buscar uma atividade específica
+        $atividade = Atividades::find($id);
+        return response()->json($atividade);
     }
 
     public function listarAtividadesPublicas()
@@ -188,7 +192,7 @@ class AtividadesController extends Controller
         return view('atividades.listar', compact('atividades'));
     }
 
-    public function index()
+    public function listar()
     {
         $atividades = Atividades::where('data_inicio', '<=', now())
             ->where('data_fim', '>=', now())
@@ -197,6 +201,31 @@ class AtividadesController extends Controller
                 return $atividade->ocorreHoje();
             });
 
-        return view('administrador.painel', compact('atividades'));
+        return view('aluno.atividades.listar', compact('atividades'));
+    }
+
+    public function atividadesMatriculadas()
+    {
+        $user = Auth::user();
+        $atividadesMatriculadas = $user->atividades;
+
+        return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
+    }
+
+
+    public function profAtividadesIndex()
+    {
+        $user = Auth::user();
+        $atividades = $user->atividades;
+
+        return view('professor.atividades.index', compact('atividades'));
+    }
+
+    public function profAtividadesMatriculadas()
+    {
+        $user = Auth::user();
+        $atividades = $user->atividades;
+
+        return view('professor.atividades.matriculadas', compact('atividades'));
     }
 }

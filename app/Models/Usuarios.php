@@ -38,12 +38,12 @@ class Usuarios extends Authenticatable
 
     public function isProfessor()
     {
-        return $this->tipo_id == 2;
+        return $this->tipo_id == 3;
     }
 
     public function isAluno()
     {
-        return $this->tipo_id == 3;
+        return $this->tipo_id == 2;
     }
 
     public function professor()

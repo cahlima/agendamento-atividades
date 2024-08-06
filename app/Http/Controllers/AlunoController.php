@@ -5,58 +5,80 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 
 class AlunoController extends Controller
 {
-
-
-public function index()
-{
-    $usuario = Auth::guard('web')->user();
-
-    if (!$usuario || is_null($usuario->email)) {
-        Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
-        return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
-    }
-
-    // Supondo que 'atividades' é uma relação definida no modelo do usuário
-    $atividades = $usuario->atividades()->get();
-
-    Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
-
-    Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
-    Log::info('Atividades recuperadas', ['atividades' => $atividades]);
-
-    // Garanta que a variável 'atividades' não seja nula ao passar para a view
-    return view('aluno.painelaluno', compact('usuario', 'atividades'));
-
-    dd($usuario,$atividades);
-}
-
-    public function perfilEdit()
+    public function index()
     {
         $usuario = Auth::guard('web')->user();
+
+        if (!$usuario || is_null($usuario->email)) {
+            Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
+            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
+        }
+
+        $atividades = $usuario->atividades()->get();
+
+        Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
+        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
+        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
+
+        return view('aluno.painelaluno', compact('usuario', 'atividades'));
+    }
+
+    public function showPerfil()
+    {
+        $usuario = Auth::guard('web')->user();
+        Log::info('Exibindo perfil do usuário', ['user_id' => $usuario->id]);
+        return view('aluno.perfil.index', compact('usuario'));
+    }
+
+    public function editPerfil()
+    {
+        $usuario = Auth::guard('web')->user();
+        Log::info('Exibindo formulário de edição de perfil', ['user_id' => $usuario->id]);
         return view('aluno.perfil.edit', compact('usuario'));
     }
 
-    public function perfilUpdate(Request $request)
+    public function updatePerfil(Request $request)
     {
         $usuario = Auth::guard('web')->user();
+        Log::info('Iniciando atualização de perfil', ['user_id' => $usuario->id, 'request_data' => $request->all()]);
 
         $data = $request->validate([
             'nome' => 'required|string|max:255',
+            'sobrenome' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'login' => 'required|string|max:255|unique:usuarios,login,' . $usuario->id,
+            'data_nascimento' => 'required|date',
+            'telefone' => 'required|string|max:20',
+            'senha' => 'nullable|string|min:8|confirmed',
         ]);
 
-        if ($request->filled('password')) {
-            $data['password'] = bcrypt($request->password);
+        Log::info('Dados validados', ['data' => $data]);
+
+        if ($request->filled('senha')) {
+            $data['senha'] = bcrypt($request->senha);
         } else {
-            unset($data['password']);
+            unset($data['senha']);
         }
 
-        $usuario->update($data);
+        Log::info('Dados a serem atualizados', ['data' => $data]);
 
-        return redirect()->route('aluno.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
+        try {
+            $usuario->update($data);
+            Log::info('Perfil atualizado com sucesso', ['user_id' => $usuario->id, 'updated_data' => $data]);
+
+            Session::flash('flash_message', [
+                'msg' => "Perfil atualizado com sucesso!",
+                'class' => "alert-success"
+            ]);
+
+            return redirect()->route('aluno.perfil.index');
+        } catch (\Exception $e) {
+            Log::error('Erro ao atualizar perfil do usuário', ['user_id' => $usuario->id, 'error' => $e->getMessage()]);
+            return redirect()->route('aluno.perfil.edit')->with('error', 'Erro ao atualizar o perfil.');
+        }
     }
 }

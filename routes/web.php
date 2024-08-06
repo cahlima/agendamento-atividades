@@ -90,6 +90,10 @@ Route::prefix('admin/atividades')->name('admin.atividades.')->middleware('can:is
 // Rota para listar atividades que todos os usuários podem acessar
 Route::get('/atividades/listar', [AtividadesController::class, 'listarAtividadesPublicas'])->name('atividades.listar');
 
+
+
+//Rotas Aluno
+
 // Rotas de Alunos
 Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(function () {
     Route::get('/painelaluno', [AlunoController::class, 'index'])->name('painel');
@@ -97,11 +101,16 @@ Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(functio
     Route::get('/atividades/matriculadas', [AtividadesController::class, 'atividadesMatriculadas'])->name('atividades.matriculadas');
     Route::post('/atividades/matricular/{id}', [MatriculaController::class, 'matricular'])->name('atividades.matricular');
     Route::delete('/atividades/desmatricular/{id}', [MatriculaController::class, 'desmatricular'])->name('atividades.desmatricular');
-    Route::get('/perfil', [AlunoController::class, 'perfilEdit'])->name('perfil.edit');
-    Route::post('/perfil', [AlunoController::class, 'perfilUpdate'])->name('perfil.update');
+    Route::get('/perfil', [AlunoController::class, 'showPerfil'])->name('perfil.index');
+    Route::get('/perfil/edit', [AlunoController::class, 'editPerfil'])->name('perfil.edit');
+    Route::put('/perfil', [AlunoController::class, 'updatePerfil'])->name('perfil.update');
     Route::get('/atividades/{id}/horarios', [AtividadesController::class, 'buscarHorarios'])->name('atividades.horarios');
     Route::get('/atividades/{id}', [AtividadesController::class, 'buscarAtividades'])->name('atividades.buscar');
 });
+
+
+
+
 
 // Rotas de Professores
 Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
@@ -114,21 +123,18 @@ Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->g
     Route::get('/atividades/{id}', [AtividadesController::class, 'buscarAtividades'])->name('atividades.buscar');
 });
 
-// Rotas de Matrículas
-Route::prefix('matriculas')->name('matricula.')->group(function () {
+// Rotas de Matrículas (Admin)
+Route::prefix('matriculas')->name('matricula.')->middleware('can:isAdmin')->group(function () {
     Route::get('/', [MatriculaController::class, 'index'])->name('index');
     Route::get('/geral', [MatriculaController::class, 'matriculageral'])->name('geral');
-    Route::get('/aluno', [MatriculaController::class, 'matriculaaluno'])->name('aluno');
     Route::get('/confirmar/{id}', [MatriculaController::class, 'confirmar'])->name('confirmar');
     Route::get('/adicionar', [MatriculaController::class, 'adicionar'])->name('adicionar');
     Route::post('/salvar', [MatriculaController::class, 'salvar'])->name('salvar');
     Route::get('/editar/{id}', [MatriculaController::class, 'editar'])->name('editar');
-    Route::get('/editaraluno/{id}', [MatriculaController::class, 'editaraluno'])->name('editaraluno');
     Route::post('/atualizar/{id}', [MatriculaController::class, 'atualizar'])->name('atualizar');
-    Route::post('/atualizaraluno/{id}', [MatriculaController::class, 'atualizaraluno'])->name('atualizaraluno');
     Route::delete('/deletar/{id}', [MatriculaController::class, 'deletar'])->name('deletar');
-    Route::delete('/desmatricular/{id}', [MatriculaController::class, 'desmatricular'])->name('desmatricular');
 });
+
 
 // Rotas de Tipos
 Route::prefix('tipos')->name('tipo.')->group(function () {

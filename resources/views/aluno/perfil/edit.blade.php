@@ -1,87 +1,59 @@
-@extends('layouts.base')
+@extends('layouts.app')
+
+@section('title', 'Editar Perfil')
 
 @section('content')
-<div class="container-fluid">
-    <div class="row">
-        <!-- Sidebar -->
-        <nav id="sidebar" class="col-md-3 col-lg-2 d-md-block bg-light sidebar fixed">
-            <div class="position-sticky">
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">
-                            {{ __('Atividades Disponíveis') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">
-                            {{ __('Minhas Atividades') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">
-                            {{ __('Meu Perfil') }}
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                            {{ __('Sair') }}
-                        </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
-                            @csrf
-                        </form>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="h2">{{ __('Editar Perfil') }}</h1>
+        </div>
+        <div class="card-body">
+            @if(Session::has('flash_message'))
+                <div class="alert {{ Session::get('flash_message.class') }}">
+                    {{ Session::get('flash_message.msg') }}
+                </div>
+            @endif
 
-        <!-- Main content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <h2>{{ __('Editar Perfil') }}</h2>
-
-            <form action="{{ route('aluno.perfil.update') }}" method="POST">
+            <form action="{{ route('aluno.perfil.update') }}" method="POST" onsubmit="return confirm('Você tem certeza que deseja salvar as alterações no perfil?');">
                 @csrf
-                <div class="mb-3 row">
-                    <label for="nome" class="col-sm-2 col-form-label">{{ __('Nome') }}</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" readonly>
-                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('nome')">Editar</button>
-                        </div>
-                    </div>
+                @method('PUT')
+                <div class="form-group">
+                    <label for="nome">{{ __('Nome') }}</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" required>
                 </div>
-                <div class="mb-3 row">
-                    <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
-                    <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly>
-                    </div>
+                <div class="form-group">
+                    <label for="sobrenome">{{ __('Sobrenome') }}</label>
+                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" required>
                 </div>
-                <div class="mb-3 row">
-                    <label for="password" class="col-sm-2 col-form-label">{{ __('Senha') }}</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password" name="password" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
-                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('password')">Editar</button>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="email">{{ __('Email') }}</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" required>
                 </div>
-                <div class="mb-3 row">
-                    <label for="password_confirmation" class="col-sm-2 col-form-label">{{ __('Confirmar Senha') }}</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
-                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('password_confirmation')">Editar</button>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label for="login">{{ __('Login') }}</label>
+                    <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" required>
                 </div>
-                <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
+                <div class="form-group">
+                    <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
+                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="telefone">{{ __('Telefone') }}</label>
+                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" required>
+                </div>
+                <div class="form-group">
+                    <label for="senha">{{ __('Senha') }}</label>
+                    <input type="password" class="form-control" id="senha" name="senha">
+                </div>
+                <div class="form-group">
+                    <label for="password_confirmation">{{ __('Confirmar Senha') }}</label>
+                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation">
+                </div>
+                <button type="submit" class="btn btn-success mt-3">{{ __('Salvar') }}</button>
+                <a href="{{ route('aluno.perfil.index') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
             </form>
-        </main>
+        </div>
     </div>
 </div>
-
-<script>
-    function enableEditing(fieldId) {
-        document.getElementById(fieldId).removeAttribute('readonly');
-    }
-</script>
 @endsection
