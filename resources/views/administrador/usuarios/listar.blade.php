@@ -23,14 +23,18 @@
             <a href="{{ route('usuarios.create') }}" class="btn btn-success mb-3">{{ __('Adicionar Usuário') }}</a>
 
             <div class="table-responsive">
-                <table class="table">
+                <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nome</th>
-                            <th>Email</th>
-                            <th>Tipo</th>
-                            <th>Ações</th>
+                            <th>{{ __('ID') }}</th>
+                            <th>{{ __('Nome') }}</th>
+                            <th>{{ __('Sobrenome') }}</th>
+                            <th>{{ __('Email') }}</th>
+                            <th>{{ __('Login') }}</th>
+                            <th>{{ __('Data de Nascimento') }}</th>
+                            <th>{{ __('Telefone') }}</th>
+                            <th>{{ __('Tipo') }}</th>
+                            <th>{{ __('Ações') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -38,14 +42,18 @@
                             <tr>
                                 <td>{{ $usuario->id }}</td>
                                 <td>{{ $usuario->nome }}</td>
+                                <td>{{ $usuario->sobrenome }}</td>
                                 <td>{{ $usuario->email }}</td>
+                                <td>{{ $usuario->login }}</td>
+                                <td>{{ \Carbon\Carbon::parse($usuario->data_nascimento)->format('d/m/Y') }}</td>
+                                <td>{{ $usuario->telefone }}</td>
                                 <td>{{ $usuario->tipo->nome }}</td>
                                 <td>
-                                    <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary">{{ __('Editar') }}</a>
-                                    <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline-block;">
+                                    <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary btn-sm">{{ __('Editar') }}</a>
+                                    <form action="{{ route('usuarios.destroy', $usuario->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('{{ __('Tem certeza que deseja deletar este usuário?') }}');">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-danger">{{ __('Deletar') }}</button>
+                                        <button type="submit" class="btn btn-danger btn-sm">{{ __('Deletar') }}</button>
                                     </form>
                                 </td>
                             </tr>

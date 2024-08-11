@@ -21,58 +21,97 @@ class Usuarios extends Authenticatable
 
     protected $hidden = ['senha', 'remember_token'];
 
+    /**
+     * Retorna a senha que deve ser usada para autenticação.
+     */
     public function getAuthPassword()
     {
         return $this->senha;
     }
 
+    /**
+     * Relacionamento com o modelo Tipos.
+     */
     public function tipo()
     {
         return $this->belongsTo(Tipos::class, 'tipo_id');
     }
 
+    /**
+     * Verifica se o usuário é um administrador.
+     */
     public function isAdmin()
     {
         return $this->tipo_id == 1;
     }
 
+    /**
+     * Verifica se o usuário é um professor.
+     */
     public function isProfessor()
     {
         return $this->tipo_id == 3;
     }
 
+    /**
+     * Verifica se o usuário é um aluno.
+     */
     public function isAluno()
     {
         return $this->tipo_id == 2;
     }
 
+    /**
+     * Relacionamento com o modelo Professor.
+     */
     public function professor()
     {
         return $this->hasOne(Professor::class, 'usuario_id');
     }
 
+    /**
+     * Relacionamento com o modelo Aluno.
+     */
     public function aluno()
     {
         return $this->hasOne(Aluno::class, 'usuario_id');
     }
 
+    /**
+     * Relacionamento com as atividades matriculadas pelo usuário.
+     */
     public function atividades()
     {
-        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id');
+        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
     }
 
+    /**
+     * Alias para o relacionamento de atividades matriculadas.
+     */
+    public function atividadesMatriculadas()
+    {
+        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
+    }
+
+    /**
+     * Relacionamento com as atividades alocadas ao usuário (como instrutor).
+     */
     public function atividadesAlocadas()
     {
         return $this->hasMany(Atividades::class, 'instrutor_id', 'id');
     }
 
-    // Método update personalizado
-    public function update(array $attributes = [], array $options = [])
+    /**
+     * Mutator para garantir que a senha seja sempre hashada antes de ser salva.
+     */
+    public function setSenhaAttribute($value)
     {
-        if (isset($attributes['senha'])) {
-            $attributes['senha'] = Hash::make($attributes['senha']);
+        if (!empty($value)) {
+            $this->attributes['senha'] = Hash::make($value);
         }
-
-        return parent::update($attributes, $options);
     }
 }

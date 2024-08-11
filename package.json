@@ -23,8 +23,10 @@
         "bootstrap": "^5.3.3",
         "jquery": "^3.7.1",
         "laravel-echo": "^1.16.1",
+        "lodash.set": "^4.3.2",
         "pusher-js": "^8.4.0-rc2",
         "select": "^1.1.2",
+        "select2": "^4.1.0-rc.0",
         "vue": "^3.4.31"
     }
 }

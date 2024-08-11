@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Horarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -45,112 +46,75 @@ class AtividadesController extends Controller
     }
 
     public function salvarAtividade(Request $request)
-    {
-        $this->authorize('isAdmin', Auth::user());
+{
+    $this->authorize('isAdmin', Auth::user());
 
-        Log::info('Iniciando validação dos dados da atividade.', ['dados' => $request->all()]);
+    Log::info('Iniciando validação dos dados da atividade.', ['dados' => $request->all()]);
 
-        $validator = Validator::make($request->all(), [
-            'atividade' => 'required|string|max:255',
-            'data_inicio' => 'required|date',
-            'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'hora' => 'required|date_format:H:i',
-            'instrutor_id' => 'required|exists:usuarios,id',
-            'local' => 'required|string|max:255',
-            'dias' => 'required|array',
-            'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
-        ]);
+    $validator = Validator::make($request->all(), [
+        'atividade' => 'required|string|max:255',
+        'data_inicio' => 'required|date',
+        'data_fim' => 'required|date|after_or_equal:data_inicio',
+        'hora' => 'required|array', // Mudança: hora agora é um array de horários
+        'hora.*' => 'date_format:H:i', // Validação para cada horário no array
+        'instrutor_id' => 'required|exists:usuarios,id',
+        'local' => 'required|string|max:255',
+        'dias' => 'required|array',
+        'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
+    ]);
 
-        if ($validator->fails()) {
-            Log::error('Validação dos dados falhou.', ['erros' => $validator->errors()]);
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dias = implode(',', $request->dias);
-        $instrutor = Usuarios::find($request->instrutor_id)->nome; // Obter o nome do instrutor
-
-        try {
-            Log::info('Tentando criar nova atividade.', [
-                'atividade' => $request->atividade,
-                'data_inicio' => $request->data_inicio,
-                'data_fim' => $request->data_fim,
-                'hora' => $request->hora,
-                'instrutor_id' => $request->instrutor_id,
-                'instrutor' => $instrutor, // Adicionar o nome do instrutor
-                'local' => $request->local,
-                'dias' => $dias,
-            ]);
-
-            Atividades::create([
-                'atividade' => $request->atividade,
-                'data_inicio' => $request->data_inicio,
-                'data_fim' => $request->data_fim,
-                'hora' => $request->hora,
-                'instrutor_id' => $request->instrutor_id,
-                'instrutor' => $instrutor, // Adicionar o nome do instrutor
-                'local' => $request->local,
-                'dias' => $dias,
-            ]);
-
-            Log::info('Atividade criada com sucesso.');
-
-            Session::flash('flash_message', [
-                'msg' => "Atividade adicionada com sucesso!",
-                'class' => "alert-success"
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Erro ao criar atividade.', ['erro' => $e->getMessage()]);
-            return redirect()->back()->withErrors('Erro ao criar atividade. Por favor, tente novamente.')->withInput();
-        }
-
-        return redirect()->route('admin.atividades.index');
+    if ($validator->fails()) {
+        Log::error('Validação dos dados falhou.', ['erros' => $validator->errors()]);
+        return redirect()->back()->withErrors($validator)->withInput();
     }
 
-    public function update(Request $request, $id)
-    {
-        $this->authorize('isAdmin', Auth::user());
+    $dias = implode(',', $request->dias);
+    $instrutor = Usuarios::find($request->instrutor_id)->nome; // Obter o nome do instrutor
 
-        $atividade = Atividades::find($id);
-        if (!$atividade) {
-            return redirect()->back()->withErrors('Atividade não encontrada.');
-        }
-
-        $validator = Validator::make($request->all(), [
-            'atividade' => 'required|string|max:255',
-            'data_inicio' => 'required|date',
-            'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'hora' => 'required|date_format:H:i',
-            'instrutor_id' => 'required|exists:usuarios,id',
-            'local' => 'required|string|max:255',
-            'dias' => 'required|array',
-            'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dias = implode(',', $request->dias);
-        $instrutor = Usuarios::find($request->instrutor_id)->nome; // Obter o nome do instrutor
-
-        $atividade->update([
+    try {
+        Log::info('Tentando criar nova atividade.', [
             'atividade' => $request->atividade,
             'data_inicio' => $request->data_inicio,
             'data_fim' => $request->data_fim,
-            'hora' => $request->hora,
             'instrutor_id' => $request->instrutor_id,
             'instrutor' => $instrutor,
             'local' => $request->local,
             'dias' => $dias,
         ]);
 
-        Session::flash('flash_message', [
-            'msg' => "Atividade atualizada com sucesso!",
-            'class' => "alert-success"
+        // Criar a atividade
+        $atividade = Atividades::create([
+            'atividade' => $request->atividade,
+            'data_inicio' => $request->data_inicio,
+            'data_fim' => $request->data_fim,
+            'instrutor_id' => $request->instrutor_id,
+            'instrutor' => $instrutor,
+            'local' => $request->local,
+            'dias' => $dias,
         ]);
 
-        return redirect()->route('admin.atividades.index');
+        // Salvar os horários na tabela `horarios`
+        foreach ($request->hora as $hora) {
+            Horarios::create([
+                'atividade_id' => $atividade->id,
+                'hora' => $hora
+            ]);
+        }
+
+        Log::info('Atividade criada com sucesso.');
+
+        Session::flash('flash_message', [
+            'msg' => "Atividade adicionada com sucesso!",
+            'class' => "alert-success"
+        ]);
+    } catch (\Exception $e) {
+        Log::error('Erro ao criar atividade.', ['erro' => $e->getMessage()]);
+        return redirect()->back()->withErrors('Erro ao criar atividade. Por favor, tente novamente.')->withInput();
     }
+
+    return redirect()->route('admin.atividades.index');
+}
+
 
     public function deletarAtividade($id)
     {
@@ -172,19 +136,19 @@ class AtividadesController extends Controller
         return redirect()->route('admin.atividades.index');
     }
 
+
     public function buscarHorarios($id)
     {
-        // Implemente a lógica para buscar horários de uma atividade específica
-        $horarios = Atividades::find($id)->horarios;
+        $horarios = Horarios::where('atividade_id', $id)->get(['hora']); // Pegando os horários relacionados à atividade
         return response()->json($horarios);
     }
 
-    public function buscarAtividades($id)
-    {
-        // Implemente a lógica para buscar uma atividade específica
-        $atividade = Atividades::find($id);
-        return response()->json($atividade);
-    }
+
+public function buscarAtividades($id)
+{
+    $atividade = Atividades::find($id);
+    return response()->json($atividade);
+}
 
     public function listarAtividadesPublicas()
     {
@@ -193,16 +157,25 @@ class AtividadesController extends Controller
     }
 
     public function listar()
-    {
-        $atividades = Atividades::where('data_inicio', '<=', now())
-            ->where('data_fim', '>=', now())
-            ->get()
-            ->filter(function ($atividade) {
-                return $atividade->ocorreHoje();
-            });
+{
+    $user = Auth::user();
+    Log::info('Método listar chamado por usuário:', ['user_id' => $user->id, 'tipo_id' => $user->tipo_id]);
+
+    if ($user->isAluno()) {
+        Log::info('Redirecionando para a view do aluno.');
+
+        // Supondo que a tabela `atividades` armazene atividades disponíveis para todos os alunos
+        $atividades = Atividades::all(); // Busca todas as atividades disponíveis
+
+        // Log para verificar as atividades
+        Log::debug('Atividades recuperadas:', ['atividades' => $atividades]);
 
         return view('aluno.atividades.listar', compact('atividades'));
+    } else {
+        Log::warning('Usuário não autorizado.', ['user_id' => $user->id, 'tipo_id' => $user->tipo_id]);
+        abort(403, 'Acesso negado');
     }
+}
 
     public function atividadesMatriculadas()
     {
@@ -213,13 +186,26 @@ class AtividadesController extends Controller
     }
 
 
+public function listarParaProfessores()
+{
+    $user = Auth::user();
+    Log::info('Listando atividades para professor:', ['user_id' => $user->id]);
+
+    return view('professor.atividades.index');
+}
+
     public function profAtividadesIndex()
     {
         $user = Auth::user();
-        $atividades = $user->atividades;
 
+        if ($user->role !== 'professor') {
+            abort(403, 'Acesso negado');
+        }
+
+        $atividades = $user->atividades;
         return view('professor.atividades.index', compact('atividades'));
     }
+
 
     public function profAtividadesMatriculadas()
     {

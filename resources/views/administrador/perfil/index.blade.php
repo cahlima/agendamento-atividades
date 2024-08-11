@@ -45,7 +45,11 @@
                 <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
             </div>
 
-            <a href="{{ route('aluno.perfil.edit') }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
+            <!-- Ajuste o link para a página correta de edição de perfil -->
+            <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
+
+            <!-- Botão Voltar -->
+            <a href="{{ url()->previous() }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
         </div>
     </div>
 </div>

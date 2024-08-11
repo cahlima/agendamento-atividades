@@ -38,9 +38,17 @@
                     </div>
                 </div>
 
+                <!-- Seção de horários -->
                 <div class="form-group">
-                    <label for="hora">{{ __('Hora') }}</label>
-                    <input id="hora" type="time" class="form-control" name="hora" value="{{ old('hora') }}" required>
+                    <label for="hora">{{ __('Horários') }}</label>
+                    <div id="horarios-container">
+                        <div class="input-group mb-2">
+                            <input type="time" name="hora[]" class="form-control" value="{{ old('hora.0') }}" required>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-success add-hora">{{ __('Adicionar Horário') }}</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -79,4 +87,35 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('horarios-container');
+
+        // Adicionar novo campo de horário
+        document.querySelector('.add-hora').addEventListener('click', function() {
+            var newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+            newInput.innerHTML = `
+                <input type="time" name="hora[]" class="form-control" required>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-danger remove-hora">{{ __('Remover') }}</button>
+                </div>
+            `;
+            container.appendChild(newInput);
+
+            // Adicionar evento para remover horário
+            newInput.querySelector('.remove-hora').addEventListener('click', function() {
+                newInput.remove();
+            });
+        });
+
+        // Remover horário existente
+        document.querySelectorAll('.remove-hora').forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.closest('.input-group').remove();
+            });
+        });
+    });
+</script>
 @endsection

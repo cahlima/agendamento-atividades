@@ -1,44 +1,44 @@
 @extends('layouts.app')
 
-@section('title', 'Editar Perfil')
+@section('title', 'Editar Usuário')
 
 @section('content')
 <div class="container mt-5">
     <div class="card">
         <div class="card-header">
-            <h2>{{ __('Editar Perfil') }}</h2>
+            <h2>{{ __('Editar Usuário') }}</h2>
         </div>
         <div class="card-body">
             @if(Session::has('flash_message'))
-                <div class="alert alert-success">{{ Session::get('flash_message')['msg'] }}</div>
+                <div class="alert alert-success">{{ Session::get('flash_message') }}</div>
             @endif
 
-            <form action="{{ route('admin.perfil.update', ['id' => $usuario->id]) }}" method="POST">
+            <form action="{{ route('usuarios.update', ['id' => $usuario->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="form-group">
                     <label for="nome">{{ __('Nome') }}</label>
-                    <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" required>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ old('nome', $usuario->nome) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="sobrenome">{{ __('Sobrenome') }}</label>
-                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" required>
+                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ old('sobrenome', $usuario->sobrenome) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="email">{{ __('Email') }}</label>
-                    <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" required>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ old('email', $usuario->email) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="login">{{ __('Login') }}</label>
-                    <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" required>
+                    <input type="text" class="form-control" id="login" name="login" value="{{ old('login', $usuario->login) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
-                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" required>
+                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ old('data_nascimento', $usuario->data_nascimento) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="telefone">{{ __('Telefone') }}</label>
-                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" required>
+                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ old('telefone', $usuario->telefone) }}" required>
                 </div>
                 <div class="form-group">
                     <label for="senha">{{ __('Senha') }}</label>
@@ -52,7 +52,7 @@
                     <label for="tipo_id">{{ __('Tipo') }}</label>
                     <select class="form-control" id="tipo_id" name="tipo_id" required>
                         @foreach($tipos as $tipo)
-                            <option value="{{ $tipo->id }}" {{ $usuario->tipo_id == $tipo->id ? 'selected' : '' }}>{{ $tipo->nome }}</option>
+                            <option value="{{ $tipo->id }}" {{ old('tipo_id', $usuario->tipo_id) == $tipo->id ? 'selected' : '' }}>{{ $tipo->nome }}</option>
                         @endforeach
                     </select>
                 </div>

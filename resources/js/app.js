@@ -4,13 +4,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import '../sass/app.scss';
 import axios from 'axios';
 import './bootstrap';
-import $ from 'jquery';
+import $ from 'jquery';  // Importa o jQuery
 
-
-// Outros imports e código JS
-
-
-
+import 'select2';  // Importa o Select2 após o jQuery
 
 // Configuração do Axios
 window.axios = axios;
@@ -29,6 +25,8 @@ createApp(App).mount('#vue-app');
 
 // Inicializa o Select2 para o campo de seleção múltipla
 $(document).ready(function() {
+    $('.select2').select2(); // Inicializa o Select2 em todos os elementos com a classe 'select2'
+
     $('#dias').select2({
         placeholder: "Selecione os dias",
         allowClear: true

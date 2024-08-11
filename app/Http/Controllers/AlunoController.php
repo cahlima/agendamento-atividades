@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class AlunoController extends Controller
-{
-    public function index()
+{public function index()
     {
         $usuario = Auth::guard('web')->user();
 
@@ -18,14 +17,21 @@ class AlunoController extends Controller
             return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
         }
 
-        $atividades = $usuario->atividades()->get();
+        // Adicionando um log para verificar o tipo de usuário
+        Log::info('Usuário autenticado acessando o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
 
+        if (!$usuario->isAluno()) {
+            Log::warning('Usuário não autorizado a acessar o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
+            abort(403, 'Acesso negado. Você não tem permissão para acessar esta página.');
+        }
+
+        $atividades = $usuario->atividades()->get();
         Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
         Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
-        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
         return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
+
 
     public function showPerfil()
     {

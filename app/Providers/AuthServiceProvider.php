@@ -33,11 +33,11 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('isAluno', function ($user) {
-            return $user->tipo_id == 3; // Assuming tipo_id 3 is for Aluno
+            return $user->tipo_id == 2; // Assuming tipo_id 3 is for Aluno
         });
 
         Gate::define('isProfessor', function ($user) {
-            return $user->tipo_id == 2; // Assuming tipo_id 2 is for Professor
+            return $user->tipo_id == 3; // Assuming tipo_id 2 is for Professor
         });
 
         // Other Gates can be defined here

@@ -57,7 +57,7 @@
                                 <a class="nav-link" href="{{ route('professor.painel') }}">Início</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('professor.atividades.listar') }}">Minhas Atividades</a>
+                                <a class="nav-link" href="{{ route('professor.atividades.index') }}">Minhas Atividades</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('professor.perfil.edit') }}">Meu Perfil</a>
@@ -96,6 +96,21 @@
     <!-- Scripts -->
     @vite(['resources/js/app.js'])
 
-    @yield('scripts')
-</body>
-</html>
+    <!-- Inclua jQuery primeiro -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<!-- Inclua o script do Select2 -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
+<!-- Inclua o CSS do Select2 -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+
+<!-- Depois, inclua o app.js do Vite -->
+@vite(['resources/js/app.js'])
+
+<!-- Inicialização do Select2 -->
+<script>
+    $(document).ready(function() {
+        $('.select2').select2();
+    });
+</script>
