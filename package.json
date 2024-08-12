@@ -8,7 +8,7 @@
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^5.0.5",
-        "axios": "^1.7.2",
+        "axios": "^1.7.3",
         "laravel-vite-plugin": "^1.0.2",
         "resolve-url-loader": "^5.0.0",
         "sass": "^1.75.0",

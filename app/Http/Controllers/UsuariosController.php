@@ -11,6 +11,7 @@ use App\Services\UserTypeManager;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use Illuminate\Support\Facades\Log;
 
 class UsuariosController extends Controller
 {
@@ -38,12 +39,12 @@ class UsuariosController extends Controller
     public function salvar(UserStoreRequest $request)
     {
         $dados = $request->validated();
-        \Log::info('Dados recebidos para criar usuário', $dados);
+        Log::info('Dados recebidos para criar usuário', $dados);
 
         $dados['senha'] = bcrypt($dados['senha']);
         $usuario = Usuarios::create($dados);
 
-        \Log::info('Usuário criado com sucesso', ['usuario_id' => $usuario->id]);
+        Log::info('Usuário criado com sucesso', ['usuario_id' => $usuario->id]);
 
         $this->userTypeManager->assignType($usuario, $dados['tipo_id']);
 
@@ -65,7 +66,7 @@ class UsuariosController extends Controller
         $this->authorize('update', $usuario);
 
         $dados = $request->validated();
-        \Log::info('Dados recebidos para atualizar usuário', $dados);
+        Log::info('Dados recebidos para atualizar usuário', $dados);
 
         if (isset($dados['senha']) && $dados['senha']) {
             $dados['senha'] = bcrypt($dados['senha']);
@@ -74,7 +75,7 @@ class UsuariosController extends Controller
         }
 
         $usuario->update($dados);
-        \Log::info('Usuário atualizado com sucesso', ['usuario_id' => $usuario->id, 'dados_atualizados' => $dados]);
+        Log::info('Usuário atualizado com sucesso', ['usuario_id' => $usuario->id, 'dados_atualizados' => $dados]);
 
         $this->userTypeManager->updateType($usuario, $dados['tipo_id']);
 
@@ -86,11 +87,11 @@ class UsuariosController extends Controller
     {
         $usuario = Usuarios::findOrFail($id);
         $this->authorize('delete', $usuario);
-        \Log::info('Deletando usuário', ['usuario_id' => $usuario->id]);
+        Log::info('Deletando usuário', ['usuario_id' => $usuario->id]);
 
         $usuario->delete();
 
-        \Log::info('Usuário deletado com sucesso', ['usuario_id' => $usuario->id]);
+        Log::info('Usuário deletado com sucesso', ['usuario_id' => $usuario->id]);
 
         Session::flash('flash_message', 'Registro excluído com sucesso!');
         return redirect()->route('usuarios.index');

@@ -45,7 +45,13 @@
                 <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
             </div>
 
+            <!-- Link para editar o perfil do aluno -->
             <a href="{{ route('aluno.perfil.edit') }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
+
+            <!-- Botão Voltar -->
+           <!-- Botão Voltar para o Painel do Aluno -->
+<a href="{{ route('aluno.painel') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
+
         </div>
     </div>
 </div>

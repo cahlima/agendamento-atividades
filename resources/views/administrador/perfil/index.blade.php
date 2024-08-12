@@ -49,7 +49,8 @@
             <a href="{{ route('usuarios.edit', $usuario->id) }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
 
             <!-- Botão Voltar -->
-            <a href="{{ url()->previous() }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
+            <!-- Botão Voltar para o Painel do Admin -->
+<a href="{{ route('admin.painel') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
         </div>
     </div>
 </div>

@@ -13,6 +13,9 @@
 
     <!-- Styles -->
     @vite(['resources/sass/app.scss'])
+
+    <!-- Inclua o CSS do Select2 -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body>
     <div id="app">
@@ -49,7 +52,7 @@
                                 <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">Minhas Atividades</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('aluno.perfil.edit') }}">Meu Perfil</a>
+                                <a class="nav-link" href="{{ route('aluno.perfil.index') }}">Meu Perfil</a>
                             </li>
                         @endcan
                         @can('isProfessor')
@@ -93,24 +96,20 @@
     <!-- Vue App Mount Point -->
     <div id="vue-app"></div>
 
+    <!-- Inclua jQuery primeiro -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Inclua o script do Select2 -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+
     <!-- Scripts -->
     @vite(['resources/js/app.js'])
 
-    <!-- Inclua jQuery primeiro -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<!-- Inclua o script do Select2 -->
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-
-<!-- Inclua o CSS do Select2 -->
-<link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
-
-<!-- Depois, inclua o app.js do Vite -->
-@vite(['resources/js/app.js'])
-
-<!-- Inicialização do Select2 -->
-<script>
-    $(document).ready(function() {
-        $('.select2').select2();
-    });
-</script>
+    <!-- Inicialização do Select2 -->
+    <script>
+        $(document).ready(function() {
+            $('.select2').select2();
+        });
+    </script>
+</body>
+</html>

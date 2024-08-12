@@ -14,7 +14,7 @@
 
     <form id="buscar-atividade-form" method="GET" action="{{ route('aluno.atividades.listar') }}" class="mb-3">
         <div class="input-group">
-            <select id="atividade" name="atividade" class="form-control">
+            <select id="atividade" name="atividade" class="form-control" onchange="buscarHorarios(this.value)">
                 <option value="">{{ __('Selecione uma atividade') }}</option>
                 @foreach($atividades as $atividade)
                     <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
@@ -71,37 +71,43 @@
 </div>
 
 <script>
-document.getElementById('atividade').addEventListener('change', function() {
-    var atividadeId = this.value;
+// Inicialize o select2
+$(document).ready(function() {
+    $('#atividade').select2({
+        placeholder: "{{ __('Selecione uma atividade') }}",
+        allowClear: true
+    });
+});
+
+// Função para buscar horários via AJAX
+function buscarHorarios(atividadeId) {
     if (atividadeId) {
-        fetch(`/aluno/atividades/${atividadeId}`)
+        fetch(`/aluno/atividades/${atividadeId}/horarios`)
             .then(response => response.json())
             .then(data => {
-                var atividadesList = document.getElementById('atividades-list');
-                atividadesList.innerHTML = ''; // Limpa a lista de atividades
+                var horariosList = document.getElementById('horarios-list');
+                horariosList.innerHTML = ''; // Limpa a lista de horários
 
-                var row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${data.atividade}</td>
-                    <td>${new Date(data.data_inicio).toLocaleDateString()}</td>
-                    <td>${new Date(data.data_fim).toLocaleDateString()}</td>
-                    <td>${data.hora}</td>
-                    <td>${data.instrutor ?? 'N/A'}</td>
-                    <td>${data.local}</td>
-                    <td>
-                        <button type="button" class="btn btn-primary" data-id="${data.id}" data-atividade="${data.atividade}" data-hora="${data.hora}" data-bs-toggle="modal" data-bs-target="#confirmModal">{{ __('Matricular') }}</button>
-                    </td>
-                `;
-                atividadesList.appendChild(row);
-
-                document.getElementById('atividades-dinamicas').style.display = 'block';
+                if (data.length > 0) {
+                    data.forEach(horario => {
+                        var li = document.createElement('li');
+                        li.className = 'list-group-item';
+                        li.textContent = horario.hora;
+                        horariosList.appendChild(li);
+                    });
+                    document.getElementById('horarios-disponiveis').style.display = 'block';
+                } else {
+                    document.getElementById('horarios-disponiveis').style.display = 'none';
+                }
             })
-            .catch(error => console.error('Erro ao buscar atividade:', error));
+            .catch(error => {
+                console.error('Erro ao buscar horários:', error);
+                alert('Ocorreu um erro ao buscar os horários. Por favor, tente novamente.');
+            });
     } else {
         document.getElementById('horarios-disponiveis').style.display = 'none';
-        document.getElementById('atividades-dinamicas').style.display = 'none';
     }
-});
+}
 
 // Configurar o modal de confirmação
 document.getElementById('confirmModal').addEventListener('show.bs.modal', function (event) {
@@ -115,6 +121,7 @@ document.getElementById('confirmModal').addEventListener('show.bs.modal', functi
 
     var confirmBtn = document.getElementById('confirmBtn');
     confirmBtn.onclick = function() {
+        confirmBtn.disabled = true;
         var form = document.createElement('form');
         form.method = 'POST';
         form.action = `/aluno/atividades/matricular/${atividadeId}`;
@@ -124,13 +131,7 @@ document.getElementById('confirmModal').addEventListener('show.bs.modal', functi
         csrfInput.name = '_token';
         csrfInput.value = `{{ csrf_token() }}`;
 
-        var methodInput = document.createElement('input');
-        methodInput.type = 'hidden';
-        methodInput.name = '_method';
-        methodInput.value = 'POST';
-
         form.appendChild(csrfInput);
-        form.appendChild(methodInput);
         document.body.appendChild(form);
         form.submit();
     };

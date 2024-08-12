@@ -136,15 +136,17 @@ class AtividadesController extends Controller
         return redirect()->route('admin.atividades.index');
     }
 
+    //Função para aluno
 
     public function buscarHorarios($id)
     {
         $horarios = Horarios::where('atividade_id', $id)->get(['hora']); // Pegando os horários relacionados à atividade
-        return response()->json($horarios);
+        return response()->json($horarios); // Certifique-se de que isso está retornando corretamente
     }
 
 
-public function buscarAtividades($id)
+
+public function buscarAtividade($id)
 {
     $atividade = Atividades::find($id);
     return response()->json($atividade);
@@ -157,34 +159,21 @@ public function buscarAtividades($id)
     }
 
     public function listar()
+    {
+        $atividades = Atividades::all(); // ou alguma outra lógica para recuperar as atividades
+        return view('aluno.atividades.listar', compact('atividades'));
+    }
+
+public function atividadesMatriculadas()
 {
     $user = Auth::user();
-    Log::info('Método listar chamado por usuário:', ['user_id' => $user->id, 'tipo_id' => $user->tipo_id]);
+    $atividadesMatriculadas = $user->atividades()->paginate(10); // Paginação de 10 itens por página
 
-    if ($user->isAluno()) {
-        Log::info('Redirecionando para a view do aluno.');
-
-        // Supondo que a tabela `atividades` armazene atividades disponíveis para todos os alunos
-        $atividades = Atividades::all(); // Busca todas as atividades disponíveis
-
-        // Log para verificar as atividades
-        Log::debug('Atividades recuperadas:', ['atividades' => $atividades]);
-
-        return view('aluno.atividades.listar', compact('atividades'));
-    } else {
-        Log::warning('Usuário não autorizado.', ['user_id' => $user->id, 'tipo_id' => $user->tipo_id]);
-        abort(403, 'Acesso negado');
-    }
+    return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
 }
 
-    public function atividadesMatriculadas()
-    {
-        $user = Auth::user();
-        $atividadesMatriculadas = $user->atividades;
 
-        return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
-    }
-
+    //funcao para professores
 
 public function listarParaProfessores()
 {

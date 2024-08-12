@@ -25,7 +25,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($atividadesMatriculadas as $atividade)
+                @forelse($atividadesMatriculadas as $atividade)
                     <tr>
                         <td>{{ $atividade->atividade }}</td>
                         <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
@@ -40,15 +40,17 @@
                             </form>
                         </td>
                     </tr>
-                @endforeach
+                @empty
+                    <tr>
+                        <td colspan="6">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
+                    </tr>
+                @endforelse
             </tbody>
         </table>
     </div>
 
-    @if($atividadesMatriculadas->isNotEmpty())
+    @if($atividadesMatriculadas instanceof \Illuminate\Pagination\LengthAwarePaginator)
         {{ $atividadesMatriculadas->links() }}
-    @else
-        <p>{{ __('Você não está matriculado em nenhuma atividade.') }}</p>
     @endif
 </div>
 @endsection
