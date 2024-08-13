@@ -60,10 +60,10 @@
                                 <a class="nav-link" href="{{ route('professor.painel') }}">Início</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('professor.atividades.index') }}">Minhas Atividades</a>
+                                <a class="nav-link" href="{{ route('professor.atividades.listar') }}">Minhas Atividades</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('professor.perfil.edit') }}">Meu Perfil</a>
+                                <a class="nav-link" href="{{ route('professor.perfil.index') }}">Meu Perfil</a>
                             </li>
                         @endcan
                         <li class="nav-item">

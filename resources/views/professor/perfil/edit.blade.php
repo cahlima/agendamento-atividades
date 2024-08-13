@@ -40,6 +40,8 @@
 
             <form action="{{ route('professor.perfil.update') }}" method="POST">
                 @csrf
+                @method('PUT') <!-- Usar o método PUT para atualizar recursos -->
+
                 <div class="mb-3 row">
                     <label for="nome" class="col-sm-2 col-form-label">{{ __('Nome') }}</label>
                     <div class="col-sm-10">
@@ -49,12 +51,17 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="mb-3 row">
                     <label for="email" class="col-sm-2 col-form-label">{{ __('Email') }}</label>
                     <div class="col-sm-10">
-                        <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly>
+                        <div class="input-group">
+                            <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly>
+                            <button class="btn btn-outline-primary" type="button" onclick="enableEditing('email')">Editar</button>
+                        </div>
                     </div>
                 </div>
+
                 <div class="mb-3 row">
                     <label for="password" class="col-sm-2 col-form-label">{{ __('Senha') }}</label>
                     <div class="col-sm-10">
@@ -64,6 +71,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="mb-3 row">
                     <label for="password_confirmation" class="col-sm-2 col-form-label">{{ __('Confirmar Senha') }}</label>
                     <div class="col-sm-10">
@@ -73,8 +81,9 @@
                         </div>
                     </div>
                 </div>
+
                 <button type="submit" class="btn btn-primary">{{ __('Salvar') }}</button>
-                <a href="{{ route('professor.atividades.listar') }}" class="btn btn-secondary">{{ __('Voltar') }}</a> <!-- Botão Voltar adicionado -->
+                <a href="{{ route('professor.atividades.listar') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
             </form>
         </main>
     </div>
@@ -82,7 +91,10 @@
 
 <script>
     function enableEditing(fieldId) {
-        document.getElementById(fieldId).removeAttribute('readonly');
+        const field = document.getElementById(fieldId);
+        field.removeAttribute('readonly');
+        field.focus();
+        field.style.backgroundColor = "#fff";  // Adiciona um estilo visual ao campo editável
     }
 </script>
 @endsection

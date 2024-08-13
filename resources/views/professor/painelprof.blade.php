@@ -19,7 +19,7 @@
                     <p>Aqui você pode ver suas informações e acessar as funcionalidades disponíveis para os professores.</p>
 
                     <div class="list-group mb-4">
-                        <a href="{{ route('professor.atividades.index') }}" class="list-group-item list-group-item-action">Ver todas as Atividades</a>
+                        <a href="{{ route('professor.atividades.listar') }}" class="list-group-item list-group-item-action">Ver todas as Atividades</a>
                         <a href="{{ route('professor.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Ver minhas Atividades</a>
                         <a href="{{ route('professor.perfil.edit') }}" class="list-group-item list-group-item-action">Editar perfil</a>
                     </div>
