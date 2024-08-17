@@ -36,7 +36,7 @@ class Atividades extends Model
     // Relação com os horários da atividade
     public function horarios()
     {
-        return $this->hasMany(Horarios::class, 'atividade_id'); // Ajuste conforme necessário, certifique-se de que há um modelo Horarios
+        return $this->hasMany(Horarios::class, 'atividade_id');
     }
 
     // Verifica se a atividade ocorre no dia da semana atual

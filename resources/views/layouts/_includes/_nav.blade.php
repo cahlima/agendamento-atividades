@@ -28,7 +28,7 @@
                             <a class="nav-link" href="{{ route('professor.painel') }}">{{ __('Painel do Professor') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Minhas Atividades') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.matriculadas') }}">{{ __('Minhas Atividades') }}</a>
                         </li>
                     @endif
 
@@ -37,7 +37,7 @@
                             <a class="nav-link" href="{{ route('aluno.painel') }}">{{ __('Painel do Aluno') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{{ route('atividades.listar') }}">{{ __('Atividades Disponíveis') }}</a>
+                            <a class="nav-link" href="{{ route('atividades.listarAtividades') }}">{{ __('Atividades Disponíveis') }}</a>
                         </li>
                     @endif
                 @endguest

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Horarios;
@@ -24,6 +23,19 @@ class AtividadesController extends Controller
         $this->authorize('isAdmin', Auth::user());
         $atividades = Atividades::with('instrutor')->get();
         return view('administrador.atividades.index', compact('atividades'));
+    }
+
+    // Função para alunos (essa será utilizada para listar atividades públicas)
+    public function listarAtividadesPublicas(Request $request)
+    {
+        $atividades = Atividades::all();
+        $horarios = [];
+
+        if ($request->has('atividade')) {
+            $horarios = Horarios::where('atividade_id', $request->atividade)->get();
+        }
+
+        return view('aluno.atividades.listar', compact('atividades', 'horarios'));
     }
 
     public function adicionarAtividade()
@@ -54,7 +66,7 @@ class AtividadesController extends Controller
             'data_inicio' => 'required|date',
             'data_fim' => 'required|date|after_or_equal:data_inicio',
             'hora' => 'required|array',
-            'hora.*' => 'date_format:H:i',
+            'hora.*' => 'required|date_format:H:i',
             'instrutor_id' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255',
             'dias' => 'required|array',
@@ -88,6 +100,7 @@ class AtividadesController extends Controller
 
             Session::flash('flash_message', 'Atividade adicionada com sucesso!');
         } catch (\Exception $e) {
+            Log::error('Erro ao criar atividade', ['error' => $e->getMessage()]);
             return redirect()->back()->withErrors('Erro ao criar atividade. Por favor, tente novamente.')->withInput();
         }
 
@@ -112,30 +125,39 @@ class AtividadesController extends Controller
     public function listarParaProfessores()
     {
         $user = Auth::user();
-        Log::info('Listando atividades para professor:', ['user_id' => $user->id]);
+        Log::info('Listando atividades para professor', ['user_id' => $user->id]);
 
-        $atividades = $user->atividadesAlocadas;
-
-        return view('professor.atividades.listar', compact('atividades'));
-    }
-
-    public function buscarAtividades(Request $request)
-    {
-        $user = Auth::user();
-        $busca = $request->input('busca');
-
-        $atividades = $user->atividadesAlocadas()
-                           ->where('titulo', 'like', '%' . $busca . '%')
-                           ->orWhere('local', 'like', '%' . $busca . '%')
-                           ->get();
+        $atividades = Atividades::where('instrutor_id', $user->id)->get();
 
         return view('professor.atividades.listar', compact('atividades'));
     }
 
-    // Função para alunos (apenas exemplo, pode ser removido se não for necessário)
-    public function listarAtividadesPublicas()
+    public function buscarAtividade($id)
+{
+    try {
+        $atividade = Atividades::with(['horarios', 'instrutor'])->findOrFail($id);
+
+        return response()->json([
+            'atividade' => $atividade->atividade,
+            'instrutor' => $atividade->instrutor->nome,
+            'horarios' => $atividade->horarios,
+            'local' => $atividade->local,
+            'dias' => $atividade->dias,
+        ]);
+    } catch (\Exception $e) {
+        return response()->json(['error' => 'Ocorreu um erro ao buscar os detalhes da atividade.'], 500);
+    }
+}
+
+
+    public function buscarHorarios($id)
     {
-        $atividades = Atividades::all();
-        return view('atividades.listar', compact('atividades'));
+        $atividade = Atividades::with('horarios')->find($id);
+
+        if (!$atividade) {
+            return response()->json(['error' => 'Atividade não encontrada.'], 404);
+        }
+
+        return response()->json($atividade->horarios);
     }
 }

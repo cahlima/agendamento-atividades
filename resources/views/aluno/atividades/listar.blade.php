@@ -12,9 +12,9 @@
         </div>
     @endif
 
-    <form id="buscar-atividade-form" method="GET" action="{{ route('aluno.atividades.listar') }}" class="mb-3">
+    <form id="buscar-atividade-form" method="GET" action="{{ route('atividades.listarAtividades') }}" class="mb-3">
         <div class="input-group">
-            <select id="atividade" name="atividade" class="form-control" onchange="buscarHorarios(this.value)">
+            <select id="atividade" name="atividade" class="form-control" onchange="mostrarDetalhesAtividade(this.value)">
                 <option value="">{{ __('Selecione uma atividade') }}</option>
                 @foreach($atividades as $atividade)
                     <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
@@ -23,28 +23,22 @@
         </div>
     </form>
 
-    <div id="horarios-disponiveis" style="display: none;">
-        <h4>{{ __('Horários Disponíveis') }}</h4>
-        <ul id="horarios-list" class="list-group">
-            <!-- Horários serão preenchidos via JavaScript -->
-        </ul>
-    </div>
-
-    <div id="atividades-dinamicas" style="display: none;">
+    <div id="detalhes-atividade" style="display: none;">
+        <h4>{{ __('Detalhes da Atividade') }}</h4>
         <table class="table mt-4">
             <thead>
                 <tr>
-                    <th>{{ __('Atividade') }}</th>
                     <th>{{ __('Data de Início') }}</th>
                     <th>{{ __('Data de Término') }}</th>
+                    <th>{{ __('Dia da Semana') }}</th>
                     <th>{{ __('Hora') }}</th>
                     <th>{{ __('Instrutor') }}</th>
                     <th>{{ __('Local') }}</th>
                     <th>{{ __('Ações') }}</th>
                 </tr>
             </thead>
-            <tbody id="atividades-list">
-                <!-- Atividades serão preenchidas via JavaScript -->
+            <tbody id="detalhes-atividade-list">
+                <!-- Detalhes serão preenchidos dinamicamente -->
             </tbody>
         </table>
     </div>
@@ -64,77 +58,64 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
-                <button type="button" id="confirmBtn" class="btn btn-primary">{{ __('Confirmar') }}</button>
+                <form id="matricular-form" method="POST">
+                    @csrf
+                    <button type="submit" class="btn btn-primary">{{ __('Confirmar') }}</button>
+                </form>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-// Inicialize o select2
-$(document).ready(function() {
-    $('#atividade').select2({
-        placeholder: "{{ __('Selecione uma atividade') }}",
-        allowClear: true
-    });
-});
-
-// Função para buscar horários via AJAX
-function buscarHorarios(atividadeId) {
+function mostrarDetalhesAtividade(atividadeId) {
     if (atividadeId) {
-        fetch(`/aluno/atividades/${atividadeId}/horarios`)
+        fetch(`/atividades/${atividadeId}`)
             .then(response => response.json())
             .then(data => {
-                var horariosList = document.getElementById('horarios-list');
-                horariosList.innerHTML = ''; // Limpa a lista de horários
+                var detalhesList = document.getElementById('detalhes-atividade-list');
+                detalhesList.innerHTML = ''; // Limpa a lista de detalhes
 
-                if (data.length > 0) {
-                    data.forEach(horario => {
-                        var li = document.createElement('li');
-                        li.className = 'list-group-item';
-                        li.textContent = horario.hora;
-                        horariosList.appendChild(li);
+                if (data.horarios && data.horarios.length > 0) {
+                    data.horarios.forEach(horario => {
+                        var tr = document.createElement('tr');
+
+                        tr.innerHTML = `
+                            <td>${data.data_inicio}</td>
+                            <td>${data.data_fim}</td>
+                            <td>${horario.dia_semana}</td>
+                            <td>${horario.hora}</td>
+                            <td>${data.instrutor}</td>
+                            <td>${data.local}</td>
+                            <td>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" data-id="${data.id}" data-atividade="${data.atividade}" data-hora="${horario.hora}">
+                                    {{ __('Matricular') }}
+                                </button>
+                            </td>
+                        `;
+
+                        detalhesList.appendChild(tr);
                     });
-                    document.getElementById('horarios-disponiveis').style.display = 'block';
+                    document.getElementById('detalhes-atividade').style.display = 'block';
                 } else {
-                    document.getElementById('horarios-disponiveis').style.display = 'none';
+                    document.getElementById('detalhes-atividade').style.display = 'none';
                 }
             })
             .catch(error => {
-                console.error('Erro ao buscar horários:', error);
-                alert('Ocorreu um erro ao buscar os horários. Por favor, tente novamente.');
+                console.error('Erro ao buscar detalhes da atividade:', error);
+                alert('Ocorreu um erro ao buscar os detalhes da atividade. Por favor, tente novamente.');
             });
     } else {
-        document.getElementById('horarios-disponiveis').style.display = 'none';
+        document.getElementById('detalhes-atividade').style.display = 'none';
     }
 }
 
-// Configurar o modal de confirmação
 document.getElementById('confirmModal').addEventListener('show.bs.modal', function (event) {
     var button = event.relatedTarget;
     var atividadeId = button.getAttribute('data-id');
-    var atividadeNome = button.getAttribute('data-atividade');
-    var atividadeHora = button.getAttribute('data-hora');
 
-    var confirmMessage = document.getElementById('confirmMessage');
-    confirmMessage.textContent = `Você está se matriculando na atividade "${atividadeNome}" às ${atividadeHora}. Podemos confirmar?`;
-
-    var confirmBtn = document.getElementById('confirmBtn');
-    confirmBtn.onclick = function() {
-        confirmBtn.disabled = true;
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/aluno/atividades/matricular/${atividadeId}`;
-
-        var csrfInput = document.createElement('input');
-        csrfInput.type = 'hidden';
-        csrfInput.name = '_token';
-        csrfInput.value = `{{ csrf_token() }}`;
-
-        form.appendChild(csrfInput);
-        document.body.appendChild(form);
-        form.submit();
-    };
+    var form = document.getElementById('matricular-form');
+    form.action = `/atividades/matricular/${atividadeId}`;
 });
 </script>
 @endsection

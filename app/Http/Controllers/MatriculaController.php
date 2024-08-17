@@ -31,7 +31,7 @@ class MatriculaController extends Controller
 
             if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
                 Log::info('Usuário já está matriculado na atividade:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
-                return redirect()->route('aluno.atividades.listar')->with('error', 'Você já está matriculado nesta atividade.');
+                return redirect()->route('aluno.atividades.listarAtividades')->with('error', 'Você já está matriculado nesta atividade.');
             }
 
             Matricula::create([
@@ -48,7 +48,7 @@ class MatriculaController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Erro ao matricular usuário:', ['error' => $e->getMessage(), 'user_id' => $usuario->id, 'atividade_id' => $id]);
-            return redirect()->route('aluno.atividades.listar')->with('error', 'Erro ao matricular: ' . $e->getMessage());
+            return redirect()->route('aluno.atividades.Atividades')->with('error', 'Erro ao matricular: ' . $e->getMessage());
         }
     }
 
@@ -89,18 +89,18 @@ class MatriculaController extends Controller
         return view('matriculas.geral', compact('matriculas'));
     }
 
-    // Método para listar as atividades matriculadas de um aluno
-    public function matriculaaluno()
-    {
-        // Verifica se o usuário está autenticado
-        $usuario = Auth::user();
+public function matriculaaluno()
+{
+    // Verifica se o usuário está autenticado
+    $usuario = Auth::user();
 
-        if (!$usuario) {
-            return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
-        }
-
-        $atividades = $usuario->atividades; // Relacionamento definido no modelo Usuario
-
-        return view('aluno.painelaluno', compact('usuario', 'atividades'));
+    if (!$usuario) {
+        return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
     }
+
+    // Obtenha as atividades matriculadas do usuário
+    $atividadesMatriculadas = $usuario->atividades; // Certifique-se de que esse relacionamento esteja corretamente configurado no modelo Usuario
+
+    return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
+}
 }

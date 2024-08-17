@@ -46,7 +46,7 @@
                                 <a class="nav-link" href="{{ route('aluno.painel') }}">Início</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{{ route('aluno.atividades.listar') }}">Buscar Atividades</a>
+                                <a class="nav-link" href="{{ route('aluno.atividades.listarAtividades') }}">Buscar Atividades</a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('aluno.atividades.matriculadas') }}">Minhas Atividades</a>
