@@ -9,6 +9,8 @@ import 'select2';  // Importa o Select2 após o jQuery
 // Configuração do Axios
 window.axios = axios;
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+window.axios.defaults.withCredentials = true; // Inclui cookies e autenticação automaticamente
+
 
 // Configuração do Token CSRF
 const csrfToken = document.querySelector('meta[name="csrf-token"]');
