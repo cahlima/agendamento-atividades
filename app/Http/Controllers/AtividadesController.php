@@ -149,15 +149,25 @@ class AtividadesController extends Controller
     }
 }
 
+public function buscarHorarios($id)
+{
+    $horarios = [
+        [
+            'hora' => '10:00',
+            'instrutor' => 'Professor Exemplo',
+            'local' => 'Sala 1',
+            'dia' => 'segunda'
+        ],
+        [
+            'hora' => '14:00',
+            'instrutor' => 'Professor Exemplo',
+            'local' => 'Sala 2',
+            'dia' => 'terça'
+        ]
+    ];
 
-    public function buscarHorarios($id)
-    {
-        $atividade = Atividades::with('horarios')->find($id);
+    return response()->json($horarios);
+}
 
-        if (!$atividade) {
-            return response()->json(['error' => 'Atividade não encontrada.'], 404);
-        }
 
-        return response()->json($atividade->horarios);
-    }
 }

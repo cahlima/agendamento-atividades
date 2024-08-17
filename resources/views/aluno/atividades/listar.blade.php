@@ -3,8 +3,8 @@
 @section('title', 'Atividades Disponíveis')
 
 @section('content')
-<div class="container">
-    <h2>{{ __('Atividades Disponíveis') }}</h2>
+<div class="container" id="app">
+    <h2>{{ __('Atividades disponíveis') }}</h2>
 
     @if(Session::has('success'))
         <div class="alert alert-success">
@@ -12,110 +12,97 @@
         </div>
     @endif
 
-    <form id="buscar-atividade-form" method="GET" action="{{ route('atividades.listarAtividades') }}" class="mb-3">
-        <div class="input-group">
-            <select id="atividade" name="atividade" class="form-control" onchange="mostrarDetalhesAtividade(this.value)">
-                <option value="">{{ __('Selecione uma atividade') }}</option>
-                @foreach($atividades as $atividade)
-                    <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
-                @endforeach
-            </select>
-        </div>
-    </form>
+    <div class="mb-3">
+        <label for="atividade">{{ __('Escolha uma atividade:') }}</label>
+        <select id="atividade" class="form-control" v-model="selectedAtividade" @change="fetchHorarios">
+            <option value="">{{ __('Selecione uma atividade') }}</option>
+            @foreach($atividades as $atividade)
+                <option value="{{ $atividade->id }}">{{ $atividade->atividade }}</option>
+            @endforeach
+        </select>
+    </div>
 
-    <div id="detalhes-atividade" style="display: none;">
-        <h4>{{ __('Detalhes da Atividade') }}</h4>
-        <table class="table mt-4">
-            <thead>
-                <tr>
-                    <th>{{ __('Data de Início') }}</th>
-                    <th>{{ __('Data de Término') }}</th>
-                    <th>{{ __('Dia da Semana') }}</th>
-                    <th>{{ __('Hora') }}</th>
-                    <th>{{ __('Instrutor') }}</th>
-                    <th>{{ __('Local') }}</th>
-                    <th>{{ __('Ações') }}</th>
-                </tr>
-            </thead>
-            <tbody id="detalhes-atividade-list">
-                <!-- Detalhes serão preenchidos dinamicamente -->
-            </tbody>
-        </table>
+    <div v-if="selectedAtividade" class="mb-3">
+        <label for="dia">{{ __('Escolha um dia:') }}</label>
+        <select id="dia" class="form-control" v-model="selectedDia">
+            <option value="">{{ __('Selecione um dia') }}</option>
+            <option v-for="dia in diasDisponiveis" :key="dia" :value="dia">@{{ dia }}</option>
+        </select>
+    </div>
+
+    <div v-if="selectedDia">
+        <h4>{{ __('Horários disponíveis') }}</h4>
+        <ul class="list-group">
+            <li v-for="horario in horariosFiltrados" :key="horario.id" class="list-group-item">
+                @{{ horario.hora }} - @{{ horario.instrutor }} (@{{ horario.local }})
+                <button class="btn btn-primary btn-sm float-end" @click="matricular(horario.id)">
+                    {{ __('Matricular') }}
+                </button>
+            </li>
+        </ul>
     </div>
 </div>
+@endsection
 
-<!-- Modal de Confirmação -->
-<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="confirmModalLabel">{{ __('Confirmação de Matrícula') }}</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmMessage">{{ __('Você está se matriculando na atividade selecionada.') }}</p>
-                <p>{{ __('Podemos confirmar?') }}</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('Cancelar') }}</button>
-                <form id="matricular-form" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">{{ __('Confirmar') }}</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
-
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
 <script>
-function mostrarDetalhesAtividade(atividadeId) {
-    if (atividadeId) {
-        fetch(`/atividades/${atividadeId}`)
+new Vue({
+    el: '#app',
+    data: {
+        selectedAtividade: '',
+        selectedDia: '',
+        horarios: [],
+        diasDisponiveis: []
+    },
+    computed: {
+        horariosFiltrados() {
+    return this.horarios.filter(horario => horario.dia === this.selectedDia);
+}
+
+    },
+    methods: {
+        fetchHorarios() {
+    if (this.selectedAtividade) {
+        fetch(`/atividades/${this.selectedAtividade}/horarios`)
             .then(response => response.json())
             .then(data => {
-                var detalhesList = document.getElementById('detalhes-atividade-list');
-                detalhesList.innerHTML = ''; // Limpa a lista de detalhes
-
-                if (data.horarios && data.horarios.length > 0) {
-                    data.horarios.forEach(horario => {
-                        var tr = document.createElement('tr');
-
-                        tr.innerHTML = `
-                            <td>${data.data_inicio}</td>
-                            <td>${data.data_fim}</td>
-                            <td>${horario.dia_semana}</td>
-                            <td>${horario.hora}</td>
-                            <td>${data.instrutor}</td>
-                            <td>${data.local}</td>
-                            <td>
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#confirmModal" data-id="${data.id}" data-atividade="${data.atividade}" data-hora="${horario.hora}">
-                                    {{ __('Matricular') }}
-                                </button>
-                            </td>
-                        `;
-
-                        detalhesList.appendChild(tr);
-                    });
-                    document.getElementById('detalhes-atividade').style.display = 'block';
-                } else {
-                    document.getElementById('detalhes-atividade').style.display = 'none';
-                }
+                console.log('Dados recebidos:', data); // Verifique se os dados estão sendo retornados corretamente
+                this.horarios = data;
+                this.diasDisponiveis = [...new Set(data.map(horario => horario.dia))];
             })
             .catch(error => {
-                console.error('Erro ao buscar detalhes da atividade:', error);
-                alert('Ocorreu um erro ao buscar os detalhes da atividade. Por favor, tente novamente.');
+                console.error('Erro ao buscar horários:', error);
+                alert('Ocorreu um erro ao buscar os horários. Por favor, tente novamente.');
             });
-    } else {
-        document.getElementById('detalhes-atividade').style.display = 'none';
     }
 }
 
-document.getElementById('confirmModal').addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;
-    var atividadeId = button.getAttribute('data-id');
-
-    var form = document.getElementById('matricular-form');
-    form.action = `/atividades/matricular/${atividadeId}`;
+},
+        matricular(horarioId) {
+            if (confirm('Deseja se matricular neste horário?')) {
+                fetch(`/atividades/matricular/${horarioId}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Matrícula realizada com sucesso!');
+                    } else {
+                        alert('Erro ao realizar a matrícula: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao realizar a matrícula:', error);
+                    alert('Ocorreu um erro ao realizar a matrícula. Por favor, tente novamente.');
+                });
+            }
+        }
+    }
 });
 </script>
 @endsection

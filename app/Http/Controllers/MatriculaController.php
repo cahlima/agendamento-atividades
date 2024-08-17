@@ -104,3 +104,4 @@ public function matriculaaluno()
     return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
 }
 }
+

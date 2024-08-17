@@ -60,7 +60,7 @@ Route::prefix('admin')->name('admin.')->middleware('can:isAdmin')->group(functio
     Route::get('/perfil/{id}/edit', [PainelAdmController::class, 'perfilEdit'])->name('perfil.edit');
     Route::put('/perfil/{id}', [PainelAdmController::class, 'perfilUpdate'])->name('perfil.update');
     Route::get('/perfil', [PainelAdmController::class, 'perfilIndex'])->name('perfil.index');
-
+});
 // Rotas Administradores/Atividades
 Route::prefix('admin/atividades')->name('admin.atividades.')->middleware('can:isAdmin')->group(function () {
     Route::get('/', [AtividadesController::class, 'listarAtividades'])->name('index');
@@ -70,9 +70,10 @@ Route::prefix('admin/atividades')->name('admin.atividades.')->middleware('can:is
     Route::put('/{id}', [AtividadesController::class, 'update'])->name('update');
     Route::delete('/{id}', [AtividadesController::class, 'deletarAtividade'])->name('destroy');
     Route::get('/{id}/horarios', [AtividadesController::class, 'buscarHorarios'])->name('horarios');
-    Route::get('/{id}', [AtividadesController::class, 'buscarAtividades'])->name('buscar');
+    Route::get('/{id}', [AtividadesController::class, 'buscarAtividade'])->name('buscar');
+
 });
-});
+
 
 // Rotas de Usuários
 Route::prefix('usuarios')->name('usuarios.')->group(function () {
@@ -97,6 +98,8 @@ Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(functio
     Route::get('/perfil', [AlunoController::class, 'showPerfil'])->name('perfil.index');
     Route::get('/perfil/edit', [AlunoController::class, 'editPerfil'])->name('perfil.edit');
     Route::put('/perfil', [AlunoController::class, 'updatePerfil'])->name('perfil.update');
+    Route::get('/atividades/{id}/horarios', [AtividadesController::class, 'buscarHorarios']);
+
 });
 
 
