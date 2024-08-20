@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h2>{{ __('Minhas Atividades') }}</h2>
+    <h2>{{ __('Atividades') }}</h2>
 
     @if(Session::has('success'))
         <div class="alert alert-success">
@@ -11,7 +11,7 @@
     @endif
 
     <!-- Formulário de busca -->
-    <form method="GET" action="{{ route('atividades.listar') }}" class="mb-4">
+    <form method="GET" action="{{ route('professor.atividades.listar') }}" class="mb-4">
         <div class="input-group">
             <input type="text" name="busca" class="form-control" placeholder="Buscar atividade..." value="{{ request('busca') }}">
             <div class="input-group-append">
