@@ -90,6 +90,15 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        // Alerta de confirmação ao submeter o formulário
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(event) {
+            const confirmSubmit = confirm('Você tem certeza que deseja adicionar essa atividade?');
+            if (!confirmSubmit) {
+                event.preventDefault(); // Cancela o envio se o usuário não confirmar
+            }
+        });
+
         var container = document.getElementById('horarios-container');
 
         // Adicionar novo campo de horário
@@ -118,4 +127,5 @@
         });
     });
 </script>
+
 @endsection

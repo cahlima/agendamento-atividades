@@ -19,26 +19,29 @@
                     <p>Aqui você pode ver suas informações e acessar as funcionalidades disponíveis para os professores.</p>
 
                     <div class="list-group mb-4">
-                        <a href="{{ route('professor.atividades.listar') }}" class="list-group-item list-group-item-action">Ver todas as Atividades</a>
+                        <a href="{{ route('atividades.listarPublicas') }}" class="list-group-item list-group-item-action">Ver todas as Atividades</a>
                         <a href="{{ route('professor.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Ver minhas Atividades</a>
                         <a href="{{ route('professor.perfil.edit') }}" class="list-group-item list-group-item-action">Editar perfil</a>
                     </div>
 
                     <div>
 
-                        <h4>Minhas Atividades</h4>
-@if(isset($minhasAtividades) && $minhasAtividades->isNotEmpty())
-    <ul class="list-group">
-        @foreach($minhasAtividades as $atividade)
-            <li class="list-group-item">
-                {{ $atividade->titulo }} - {{ $atividade->data->format('d/m/Y') }} às {{ $atividade->hora }}
-                <br>Local: {{ $atividade->local }}
-            </li>
-        @endforeach
-    </ul>
+                    <div>
+    <h4>Minhas Atividades</h4>
+    @if(isset($minhasAtividades) && $minhasAtividades->isNotEmpty())
+        <ul class="list-group">
+            @foreach($minhasAtividades as $atividade)
+                <li class="list-group-item">
+                    {{ $atividade->titulo }} - {{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }} às {{ $atividade->hora }}
+                    <br>Local: {{ $atividade->local }}
+                </li>
+            @endforeach
+        </ul>
+    @else
+        <p>Você ainda não está alocado em nenhuma atividade.</p>
+    @endif
+</div>
 
-    <p>Você ainda não está alocado em nenhuma atividade.</p>
-@endif
 
                     </div>
                 </div>

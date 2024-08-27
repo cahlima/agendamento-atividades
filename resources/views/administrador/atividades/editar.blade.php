@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Editar Atividade')
 
 @section('content')
 <div class="container">
@@ -10,10 +10,26 @@
                 <div class="card-header">{{ __('Editar Atividade') }}</div>
 
                 <div class="card-body">
-                    <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}">
+
+                    <!-- Alertas de sucesso ou erro -->
+                    @if(Session::has('success'))
+                        <div class="alert alert-success">
+                            {{ Session::get('success') }}
+                        </div>
+                    @endif
+
+                    @if(Session::has('error'))
+                        <div class="alert alert-danger">
+                            {{ Session::get('error') }}
+                        </div>
+                    @endif
+
+                    <!-- Formulário com alerta de confirmação -->
+                    <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}" onsubmit="return confirm('Você tem certeza que deseja salvar as alterações?');">
                         @csrf
                         @method('PUT')
 
+                        <!-- Campos do formulário -->
                         <div class="form-group">
                             <label for="atividade">Atividade</label>
                             <input type="text" class="form-control @error('atividade') is-invalid @enderror" id="atividade" name="atividade" value="{{ $atividade->atividade }}" required>

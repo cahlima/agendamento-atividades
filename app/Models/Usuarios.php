@@ -62,7 +62,7 @@ class Usuarios extends Authenticatable
     }
 
     /**
-     * Relacionamento com o modelo Professor.
+     * Relacionamento com o modelo Instrutor (caso o usuário seja um professor).
      */
     public function professor()
     {
@@ -70,7 +70,7 @@ class Usuarios extends Authenticatable
     }
 
     /**
-     * Relacionamento com o modelo Aluno.
+     * Relacionamento com o modelo Aluno (caso o usuário seja um aluno).
      */
     public function aluno()
     {
@@ -79,6 +79,7 @@ class Usuarios extends Authenticatable
 
     /**
      * Relacionamento com as atividades matriculadas pelo usuário.
+     * Caso tenha um relacionamento similar com `atividadesMatriculadas`, considere manter apenas um dos dois.
      */
     public function atividades()
     {
@@ -89,13 +90,9 @@ class Usuarios extends Authenticatable
 
     /**
      * Alias para o relacionamento de atividades matriculadas.
+     * Este método pode ser redundante se você já tem o método `atividades`.
      */
-    public function atividadesMatriculadas()
-    {
-        return $this->belongsToMany(Atividades::class, 'matriculas', 'usuario_id', 'atividade_id')
-                    ->withPivot('status')
-                    ->withTimestamps();
-    }
+   
 
     /**
      * Relacionamento com as atividades alocadas ao usuário (como instrutor).
@@ -115,4 +112,3 @@ class Usuarios extends Authenticatable
         }
     }
 }
-

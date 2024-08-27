@@ -14,7 +14,7 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('professor.atividades.listar') }}">
+                        <a class="nav-link" href="{{ route('atividades.listarPublicas') }}">
                             {{ __('Atividades Disponíveis') }}
                         </a>
                     </li>

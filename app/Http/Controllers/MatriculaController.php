@@ -48,7 +48,7 @@ class MatriculaController extends Controller
         } catch (\Exception $e) {
             DB::rollback();
             Log::error('Erro ao matricular usuário:', ['error' => $e->getMessage(), 'user_id' => $usuario->id, 'atividade_id' => $id]);
-            return redirect()->route('aluno.atividades.Atividades')->with('error', 'Erro ao matricular: ' . $e->getMessage());
+            return redirect()->route('aluno.atividades.listarAluno')->with('error', 'Erro ao matricular: ' . $e->getMessage());
         }
     }
 

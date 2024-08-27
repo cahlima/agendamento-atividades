@@ -1,10 +1,10 @@
 @extends('layouts.app')
 
-@section('title', 'Atividades Disponíveis')
+@section('title', 'Atividades do Centro Cultural')
 
 @section('content')
 <div class="container">
-    <h2>{{ __('Atividades Disponíveis') }}</h2>
+    <h2>{{ __('Atividades do Centro Cultural') }}</h2>
 
     @if(Session::has('success'))
         <div class="alert alert-success">
@@ -13,7 +13,7 @@
     @endif
 
     <!-- Formulário de busca -->
-    <form method="GET" action="{{ route('aluno.atividades.listarAluno') }}" class="mb-4">
+    <form method="GET" action="{{ route('atividades.listarPublicas') }}" class="mb-4">
         <div class="input-group">
             <input type="text" name="busca" class="form-control" placeholder="Buscar atividade..." value="{{ request('busca') }}">
             <div class="input-group-append">
@@ -29,6 +29,7 @@
                 <li class="list-group-item d-flex justify-content-between align-items-center">
                     <div>
                         <h5>{{ $atividade->atividade }}</h5>
+                        <p><strong>Local:</strong> {{ $atividade->local }}</p>
                         <p><strong>Instrutor:</strong> {{ $atividade->instrutor->nome ?? 'Instrutor não definido' }}</p>
                         <p><strong>Data:</strong>
                             {{ optional($atividade->data_inicio)->format('d/m/Y') ?? 'Data não definida' }} -
@@ -40,15 +41,6 @@
                             @endforeach
                         </p>
                     </div>
-                    <!-- Verificação se o aluno já está matriculado -->
-                    @if(!$atividade->alunos->contains(Auth::id()))
-                        <form action="{{ route('aluno.atividades.matricular', $atividade->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja se matricular nesta atividade?');">
-                            @csrf
-                            <button class="btn btn-success">{{ __('Matricular') }}</button>
-                        </form>
-                    @else
-                        <button class="btn btn-secondary" disabled>{{ __('Já Matriculado') }}</button>
-                    @endif
                 </li>
             @endforeach
         </ul>

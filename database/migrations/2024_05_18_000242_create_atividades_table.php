@@ -15,11 +15,12 @@ class CreateAtividadesTable extends Migration
             $table->date('data_fim');
             $table->time('hora');
             $table->unsignedBigInteger('instrutor_id');
+            $table->string('instrutor'); // Campo para armazenar o nome do instrutor
             $table->string('local');
             $table->string('dias'); // Armazenar os dias como uma string separada por vírgulas
             $table->timestamps();
 
-            $table->foreign('instrutor_id')->references('id')->on('usuarios');
+            $table->foreign('instrutor_id')->references('id')->on('usuarios')->onDelete('cascade');
         });
     }
 

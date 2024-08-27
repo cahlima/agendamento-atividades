@@ -19,7 +19,7 @@
                     <p>Aqui você pode ver suas informações e acessar as funcionalidades disponíveis para os alunos.</p>
 
                     <div class="list-group mb-4">
-                        <a href="{{ route('aluno.atividades.listarAtividades') }}" class="list-group-item list-group-item-action">Buscar Atividades</a>
+                        <a href="{{ route('aluno.atividades.listarAluno') }}" class="list-group-item list-group-item-action">Buscar Atividades</a>
                         <a href="{{ route('aluno.atividades.matriculadas') }}" class="list-group-item list-group-item-action">Minhas Atividades</a>
                         <a href="{{ route('aluno.perfil.index') }}" class="list-group-item list-group-item-action">Editar perfil</a>
                     </div>

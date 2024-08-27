@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Atividades;
 
 class ProfessoresController extends Controller
 {
@@ -30,6 +31,19 @@ class ProfessoresController extends Controller
         Log::info('Atividades recuperadas', ['atividades' => $atividades]);
 
         return view('professor.painelprof', compact('usuario', 'atividades'));
+    }
+
+    // Método para exibir as atividades matriculadas pelo professor
+    public function profAtividadesMatriculadas()
+    {
+        $usuario = Auth::user();
+
+        // Buscando as atividades onde o professor está alocado
+        $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
+
+        Log::info('Listando atividades matriculadas pelo professor', ['user_id' => $usuario->id]);
+
+        return view('professor.atividades.matriculadas', compact('atividades'));
     }
 
     // Exibe a página para editar o perfil do professor
@@ -60,12 +74,10 @@ class ProfessoresController extends Controller
 
         return redirect()->route('professor.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
     }
-    // No ProfessoresController
 
-public function showPerfil()
-{
-    $usuario = Auth::user();
-    return view('professor.perfil.index', compact('usuario'));
-}
-
+    public function showPerfil()
+    {
+        $usuario = Auth::user();
+        return view('professor.perfil.index', compact('usuario'));
+    }
 }
