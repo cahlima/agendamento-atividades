@@ -88,7 +88,7 @@ Route::prefix('aluno')->name('aluno.')->middleware('can:isAluno')->group(functio
 // Rotas para Professores
 Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->group(function () {
     Route::get('/painel', [ProfessoresController::class, 'index'])->name('painel');
-    Route::get('/atividades', [ProfessoresController::class, 'listarParaProfessores'])->name('atividades.listarProfessor');
+    Route::get('/atividades', [AtividadesController::class, 'listarParaProfessores'])->name('atividades.listarProfessor');
     Route::get('/atividades/matriculadas', [ProfessoresController::class, 'profAtividadesMatriculadas'])->name('atividades.matriculadas');
     Route::get('/atividades/{id}/horarios', [AtividadesController::class, 'buscarHorarios'])->name('atividades.horarios');
     Route::get('/atividades/{id}', [AtividadesController::class, 'buscarAtividade'])->name('atividades.buscar');
