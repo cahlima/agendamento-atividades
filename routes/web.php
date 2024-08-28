@@ -94,7 +94,7 @@ Route::prefix('professor')->name('professor.')->middleware('can:isProfessor')->g
     Route::get('/atividades/{id}', [AtividadesController::class, 'buscarAtividade'])->name('atividades.buscar');
     Route::get('/perfil', [ProfessoresController::class, 'showPerfil'])->name('perfil.index');
     Route::get('/perfil/edit', [ProfessoresController::class, 'PerfilEdit'])->name('perfil.edit');
-    Route::put('/perfil', [ProfessoresController::class, 'updatePerfil'])->name('perfil.update');
+    Route::put('/perfil', [ProfessoresController::class, 'perfilUpdate'])->name('perfil.update');
 });
 
 // Rotas de Matrículas
