@@ -21,7 +21,7 @@ class ProfessoresController extends Controller
         $usuario = Auth::user();
 
         // Supondo que 'atividades' é uma relação definida no modelo do usuário
-        $atividades = $usuario->atividades()->get();
+        $atividades = $usuario->atividades()->paginate(10); // Usando paginate para garantir a paginação
 
         Log::info('Usuário autenticado acessando o painel do professor', [
             'user_id' => $usuario->id,
@@ -38,8 +38,13 @@ class ProfessoresController extends Controller
     {
         $usuario = Auth::user();
 
-        // Buscando as atividades onde o professor está alocado
-        $atividades = Atividades::where('instrutor_id', $usuario->id)->get();
+          $atividades = Atividades::where('instrutor_id', $usuario->id)
+    ->with('alunos')
+    ->paginate(10);
+
+
+
+
 
         Log::info('Listando atividades matriculadas pelo professor', ['user_id' => $usuario->id]);
 

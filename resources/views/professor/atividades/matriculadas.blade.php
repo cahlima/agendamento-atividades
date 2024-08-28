@@ -31,6 +31,10 @@
                                             @foreach($atividade->alunos as $aluno)
                                                 <li>{{ $aluno->nome }}</li>
                                             @endforeach
+
+                                            
+
+
                                         </ul>
                                     </td>
                                 </tr>

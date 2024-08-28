@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'telefone' => $data['telefone'],
             'login' => $data['login'],
             'senha' => Hash::make($data['senha']),
-            'tipo_id' => 3,  // Definido como aluno
+            'tipo_id' => 2,  // Definido como aluno
         ]);
 
         Log::info('Usuário criado com sucesso', ['usuario_id' => $usuario->id]);
@@ -68,7 +68,7 @@ class RegisterController extends Controller
         Log::info('Usuário registrado com sucesso', ['usuario_id' => $usuario->id]);
 
         // Redirecionar usuários do tipo 3 para a página do painel do aluno
-        if ($usuario->tipo_id == 3) {
+        if ($usuario->tipo_id == 2) {
             return redirect('/painelaluno')->with('success', 'Cadastro realizado com sucesso!');
         }
 

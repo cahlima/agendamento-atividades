@@ -88,11 +88,13 @@ class Usuarios extends Authenticatable
                     ->withTimestamps();
     }
 
+    
+
     /**
      * Alias para o relacionamento de atividades matriculadas.
      * Este método pode ser redundante se você já tem o método `atividades`.
      */
-   
+
 
     /**
      * Relacionamento com as atividades alocadas ao usuário (como instrutor).
