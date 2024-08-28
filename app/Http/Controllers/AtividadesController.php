@@ -179,7 +179,7 @@ public function listarAtividades(Request $request)
         $atividades = Atividades::where('instrutor_id', $user->id)->get();
 
         // Aqui, o caminho da view foi ajustado para usar a view compartilhada
-        return view('professor.atividades.matriculadas', compact('atividades'));
+        return view('atividades.listar', compact('atividades'));
     }
 
     public function buscarAtividade($id)
