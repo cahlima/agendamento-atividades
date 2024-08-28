@@ -8,6 +8,16 @@
         <div class="card-header">
             <h2>{{ __('Gerenciador de Atividades') }}</h2>
         </div>
+
+         <!-- Formulário de busca -->
+    <form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="busca" class="form-control" placeholder="Buscar atividade..." value="{{ request('busca') }}">
+            <div class="input-group-append">
+                <button class="btn btn-primary" type="submit">{{ __('Buscar') }}</button>
+            </div>
+        </div>
+    </form>
         <div class="card-body">
             @if(Session::has('flash_message'))
                 <div class="alert alert-success">{{ Session::get('flash_message') }}</div>

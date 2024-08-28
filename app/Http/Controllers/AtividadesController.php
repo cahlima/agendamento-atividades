@@ -9,53 +9,61 @@ use App\Models\Atividades;
 use App\Models\Usuarios;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
-class AtividadesController extends Controller
+ class AtividadesController extends Controller
+ {
+     public function __construct()
+     {
+         $this->middleware('auth');
+     }
+
+// Método para exibir o painel do administrador com atividades do dia atual
+public function painelAdm()
 {
-    public function __construct()
-    {
-        $this->middleware('auth');
+    // Verifica se o usuário é admin antes de continuar
+    $this->authorize('isAdmin', Auth::user());
+
+    // Obtém o dia da semana atual (ex: 'terca')
+    $diaSemanaAtual = strtolower(Carbon::now()->locale('pt_BR')->isoFormat('dddd'));
+
+    // Converte 'terça-feira' para 'terca'
+    $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
+
+    // Filtra as atividades considerando o dia da semana atual e as datas de início e fim
+    $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                            ->whereDate('data_inicio', '<=', Carbon::now()->toDateString())
+                            ->whereDate('data_fim', '>=', Carbon::now()->toDateString())
+                            ->with('instrutor')
+                            ->get();
+
+    return view('administrador.paineladm', compact('atividades'));
+}
+
+// Método para exibir a view de gerenciamento de atividades com todas as atividades
+public function listarAtividades(Request $request)
+{
+    // Verifica se o usuário é admin antes de continuar
+    $this->authorize('isAdmin', Auth::user());
+
+    // Inicializa a query base
+    $atividades = Atividades::with('instrutor');
+
+    // Aplica filtros de busca
+    if ($request->has('busca')) {
+        $atividades->where('atividade', 'like', '%' . $request->busca . '%')
+                   ->orWhere('local', 'like', '%' . $request->busca . '%');
     }
 
-    // Funções para administradores
-    public function listarAtividades()
-    {
-        // Verifica se o usuário é admin antes de continuar
-        $this->authorize('isAdmin', Auth::user());
+    // Filtra por datas se necessário
+    $atividades = $atividades->where('data_inicio', '<=', now())
+                             ->where('data_fim', '>=', now())
+                             ->get();
 
-        $atividades = Atividades::with('instrutor')->get();
+    return view('administrador.atividades.index', compact('atividades'));
+}
 
-        return view('administrador.atividades.index', compact('atividades'));
-    }
-
-    // Função para alunos (essa será utilizada para listar atividades públicas)
-    public function listarAtividadesPublicas(Request $request)
-    {
-        // Filtra as atividades de acordo com a busca, caso haja um termo
-        $atividades = Atividades::query();
-
-        if ($request->has('busca')) {
-            $atividades->where('atividade', 'like', '%' . $request->busca . '%')
-                       ->orWhere('local', 'like', '%' . $request->busca . '%');
-        }
-
-        // Considera apenas as atividades dentro do período de validade
-        $atividades = $atividades->where('data_inicio', '<=', now())
-                                 ->where('data_fim', '>=', now())
-                                 ->get();
-
-        // Busca os horários, caso uma atividade específica seja selecionada
-        $horarios = [];
-
-        if ($request->has('atividade')) {
-            $horarios = Horarios::where('atividade_id', $request->atividade)->get();
-        }
-
-        return view('atividades.listar', compact('atividades', 'horarios'));
-    }
-
-//atividades para alunos
-    public function listarAtividadesAluno(Request $request)
+    public function listarAtividadesAlunos(Request $request)
     {
         $atividades = Atividades::with(['instrutor', 'horarios']); // Carrega instrutor e horários
 
@@ -63,10 +71,11 @@ class AtividadesController extends Controller
             $atividades->where('atividade', 'like', '%' . $request->busca . '%')
                        ->orWhere('local', 'like', '%' . $request->busca . '%');
         }
+        $atividades = Atividades::where('data_inicio', '<=', now())
+                         ->where('data_fim', '>=', now())
+                         ->with(['instrutor', 'horarios'])
+                         ->get();
 
-        $atividades = $atividades->where('data_inicio', '<=', now())
-                                 ->where('data_fim', '>=', now())
-                                 ->get();
 
         return view('aluno.atividades.listar', compact('atividades'));
     }

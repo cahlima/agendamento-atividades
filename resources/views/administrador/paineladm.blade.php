@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Painel Administrativo')
 
 @section('content')
 <div class="container mt-5">
@@ -28,8 +28,8 @@
                             <tr>
                                 <td>{{ $atividade->atividade }}</td>
                                 <td>{{ now()->format('d/m/Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td> 
-                                <td>{{ $atividade->instrutor }}</td>
+                                <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
+                                <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
                                 <td>{{ $atividade->local }}</td>
                             </tr>
                         @endforeach

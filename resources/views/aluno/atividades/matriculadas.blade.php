@@ -26,20 +26,21 @@
             </thead>
             <tbody>
                 @forelse($atividadesMatriculadas as $atividade)
-                    <tr>
-                        <td>{{ $atividade->atividade }}</td>
-                        <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
-                        <td>{{ $atividade->hora }}</td>
-                        <td>{{ $atividade->instrutor }}</td>
-                        <td>{{ $atividade->local }}</td>
-                        <td>
-                            <form action="{{ route('aluno.atividades.desmatricular', $atividade->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-danger">{{ __('Desmatricular') }}</button>
-                            </form>
-                        </td>
-                    </tr>
+                <tr>
+    <td>{{ $atividade->atividade }}</td>
+    <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
+    <td>{{ $atividade->hora }}</td>
+    <td>{{ $atividade->instrutor['nome'] }}</td>
+    <td>{{ $atividade->local }}</td>
+    <td>
+        <form action="{{ route('aluno.atividades.desmatricular', $atividade->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+            <button type="submit" class="btn btn-sm btn-danger">{{ __('Desmatricular') }}</button>
+        </form>
+    </td>
+</tr>
+
                 @empty
                     <tr>
                         <td colspan="6">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
