@@ -17,41 +17,49 @@ use Carbon\Carbon;
      {
          $this->middleware('auth');
      }
+
+     //ADMINISTRADOR
      public function painelAdm()
-     {
-         // Verifica se o usuário é admin antes de continuar
-         $this->authorize('isAdmin', Auth::user());
+{
+    // Verifica se o usuário é admin antes de continuar
+    $this->authorize('isAdmin', Auth::user());
 
-         // Obtém a data e o dia da semana atual
-         $dataAtual = Carbon::now();
-         $diaSemanaAtual = strtolower($dataAtual->locale('pt_BR')->isoFormat('dddd'));
-         $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
+    // Obtém a data e o dia da semana atual
+    $dataAtual = Carbon::now();
+    $diaSemanaAtual = strtolower($dataAtual->locale('pt_BR')->isoFormat('dddd'));
+    $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
 
-         // Filtra as atividades que estão programadas para o dia da semana atual e que ainda não ocorreram
-         $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
-                                 ->whereDate('data_inicio', '<=', $dataAtual->toDateString())
-                                 ->whereDate('data_fim', '>=', $dataAtual->toDateString())
-                                 ->whereTime('hora', '>=', $dataAtual->toTimeString())
-                                 ->with('instrutor')
-                                 ->get();
+    // Filtra as atividades que estão programadas para o dia da semana atual
+    $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                            ->whereDate('data_inicio', '<=', $dataAtual->toDateString())
+                            ->whereDate('data_fim', '>=', $dataAtual->toDateString())
+                            ->with('instrutor')
+                            ->get();
 
-         // Se não houver atividades hoje ou todas as atividades de hoje já passaram, calcula a próxima ocorrência
-         if ($atividades->isEmpty()) {
-             // Calcula a próxima ocorrência para o mesmo dia da semana na próxima semana
-             $proximaOcorrencia = $dataAtual->copy()->next($diaSemanaAtual);
+    // Filtrar atividades que ainda não ocorreram hoje (considerando o horário atual)
+    $atividadesFiltradas = $atividades->filter(function ($atividade) use ($dataAtual) {
+        $horaAtividade = Carbon::parse($atividade->hora);
 
-             $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
-                                     ->whereDate('data_inicio', '<=', $proximaOcorrencia->toDateString())
-                                     ->whereDate('data_fim', '>=', $proximaOcorrencia->toDateString())
-                                     ->with('instrutor')
-                                     ->get();
-         }
+        // Verifica se a atividade é hoje e se ainda não passou do horário
+        return $dataAtual->isSameDay(Carbon::parse($atividade->data_inicio)) && $horaAtividade->greaterThanOrEqualTo($dataAtual);
+    });
 
-         // Ordenar as atividades por horário
-         $atividades = $atividades->sortBy('hora');
+    // Se não houver atividades para hoje ou todas já passaram, calcula a próxima ocorrência
+    if ($atividadesFiltradas->isEmpty()) {
+        $proximaOcorrencia = $dataAtual->copy()->next($dataAtual->dayOfWeek);
 
-         return view('administrador.paineladm', ['atividades' => $atividades]);
-     }
+        $atividadesFiltradas = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                                ->whereDate('data_inicio', '<=', $proximaOcorrencia->toDateString())
+                                ->whereDate('data_fim', '>=', $proximaOcorrencia->toDateString())
+                                ->with('instrutor')
+                                ->get();
+    }
+
+    // Ordenar as atividades filtradas por horário
+    $atividadesFiltradas = $atividadesFiltradas->sortBy('hora');
+
+    return view('administrador.paineladm', ['atividades' => $atividadesFiltradas]);
+}
 
 public function listarAtividades(Request $request)
 {
@@ -75,26 +83,7 @@ public function listarAtividades(Request $request)
     return view('administrador.atividades.index', compact('atividades'));
 }
 
-    public function listarAtividadesAlunos(Request $request)
-    {
-        $atividades = Atividades::with(['instrutor', 'horarios']); // Carrega instrutor e horários
-
-        if ($request->has('busca')) {
-            $atividades->where('atividade', 'like', '%' . $request->busca . '%')
-                       ->orWhere('local', 'like', '%' . $request->busca . '%');
-        }
-        $atividades = Atividades::where('data_inicio', '<=', now())
-                         ->where('data_fim', '>=', now())
-                         ->with(['instrutor', 'horarios'])
-                         ->get();
-
-
-        return view('aluno.atividades.listar', compact('atividades'));
-    }
-
-
-
-    public function adicionarAtividade()
+public function adicionarAtividade()
     {
         $this->authorize('isAdmin', Auth::user());
         $instrutores = Usuarios::where('tipo_id', 3)->get(); // Obtém todos os instrutores
@@ -181,82 +170,6 @@ public function listarAtividades(Request $request)
         return redirect()->route('admin.atividades.index');
     }
 
-    // Funções para professores
-    public function listarParaProfessores()
-    {
-        $user = Auth::user();
-        Log::info('Listando atividades para professor', ['user_id' => $user->id]);
-
-        // Lista atividades onde o professor é o instrutor
-        $atividades = Atividades::where('instrutor_id', $user->id)->get();
-
-        // Aqui, o caminho da view foi ajustado para usar a view compartilhada
-        return view('atividades.listar', compact('atividades'));
-    }
-
-    public function buscarAtividade($id)
-    {
-        try {
-            $atividade = Atividades::with(['horarios', 'instrutor'])->findOrFail($id);
-
-            return response()->json([
-                'atividade' => $atividade->atividade,
-                'instrutor' => $atividade->instrutor->nome,
-                'horarios' => $atividade->horarios,
-                'local' => $atividade->local,
-                'dias' => $atividade->dias,
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Ocorreu um erro ao buscar os detalhes da atividade.'], 500);
-        }
-    }
-
-    public function buscarHorarios($id)
-    {
-        $horarios = [
-            [
-                'hora' => '10:00',
-                'instrutor' => 'Professor Exemplo',
-                'local' => 'Sala 1',
-                'dia' => 'segunda'
-            ],
-            [
-                'hora' => '14:00',
-                'instrutor' => 'Professor Exemplo',
-                'local' => 'Sala 2',
-                'dia' => 'terça'
-            ]
-        ];
-
-        return response()->json($horarios);
-    }
-
-    public function listarAtividadesParaAlunos(Request $request)
-{
-    // Filtra as atividades de acordo com a busca, caso haja um termo
-    $atividades = Atividades::query();
-
-    if ($request->has('busca')) {
-        $atividades->where('atividade', 'like', '%' . $request->busca . '%')
-                   ->orWhere('local', 'like', '%' . $request->busca . '%');
-    }
-
-    // Considera apenas as atividades dentro do período de validade
-    $atividades = $atividades->where('data_inicio', '<=', now())
-                             ->where('data_fim', '>=', now())
-                             ->get();
-
-    // Busca os horários, caso uma atividade específica seja selecionada
-    $horarios = [];
-
-    if ($request->has('atividade')) {
-        $horarios = Horarios::where('atividade_id', $request->atividade)->get();
-    }
-
-    return view('aluno.atividades.listar', compact('atividades', 'horarios'));
-}
-
-
     // Método para atualizar uma atividade
     public function update(Request $request, $id)
     {
@@ -295,6 +208,82 @@ public function listarAtividades(Request $request)
 
         return redirect()->route('admin.atividades.index');
     }
+
+//ALUNO
+
+public function listarAtividadesAlunos(Request $request)
+{
+    // Inicializa a query base
+    $atividades = Atividades::with(['instrutor', 'horarios']);
+
+    // Aplica filtros de busca
+    if ($request->has('busca')) {
+        $atividades->where(function($query) use ($request) {
+            $query->where('atividade', 'like', '%' . $request->busca . '%')
+                  ->orWhere('local', 'like', '%' . $request->busca . '%');
+        });
+    }
+
+    // Filtra por datas
+    $atividades = $atividades->where('data_inicio', '<=', now())
+                             ->where('data_fim', '>=', now())
+                             ->get();
+
+    return view('aluno.atividades.listar', compact('atividades'));
+}
+
+    // PROFESSOR
+    public function listarParaProfessores(Request $request)
+{
+    $user = Auth::user();
+    Log::info('Listando atividades para professor', ['user_id' => $user->id]);
+
+    // Lista atividades onde o professor é o instrutor
+    $atividades = Atividades::where('instrutor_id', $user->id)
+                            ->with('horarios')
+                            ->get();
+
+    return view('atividades.listar', compact('atividades'));
 }
 
 
+    public function buscarAtividade($id)
+    {
+        try {
+            $atividade = Atividades::with(['horarios', 'instrutor'])->findOrFail($id);
+
+            return response()->json([
+                'atividade' => $atividade->atividade,
+                'instrutor' => $atividade->instrutor->nome,
+                'horarios' => $atividade->horarios,
+                'local' => $atividade->local,
+                'dias' => $atividade->dias,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Ocorreu um erro ao buscar os detalhes da atividade.'], 500);
+        }
+    }
+
+    public function buscarHorarios($id)
+    {
+        $horarios = [
+            [
+                'hora' => '10:00',
+                'instrutor' => 'Professor Exemplo',
+                'local' => 'Sala 1',
+                'dia' => 'segunda'
+            ],
+            [
+                'hora' => '14:00',
+                'instrutor' => 'Professor Exemplo',
+                'local' => 'Sala 2',
+                'dia' => 'terça'
+            ]
+        ];
+
+        return response()->json($horarios);
+    }
+
+
+
+ }

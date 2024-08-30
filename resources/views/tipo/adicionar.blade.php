@@ -1,4 +1,4 @@
-@extends('layouts.base')
+@extends('layouts.app')
 
 @section('content')
 <h1>Adicionar Novo Tipo de Usuário</h1>

@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
+    <div class="card card-custom">
+    <div class="card-body">
             <h2>Olá, {{ Auth::user()->nome }}</h2>
         </div>
         <div class="card-body">

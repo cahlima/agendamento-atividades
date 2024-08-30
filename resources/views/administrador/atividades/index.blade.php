@@ -4,28 +4,36 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
+    <div class="card card-custom">
+    <div class="card-body">
+
             <h2>{{ __('Gerenciador de Atividades') }}</h2>
         </div>
 
          <!-- Formulário de busca -->
-    <form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-7">
-        <div class="input-group">
-            <input type="text" name="busca" class="form-control" placeholder="Buscar atividade..." value="{{ request('busca') }}">
-            <div class="input-group-append">
-                <button class="btn btn-primary" type="submit">{{ __('Buscar') }}</button>
-            </div>
-        </div>
-    </form>
-        <div class="card-body">
-            @if(Session::has('flash_message'))
-                <div class="alert alert-success">{{ Session::get('flash_message') }}</div>
+<form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-7">
+    <div class="input-group">
+        <input type="text" name="busca" class="form-control" placeholder="{{ request('busca') ? request('busca') : 'Buscar atividade...' }}" value="{{ request('busca') }}">
+        <div class="input-group-append">
+            <button class="btn btn-primary" type="submit">
+                <i class="fas fa-search"></i> {{ __('Buscar') }}
+            </button>
+            @if(request('busca'))
+                <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Limpar') }}</a>
             @endif
+        </div>
+    </div>
+</form>
+<div class="card-body">
+    @if(Session::has('flash_message'))
+        <div class="alert alert-success">{{ Session::get('flash_message') }}</div>
+    @endif
+</div>
 
             <a href="{{ route('admin.atividades.create') }}" class="btn btn-success mb-4">{{ __('Adicionar Atividade') }}</a>
 
-            <div class="table-responsive">
+           <div class="table-responsive">
+            <table class="table" style="width: 100%; min-width: 1000px;">
     <table class="table">
         <thead>
             <tr>

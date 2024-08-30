@@ -3,7 +3,9 @@
 @section('title', 'Minhas Atividades Matriculadas')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
+    <div class="card card-custom">
+    <div class="card-body">
     <h2>{{ __('Minhas Atividades Matriculadas') }}</h2>
 
     @if(Session::has('success'))

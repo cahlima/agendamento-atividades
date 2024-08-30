@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class AlunoController extends Controller
-{public function index()
+{
+
+    public function index()
     {
         $usuario = Auth::guard('web')->user();
 
@@ -25,12 +27,15 @@ class AlunoController extends Controller
             abort(403, 'Acesso negado. Você não tem permissão para acessar esta página.');
         }
 
-        $atividades = $usuario->atividades()->get();
+        // Carregar as atividades do aluno e garantir que o instrutor seja carregado
+        $atividades = $usuario->atividades()->with('instrutor')->get();
         Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
         Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
 
         return view('aluno.painelaluno', compact('usuario', 'atividades'));
     }
+
+
 
 
     public function showPerfil()

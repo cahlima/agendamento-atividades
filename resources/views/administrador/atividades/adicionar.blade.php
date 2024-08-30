@@ -3,9 +3,9 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container mt-7">
-    <div class="card">
-        <div class="card-header">
+<div class="container mt-5">
+    <div class="card card-custom">
+    <div class="card-body">
             <h2>{{ __('Adicionar Atividade') }}</h2>
         </div>
         <div class="card-body">

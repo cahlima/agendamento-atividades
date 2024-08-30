@@ -3,7 +3,9 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container">
+<div class="container mt-5">
+    <div class="card card-custom">
+    <div class="card-body"></div>
     <h2>{{ __('Buscar Atividades') }}</h2>
 
     <form id="buscar-atividade-form">
@@ -32,7 +34,7 @@
             <button type="submit" class="btn btn-primary">{{ __('Matricular') }}</button>
         </form>
     </div>
-</div>
+</>
 
 <script>
 document.getElementById('atividade').addEventListener('change', function() {
