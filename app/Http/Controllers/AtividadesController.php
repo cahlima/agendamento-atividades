@@ -17,30 +17,42 @@ use Carbon\Carbon;
      {
          $this->middleware('auth');
      }
+     public function painelAdm()
+     {
+         // Verifica se o usuário é admin antes de continuar
+         $this->authorize('isAdmin', Auth::user());
 
-// Método para exibir o painel do administrador com atividades do dia atual
-public function painelAdm()
-{
-    // Verifica se o usuário é admin antes de continuar
-    $this->authorize('isAdmin', Auth::user());
+         // Obtém a data e o dia da semana atual
+         $dataAtual = Carbon::now();
+         $diaSemanaAtual = strtolower($dataAtual->locale('pt_BR')->isoFormat('dddd'));
+         $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
 
-    // Obtém o dia da semana atual (ex: 'terca')
-    $diaSemanaAtual = strtolower(Carbon::now()->locale('pt_BR')->isoFormat('dddd'));
+         // Filtra as atividades que estão programadas para o dia da semana atual e que ainda não ocorreram
+         $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                                 ->whereDate('data_inicio', '<=', $dataAtual->toDateString())
+                                 ->whereDate('data_fim', '>=', $dataAtual->toDateString())
+                                 ->whereTime('hora', '>=', $dataAtual->toTimeString())
+                                 ->with('instrutor')
+                                 ->get();
 
-    // Converte 'terça-feira' para 'terca'
-    $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
+         // Se não houver atividades hoje ou todas as atividades de hoje já passaram, calcula a próxima ocorrência
+         if ($atividades->isEmpty()) {
+             // Calcula a próxima ocorrência para o mesmo dia da semana na próxima semana
+             $proximaOcorrencia = $dataAtual->copy()->next($diaSemanaAtual);
 
-    // Filtra as atividades considerando o dia da semana atual e as datas de início e fim
-    $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
-                            ->whereDate('data_inicio', '<=', Carbon::now()->toDateString())
-                            ->whereDate('data_fim', '>=', Carbon::now()->toDateString())
-                            ->with('instrutor')
-                            ->get();
+             $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                                     ->whereDate('data_inicio', '<=', $proximaOcorrencia->toDateString())
+                                     ->whereDate('data_fim', '>=', $proximaOcorrencia->toDateString())
+                                     ->with('instrutor')
+                                     ->get();
+         }
 
-    return view('administrador.paineladm', compact('atividades'));
-}
+         // Ordenar as atividades por horário
+         $atividades = $atividades->sortBy('hora');
 
-// Método para exibir a view de gerenciamento de atividades com todas as atividades
+         return view('administrador.paineladm', ['atividades' => $atividades]);
+     }
+
 public function listarAtividades(Request $request)
 {
     // Verifica se o usuário é admin antes de continuar

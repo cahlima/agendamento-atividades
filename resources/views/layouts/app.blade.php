@@ -40,6 +40,7 @@
                         @can('isProfessor')
                             <li class="nav-item"><a class="nav-link" href="{{ route('professor.painel') }}">Início</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('professor.atividades.matriculadas') }}">Minhas Atividades</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ route('professor.atividades.listarProfessor') }}">Buscar Atividades</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ route('professor.perfil.index') }}">Meu Perfil</a></li>
                         @endcan
                         <li class="nav-item">

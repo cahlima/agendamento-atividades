@@ -13,28 +13,36 @@
                 <h5 class="card-title">{{ __('Atividades de Hoje') }}</h5>
             </div>
             <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>{{ __('Atividade') }}</th>
-                            <th>{{ __('Data') }}</th>
-                            <th>{{ __('Hora') }}</th>
-                            <th>{{ __('Instrutor') }}</th>
-                            <th>{{ __('Local') }}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($atividades as $atividade)
-                            <tr>
-                                <td>{{ $atividade->atividade }}</td>
-                                <td>{{ now()->format('d/m/Y') }}</td>
-                                <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
-                                <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
-                                <td>{{ $atividade->local }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
+        <table class="table">
+    <thead>
+        <tr>
+            <th>Atividade</th>
+            <th>Data</th>
+            <th>Dia</th>
+            <th>Hora</th>
+            <th>Instrutor</th>
+            <th>Local</th>
+        </tr>
+    </thead>
+    <tbody>
+        @forelse ($atividades as $atividade)
+            <tr>
+                <td>{{ $atividade->atividade }}</td>
+                <td>{{ \Carbon\Carbon::parse($atividade->data_inicio)->addDays(\Carbon\Carbon::parse($atividade->data_inicio)->diffInDays($atividade->data_fim))->format('d/m/Y') }}</td>
+                <td>{{ ucfirst(\Carbon\Carbon::parse($atividade->data_inicio)->addDays(\Carbon\Carbon::parse($atividade->data_inicio)->diffInDays($atividade->data_fim))->locale('pt_BR')->isoFormat('dddd')) }}</td>
+
+                <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
+                <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
+                <td>{{ $atividade->local ?? 'N/A' }}</td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="6">Nenhuma atividade encontrada para hoje.</td>
+            </tr>
+        @endforelse
+    </tbody>
+</table>
+
             </div>
         </div>
     </div>

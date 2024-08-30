@@ -3,7 +3,7 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="container mt-5">
+<div class="container mt-7">
     <div class="card">
         <div class="card-header">
             <h2>{{ __('Adicionar Atividade') }}</h2>
@@ -42,28 +42,14 @@
                 <div class="form-group">
                     <label for="hora">{{ __('Horários') }}</label>
                     <div id="horarios-container">
-                        <div class="input-group mb-2">
+                        <div class="input-group mb-3">
                             <input type="time" name="hora[]" class="form-control" value="{{ old('hora.0') }}" required>
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-success add-hora">{{ __('Adicionar Horário') }}</button>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="instrutor">{{ __('Instrutor') }}</label>
-                    <select id="instrutor" class="form-control" name="instrutor_id" required>
-                        @foreach($instrutores as $instrutor)
-                            <option value="{{ $instrutor->id }}">{{ $instrutor->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="local">{{ __('Local') }}</label>
-                    <input id="local" type="text" class="form-control" name="local" value="{{ old('local') }}" required>
-                </div>
+                </div>]
 
                 <div class="form-group">
                     <label for="dias">{{ __('Dias da Semana') }}</label>
@@ -78,7 +64,19 @@
                         @endforeach
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="instrutor">{{ __('Instrutor') }}</label>
+                    <select id="instrutor" class="form-control" name="instrutor_id" required>
+                        @foreach($instrutores as $instrutor)
+                            <option value="{{ $instrutor->id }}">{{ $instrutor->nome }}</option>
+                        @endforeach
+                    </select>
+                </div>
 
+                <div class="form-group">
+                    <label for="local">{{ __('Local') }}</label>
+                    <input id="local" type="text" class="form-control" name="local" value="{{ old('local') }}" required>
+                </div>
                 <div class="form-group">
                     <button type="submit" class="btn btn-primary">{{ __('Adicionar Atividade') }}</button>
                     <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
