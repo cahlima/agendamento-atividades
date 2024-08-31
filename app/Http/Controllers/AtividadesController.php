@@ -213,24 +213,29 @@ public function adicionarAtividade()
 
 public function listarAtividadesAlunos(Request $request)
 {
-    // Inicializa a query base
-    $atividades = Atividades::with(['instrutor', 'horarios']);
+    // Recupera o usuário autenticado
+    $usuario = Auth::user();
+
+    // Inicializa a query para buscar todas as atividades disponíveis
+    $atividades = Atividades::with(['instrutor', 'horarios'])
+                            ->whereDoesntHave('alunos', function ($query) use ($usuario) {
+                                $query->where('usuario_id', $usuario->id);
+                            });
 
     // Aplica filtros de busca
     if ($request->has('busca')) {
-        $atividades->where(function($query) use ($request) {
-            $query->where('atividade', 'like', '%' . $request->busca . '%')
-                  ->orWhere('local', 'like', '%' . $request->busca . '%');
-        });
+        $atividades->where('atividade', 'like', '%' . $request->busca . '%')
+                   ->orWhere('local', 'like', '%' . $request->busca . '%');
     }
 
-    // Filtra por datas
-    $atividades = $atividades->where('data_inicio', '<=', now())
-                             ->where('data_fim', '>=', now())
-                             ->get();
+    $atividades = $atividades->get();
 
-    return view('aluno.atividades.listar', compact('atividades'));
+    // Recupera as atividades nas quais o usuário já está matriculado
+    $atividadesMatriculadas = $usuario->atividades()->with(['instrutor', 'horarios'])->get();
+
+    return view('aluno.atividades.listar', compact('atividades', 'atividadesMatriculadas'));
 }
+
 
     // PROFESSOR
     public function listarParaProfessores(Request $request)
@@ -283,7 +288,4 @@ public function listarAtividadesAlunos(Request $request)
 
         return response()->json($horarios);
     }
-
-
-
  }

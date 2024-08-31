@@ -13,44 +13,45 @@ class MatriculaController extends Controller
 {
     // Método para matricular um usuário em uma atividade
     public function matricular($id)
-    {
-        // Verifica se o usuário está autenticado
-        $usuario = Auth::user();
+{
+    // Verifica se o usuário está autenticado
+    $usuario = Auth::user();
 
-        if (!$usuario) {
-            return redirect()->route('login')->with('error', 'Você precisa estar logado para realizar uma matrícula.');
-        }
-
-        Log::info('Iniciando matrícula para usuário:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
-
-        DB::beginTransaction();
-
-        try {
-            $atividade = Atividades::findOrFail($id);
-            Log::info('Atividade encontrada:', ['atividade_id' => $atividade->id]);
-
-            if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
-                Log::info('Usuário já está matriculado na atividade:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
-                return redirect()->route('aluno.atividades.listarAtividades')->with('error', 'Você já está matriculado nesta atividade.');
-            }
-
-            Matricula::create([
-                'usuario_id' => $usuario->id,
-                'atividade_id' => $atividade->id,
-                'status' => 'confirmado',
-                'tipo_id' => $usuario->tipo_id,
-            ]);
-
-            Log::info('Matrícula criada com sucesso para usuário:', ['user_id' => $usuario->id, 'atividade_id' => $atividade->id]);
-
-            DB::commit();
-            return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado com sucesso.');
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Erro ao matricular usuário:', ['error' => $e->getMessage(), 'user_id' => $usuario->id, 'atividade_id' => $id]);
-            return redirect()->route('aluno.atividades.listarAluno')->with('error', 'Erro ao matricular: ' . $e->getMessage());
-        }
+    if (!$usuario) {
+        return redirect()->route('login')->with('error', 'Você precisa estar logado para realizar uma matrícula.');
     }
+
+    Log::info('Iniciando matrícula para usuário:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
+
+    DB::beginTransaction();
+
+    try {
+        $atividade = Atividades::findOrFail($id);
+        Log::info('Atividade encontrada:', ['atividade_id' => $atividade->id]);
+
+        // Verifica se o usuário já está matriculado nesta atividade
+        if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
+            Log::info('Usuário já está matriculado na atividade:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
+            return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Você já está matriculado nesta atividade.');
+        }
+
+        Matricula::create([
+            'usuario_id' => $usuario->id,
+            'atividade_id' => $atividade->id,
+            'status' => 'confirmado',
+            'tipo_id' => $usuario->tipo_id,
+        ]);
+
+        Log::info('Matrícula criada com sucesso para usuário:', ['user_id' => $usuario->id, 'atividade_id' => $atividade->id]);
+
+        DB::commit();
+        return redirect()->route('aluno.atividades.matriculadas')->with('success', 'Matriculado com sucesso.');
+    } catch (\Exception $e) {
+        DB::rollback();
+        Log::error('Erro ao matricular usuário:', ['error' => $e->getMessage(), 'user_id' => $usuario->id, 'atividade_id' => $id]);
+        return redirect()->route('aluno.atividades.listarAluno')->with('error', 'Erro ao matricular: ' . $e->getMessage());
+    }
+}
 
     // Método para desmatricular um usuário de uma atividade
     public function desmatricular($id)
@@ -89,19 +90,21 @@ class MatriculaController extends Controller
         return view('matriculas.geral', compact('matriculas'));
     }
 
-public function matriculaaluno()
-{
-    // Verifica se o usuário está autenticado
-    $usuario = Auth::user();
+    public function matriculaaluno()
+    {
+        // Verifica se o usuário está autenticado
+        $usuario = Auth::user();
 
-    if (!$usuario) {
-        return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
+        if (!$usuario) {
+            return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
+        }
+
+        // Obtenha as atividades matriculadas do usuário com paginação
+        $atividadesMatriculadas = $usuario->atividades()->paginate(10); // Paginação com 10 itens por página
+
+        return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
     }
 
-    // Obtenha as atividades matriculadas do usuário
-    $atividadesMatriculadas = $usuario->atividades; // Certifique-se de que esse relacionamento esteja corretamente configurado no modelo Usuario
 
-    return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
-}
 }
 

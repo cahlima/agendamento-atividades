@@ -29,7 +29,7 @@
                         <ul class="list-group">
                             @foreach($atividades as $atividade)
                                 <li class="list-group-item">
-                                    {{ $atividade->atividade }} - {{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }} às {{ $atividade->hora }}
+                                    {{ $atividade->atividade }} - {{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }} às {{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}
                                     <br>Instrutor: {{ $atividade->instrutor->nome ?? 'Nome do instrutor não disponível' }}
                                     <br>Local: {{ $atividade->local }}
                                 </li>
