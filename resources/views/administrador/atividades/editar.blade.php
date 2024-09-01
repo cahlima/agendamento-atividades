@@ -60,15 +60,19 @@
                             </div>
                         </div>
 
+
+
                         <div class="form-group">
-                            <label for="hora">Hora</label>
-                            <input type="time" class="form-control @error('hora') is-invalid @enderror" id="hora" name="hora" value="{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}" required>
-                            @error('hora')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
+    <label for="hora">Hora</label>
+    <input type="time" class="form-control @error('hora') is-invalid @enderror" id="hora" name="hora" value="{{ $atividade->hora }}" required>
+    @error('hora')
+        <span class="invalid-feedback" role="alert">
+            <strong>{{ $message }}</strong>
+        </span>
+    @enderror
+</div>
+
+
 
                         <div class="form-group">
                             <label for="instrutor">Instrutor</label>

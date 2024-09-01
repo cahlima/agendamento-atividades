@@ -1,56 +1,99 @@
 /* Estilos Globais */
-// resources/sass/app.scss
-
 @import "~bootstrap/scss/bootstrap";
 
 body {
     font-family: 'Nunito', sans-serif;
-    background-color: #f0f2f5;
-    color: #495057;
+    background-color: #a7ecb3;
+    color: #2b2d30;
 }
 
+/* Estilo do navbar */
 .navbar {
-    padding: 1rem 2rem;
-    background-color: #343a40; /* Cor mais escura para o Navbar */
+    background-color: #f8f9fa; /* Fundo claro */
+    padding: 0.5rem 1rem;
+    position: relative;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
 }
 
-.card {
-    max-width: 900px;
-    margin: 2rem auto;
-    padding: 1.5rem;
-    border: none;
-    border-radius: .5rem;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.navbar-brand {
+    color: black; /* Cor preta para as letras */
+    font-size: 1.8rem; /* Aumentar tamanho da fonte */
+    font-weight: 700; /* Aumentar espessura da fonte */
+    margin-right: 1rem;
 }
 
-/* Estilos de Tabela */
-
-.table-responsive {
-    overflow-x: auto;
+.navbar-nav .nav-link {
+    color: black !important; /* Cor preta para os links */
+    font-size: 1.2rem; /* Aumentar tamanho da fonte */
+    font-weight: 600; /* Aumentar espessura da fonte */
+    text-decoration: none;
 }
 
+.navbar-nav .nav-link:hover {
+    color: #555 !important; /* Cor cinza ao passar o mouse */
+}
+
+/* Estilo do banner */
+.banner {
+    margin-bottom: 20px; /* Espaço entre o banner e o conteúdo principal */
+    position: relative;
+    z-index: 1;
+}
+
+.banner img {
+    max-height: 400px;
+    width: 100%;
+    object-fit: cover;
+}
+
+/* Estilo geral */
+body {
+    font-family: 'Nunito', sans-serif;
+    background-color: #e9ecef;
+    color: #333;
+}
+
+.card-custom {
+    margin-top: 0;
+    width: 100%;
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* Estilo da tabela */
 .table {
-    width: 100%; /* Ajusta a tabela para ocupar toda a largura do contêiner */
-    min-width: 1000px; /* Define uma largura mínima */
+    margin-top: 20px;
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    background-color: #fff;
+    border-collapse: separate;
+    border-spacing: 0;
 }
-
-th, td {
-    padding: 10px; /* Aumenta o preenchimento para dar mais espaço */
-    text-align: left; /* Mantém o texto alinhado à esquerda */
-}
-
 
 .table th {
-    background-color: #343a40;
-    color: #fff;
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.table td {
+    padding: 0.75rem;
+    text-align: left;
+}
+
+.table tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
 }
 
 .table tbody tr:nth-child(even) {
-    background-color: #f8f9fa;
+    background-color: #e6e6e6;
 }
 
-/* Botão */
+/* Botões */
 .btn-primary {
     background-color: #28a745;
     border-color: #28a745;
@@ -61,15 +104,6 @@ th, td {
     border-color: #1e7e34;
 }
 
-/* Estilo para espaçar os botões */
 .table .btn {
-    margin-bottom: 0.7rem; /* Espaçamento entre os botões */
+    margin-bottom: 0.8rem;
 }
-
-.card-custom {
-    width: 100%;
-    max-width: 1300px;
-    margin: 0 auto;
-}
-
-

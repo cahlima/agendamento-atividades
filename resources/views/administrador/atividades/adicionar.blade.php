@@ -49,7 +49,7 @@
                             </div>
                         </div>
                     </div>
-                </div>]
+                </div>
 
                 <div class="form-group">
                     <label for="dias">{{ __('Dias da Semana') }}</label>

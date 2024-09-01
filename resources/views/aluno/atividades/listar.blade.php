@@ -24,8 +24,8 @@
                 </div>
             </form>
 
-            <!-- Listagem de Atividades -->
-            @if($atividades->isNotEmpty() || $atividadesMatriculadas->isNotEmpty())
+            <!-- Listagem de Atividades para matrícula -->
+            @if($atividades->isNotEmpty())
                 <ul class="list-group">
                     @foreach($atividades as $atividade)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -48,15 +48,22 @@
                                 </p>
                                 <p><strong>Local:</strong> {{ $atividade->local }}</p>
                             </div>
-                            <!-- Verifica se o usuário já está matriculado na atividade -->
+                            <!-- Botão de matrícula -->
                             <form action="{{ route('aluno.atividades.matricular', $atividade->id) }}" method="POST">
                                 @csrf
                                 <button type="submit" class="btn btn-success">{{ __('Matricular') }}</button>
                             </form>
                         </li>
                     @endforeach
+                </ul>
+            @else
+                <p>{{ __('Nenhuma atividade encontrada para matrícula.') }}</p>
+            @endif
 
-                    <!-- Listagem de Atividades em que o Aluno já está Matriculado -->
+            <!-- Listagem de Atividades já matriculadas -->
+            @if($atividadesMatriculadas->isNotEmpty())
+                <h3 class="mt-5">{{ __('Atividades já matriculadas') }}</h3>
+                <ul class="list-group">
                     @foreach($atividadesMatriculadas as $atividade)
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
@@ -78,13 +85,13 @@
                                 </p>
                                 <p><strong>Local:</strong> {{ $atividade->local }}</p>
                             </div>
-                            <!-- Botão indicando que o aluno já está matriculado -->
+                            <!-- Botão desabilitado para atividades já matriculadas -->
                             <button class="btn btn-secondary" disabled>{{ __('Já Matriculado') }}</button>
                         </li>
                     @endforeach
                 </ul>
             @else
-                <p>{{ __('Nenhuma atividade encontrada.') }}</p>
+                <p>{{ __('Nenhuma atividade encontrada para matrícula.') }}</p>
             @endif
         </div>
     </div>

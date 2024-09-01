@@ -124,11 +124,11 @@ Route::get('/send-test-email', [TestMailController::class, 'sendTestEmail'])->na
 
 // Rotas de Usuários
 Route::prefix('usuarios')->name('usuarios.')->group(function () {
-    Route::get('/', [UsuariosController::class, 'index'])->name('index');
-    Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('create');
-    Route::post('/store', [UsuariosController::class, 'salvar'])->name('store');
-    Route::get('/{id}/editar', [UsuariosController::class, 'editar'])->name('edit');
-    Route::delete('/{id}', [UsuariosController::class, 'deletar'])->name('destroy');
-    Route::get('/usuarios', [UsuariosController::class, 'index'])->name('usuarios.index');
-    Route::put('/{id}/atualizar', [UsuariosController::class, 'atualizar'])->name('update');
+    Route::get('/', [UsuariosController::class, 'index'])->name('index'); // Listar usuários
+    Route::get('/adicionar', [UsuariosController::class, 'adicionar'])->name('create'); // Exibir formulário para adicionar novo usuário
+    Route::post('/store', [UsuariosController::class, 'salvar'])->name('store'); // Salvar novo usuário
+    Route::get('/{id}/editar', [UsuariosController::class, 'editar'])->name('edit'); // Exibir formulário para editar usuário existente
+    Route::put('/{id}/atualizar', [UsuariosController::class, 'atualizar'])->name('update'); // Atualizar usuário existente
+    Route::delete('/{id}', [UsuariosController::class, 'deletar'])->name('destroy'); // Deletar usuário
 });
+
