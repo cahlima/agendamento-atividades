@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Usuarios;
 use App\Models\Tipos;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
@@ -19,11 +20,65 @@ class PainelAdmController extends Controller
     }
 
     public function index()
-    {
-        Log::info('Método index do PainelAdmController chamado');
-        $atividades = Atividades::all(); // Busca todas as atividades cadastradas
-        return view('administrador.paineladm', compact('atividades'));
-    }
+{
+    Log::info('Método index do PainelAdmController chamado');
+
+    // Obtém a data atual
+    $dataAtual = Carbon::now();
+    $diaSemanaAtual = strtolower($dataAtual->locale('pt_BR')->isoFormat('dddd'));
+    $diaSemanaAtual = str_replace('-feira', '', $diaSemanaAtual);
+
+    Log::info('Data Atual: ' . $dataAtual->toDateString());
+    Log::info('Dia da Semana Atual: ' . $diaSemanaAtual);
+
+    // Filtra as atividades que estão programadas para o dia da semana atual
+    $atividades = Atividades::where('dias', 'LIKE', "%{$diaSemanaAtual}%")
+                            ->whereDate('data_inicio', '<=', $dataAtual->toDateString())
+                            ->whereDate('data_fim', '>=', $dataAtual->toDateString())
+                            ->with('instrutor')
+                            ->get();
+
+    Log::info('Atividades Recuperadas: ' . $atividades->count());
+
+    $atividadesFiltradas = $atividades->map(function ($atividade) use ($dataAtual, $diaSemanaAtual) {
+        // Mapeia os dias da semana para os inteiros usados pelo Carbon
+        $diasSemanaMap = [
+            'domingo' => Carbon::SUNDAY,
+            'segunda' => Carbon::MONDAY,
+            'terca' => Carbon::TUESDAY,  // sem acento
+            'quarta' => Carbon::WEDNESDAY,
+            'quinta' => Carbon::THURSDAY,
+            'sexta' => Carbon::FRIDAY,
+            'sabado' => Carbon::SATURDAY, // sem acento
+        ];
+
+        // Verifica se a atividade é para o dia atual
+        if (strpos($atividade->dias, $diaSemanaAtual) !== false) {
+            // Se a atividade está dentro do intervalo de datas e é para o dia atual
+            if ($dataAtual->between(Carbon::parse($atividade->data_inicio), Carbon::parse($atividade->data_fim))) {
+                $atividade->data_ocorrencia = $dataAtual->toDateString();
+                return $atividade;
+            }
+        }
+
+        // Se não for o dia atual, calcula o próximo dia de ocorrência
+        $proxDia = $dataAtual->copy()->next($diasSemanaMap[$diaSemanaAtual]);
+
+        // Verifica se a próxima ocorrência está dentro do intervalo da atividade
+        if ($proxDia->between(Carbon::parse($atividade->data_inicio), Carbon::parse($atividade->data_fim))) {
+            $atividade->data_ocorrencia = $proxDia->toDateString();
+            return $atividade;
+        }
+
+        return null;
+    })->filter();
+
+
+    Log::info('Atividades Filtradas: ' . $atividadesFiltradas->count());
+
+    return view('administrador.paineladm', ['atividades' => $atividadesFiltradas]);
+}
+
 
     public function perfilIndex()
 {
@@ -63,112 +118,4 @@ public function perfilUpdate(Request $request, $id)
 }
 
 
-    public function listarUsuarios()
-    {
-        try {
-            Log::info('Entrando no método listarUsuarios');
-
-            $usuarios = Usuarios::paginate(10);
-
-            Log::info('Usuários recuperados com sucesso');
-
-            return view('administrador.usuarios.listar', compact('usuarios'));
-        } catch (\Exception $e) {
-            Log::error('Erro ao listar usuários: ' . $e->getMessage());
-            return redirect()->back()->withErrors('Erro ao recuperar usuários.');
-        }
-    }
-
-    public function adicionarUsuario()
-    {
-        $this->authorize('create', Usuarios::class);
-        $tipos = Tipos::all();
-        return view('administrador.usuarios.criar', compact('tipos'));
-    }
-
-    public function salvarUsuario(Request $request)
-    {
-        $this->authorize('create', Usuarios::class);
-
-        $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
-            'sobrenome' => 'required|string|max:255',
-            'login' => 'required|string|max:255|unique:usuarios,login',
-            'email' => 'required|email|unique:usuarios,email',
-            'senha' => 'required|string|min:6|confirmed',
-            'data_nascimento' => 'required|date',
-            'telefone' => 'required|string|max:20',
-            'tipo_id' => 'required|exists:tipos,id'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dados = $request->only(['nome', 'sobrenome', 'login', 'email', 'data_nascimento', 'telefone', 'tipo_id']);
-        $dados['senha'] = bcrypt($request->senha);
-        Usuarios::create($dados);
-
-        Session::flash('flash_message', [
-            'msg' => "Registro adicionado com sucesso!",
-            'class' => "alert-success"
-        ]);
-        return redirect()->route('usuarios.index');
-    }
-
-    public function editarUsuario($id)
-    {
-        $usuario = Usuarios::findOrFail($id);
-        $this->authorize('update', $usuario);
-        $tipos = Tipos::all();
-        return view('administrador.usuarios.editar', compact('usuario', 'tipos'));
-    }
-
-    public function atualizarUsuario(Request $request, $id)
-    {
-        $usuario = Usuarios::findOrFail($id);
-        $this->authorize('update', $usuario);
-
-        $validator = Validator::make($request->all(), [
-            'nome' => 'required|string|max:255',
-            'sobrenome' => 'required|string|max:255',
-            'login' => 'required|string|max:255|unique:usuarios,login,'.$usuario->id,
-            'email' => 'required|email|unique:usuarios,email,'.$usuario->id,
-            'senha' => 'nullable|string|min:6|confirmed',
-            'data_nascimento' => 'required|date',
-            'telefone' => 'required|string|max:20',
-            'tipo_id' => 'required|exists:tipos,id'
-        ]);
-
-        if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
-
-        $dados = $request->only(['nome', 'sobrenome', 'login', 'email', 'data_nascimento', 'telefone', 'tipo_id']);
-        if ($request->filled('senha')) {
-            $dados['senha'] = bcrypt($request->senha);
-        }
-        $usuario->update($dados);
-
-        Session::flash('flash_message', [
-            'msg' => "Registro atualizado com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('usuarios.index');
-    }
-
-    public function deletarUsuario($id)
-    {
-        $usuario = Usuarios::findOrFail($id);
-        $this->authorize('delete', $usuario);
-        $usuario->delete();
-
-        Session::flash('flash_message', [
-            'msg' => "Registro excluído com sucesso!",
-            'class' => "alert-success"
-        ]);
-
-        return redirect()->route('usuarios.index');
-    }
 }

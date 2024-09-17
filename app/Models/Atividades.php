@@ -26,11 +26,14 @@ class Atividades extends Model
     /**
      * Relação com os alunos matriculados na atividade.
      */
+
     public function alunos()
-    {
-        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
-                    ->wherePivot('tipo_id', 2); // Confirme o tipo_id correto para alunos
-    }
+{
+    return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
+                ->withPivot('tipo_id')
+                ->wherePivot('tipo_id', 2); // Certifique-se de que tipo_id = 2 é para alunos
+}
+
 
     /**
      * Usuários matriculados na atividade (incluindo alunos e professores).

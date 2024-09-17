@@ -3,129 +3,124 @@
 @section('title', 'Editar Atividade')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card card-custom">
-    <div class="card-body">
-                <div class="card-header">{{ __('Editar Atividade') }}</div>
-
-                <div class="card-body">
-
-                    <!-- Alertas de sucesso ou erro -->
-                    @if(Session::has('success'))
-                        <div class="alert alert-success">
-                            {{ Session::get('success') }}
-                        </div>
-                    @endif
-
-                    @if(Session::has('error'))
-                        <div class="alert alert-danger">
-                            {{ Session::get('error') }}
-                        </div>
-                    @endif
-
-                    <!-- Formulário com alerta de confirmação -->
-                    <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}" onsubmit="return confirm('Você tem certeza que deseja salvar as alterações?');">
-                        @csrf
-                        @method('PUT')
-
-                        <!-- Campos do formulário -->
-                        <div class="form-group">
-                            <label for="atividade">Atividade</label>
-                            <input type="text" class="form-control @error('atividade') is-invalid @enderror" id="atividade" name="atividade" value="{{ $atividade->atividade }}" required>
-                            @error('atividade')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-row">
-                            <div class="form-group col-md-6">
-                                <label for="data_inicio">Data de Início</label>
-                                <input type="date" class="form-control @error('data_inicio') is-invalid @enderror" id="data_inicio" name="data_inicio" value="{{ $atividade->data_inicio }}" required>
-                                @error('data_inicio')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="data_fim">Data de Fim</label>
-                                <input type="date" class="form-control @error('data_fim') is-invalid @enderror" id="data_fim" name="data_fim" value="{{ $atividade->data_fim }}" required>
-                                @error('data_fim')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                            </div>
-                        </div>
-
-
-
-                        <div class="form-group">
-    <label for="hora">Hora</label>
-    <input type="time" class="form-control @error('hora') is-invalid @enderror" id="hora" name="hora" value="{{ $atividade->hora }}" required>
-    @error('hora')
-        <span class="invalid-feedback" role="alert">
-            <strong>{{ $message }}</strong>
-        </span>
-    @enderror
-</div>
-
-
-
-                        <div class="form-group">
-                            <label for="instrutor">Instrutor</label>
-                            <select class="form-control @error('instrutor_id') is-invalid @enderror" id="instrutor" name="instrutor_id" required>
-                                <option value="">Selecione o instrutor</option>
-                                @foreach($instrutores as $instrutor)
-                                    <option value="{{ $instrutor->id }}" {{ $instrutor->id == $atividade->instrutor_id ? 'selected' : '' }}>{{ $instrutor->nome }}</option>
-                                @endforeach
-                            </select>
-                            @error('instrutor_id')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="local">Local</label>
-                            <input type="text" class="form-control @error('local') is-invalid @enderror" id="local" name="local" value="{{ $atividade->local }}" required>
-                            @error('local')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <div class="form-group">
-                            <label for="dias">Dias da Semana</label>
-                            <select id="dias" class="form-control @error('dias') is-invalid @enderror" name="dias[]" multiple required>
-                                @php
-                                    $dias_semana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
-                                    $dias_selecionados = explode(',', $atividade->dias);
-                                @endphp
-                                @foreach($dias_semana as $dia)
-                                    <option value="{{ $dia }}" {{ in_array($dia, $dias_selecionados) ? 'selected' : '' }}>
-                                        {{ ucfirst($dia) }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('dias')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-
-                        <button type="submit" class="btn btn-primary">
-                            {{ __('Salvar') }}
-                        </button>
-                    </form>
+<div class="container mt-10 d-flex justify-content-center">
+    <div class="card card-custom" style="width: 100%; max-width: 900px;">
+        <div class="card-body">
+            
+            <h2 class="text-center">{{ __('Editar Atividade') }}</h2>
+        </div>
+        <div class="card-body">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
+            @endif
+
+            <!-- Centralizando o formulário -->
+            <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}" class="mx-auto" style="max-width: 800px;">
+                @csrf
+                @method('PUT')
+
+                <div class="form-group">
+                    <label for="atividade">{{ __('Atividade') }}</label>
+                    <input id="atividade" type="text" class="form-control" name="atividade" value="{{ $atividade->atividade }}" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="data_inicio">{{ __('Data de Início') }}</label>
+                        <input id="data_inicio" type="date" class="form-control" name="data_inicio" value="{{ $atividade->data_inicio }}" required>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="data_fim">{{ __('Data de Fim') }}</label>
+                        <input id="data_fim" type="date" class="form-control" name="data_fim" value="{{ $atividade->data_fim }}" required>
+                    </div>
+                </div>
+
+                <!-- Seção de horários -->
+                <div class="form-group">
+                    <label for="hora">{{ __('Horários') }}</label>
+                    <div id="horarios-container">
+                        @foreach(explode(',', $atividade->hora) as $index => $horario)
+                            <div class="input-group mb-2">
+                                <input type="time" name="hora[]" class="form-control" value="{{ $horario }}" required>
+
+                            </div>
+                        @endforeach
+
+                <div class="form-group">
+                    <label for="dias">{{ __('Dias da Semana') }}</label>
+                    <select id="dias" class="form-control" name="dias[]" multiple required>
+                        @php
+                            $dias_semana = ['domingo', 'segunda', 'terca', 'quarta', 'quinta', 'sexta', 'sabado'];
+                            $dias_selecionados = explode(',', $atividade->dias);
+                        @endphp
+                        @foreach($dias_semana as $dia)
+                            <option value="{{ $dia }}" {{ in_array($dia, $dias_selecionados) ? 'selected' : '' }}>
+                                {{ ucfirst($dia) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="instrutor">{{ __('Instrutor') }}</label>
+                    <select id="instrutor" class="form-control" name="instrutor_id" required>
+                        @foreach($instrutores as $instrutor)
+                            <option value="{{ $instrutor->id }}" {{ $instrutor->id == $atividade->instrutor_id ? 'selected' : '' }}>
+                                {{ $instrutor->nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="local">{{ __('Local') }}</label>
+                    <input id="local" type="text" class="form-control" name="local" value="{{ $atividade->local }}" required>
+                </div>
+
+                <div class="form-group text-center">
+                    <button type="submit" class="btn btn-primary">{{ __('Salvar Alterações') }}</button>
+                    <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var container = document.getElementById('horarios-container');
+
+        // Adicionar novo campo de horário
+        document.querySelector('.add-hora').addEventListener('click', function() {
+            var newInput = document.createElement('div');
+            newInput.classList.add('input-group', 'mb-2');
+            newInput.innerHTML = `
+                <input type="time" name="hora[]" class="form-control" required>
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-danger remove-hora">{{ __('Remover') }}</button>
+                </div>
+            `;
+            container.appendChild(newInput);
+
+            // Adicionar evento para remover horário
+            newInput.querySelector('.remove-hora').addEventListener('click', function() {
+                newInput.remove();
+            });
+        });
+
+        // Remover horário existente
+        document.querySelectorAll('.remove-hora').forEach(function(button) {
+            button.addEventListener('click', function() {
+                button.closest('.input-group').remove();
+            });
+        });
+    });
+</script>
+
 @endsection

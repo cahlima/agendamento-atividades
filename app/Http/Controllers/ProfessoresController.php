@@ -17,41 +17,37 @@ class ProfessoresController extends Controller
 
     // Exibe o painel do professor com suas atividades matriculadas
     public function index()
-    {
-        $usuario = Auth::user();
+{
+    $usuario = Auth::user();
 
-        // Supondo que 'atividades' é uma relação definida no modelo do usuário
-        $atividades = $usuario->atividades()->paginate(10); // Usando paginate para garantir a paginação
+    // Filtra atividades onde a data de fim é maior ou igual a hoje
+    $minhasAtividades = Atividades::where('instrutor_id', $usuario->id)
+                                  ->where('data_fim', '>=', now()) // Filtra atividades que não expiraram
+                                  ->with('alunos') // Se precisar exibir os alunos também
+                                  ->paginate(10);
 
-        Log::info('Usuário autenticado acessando o painel do professor', [
-            'user_id' => $usuario->id,
-            'email' => $usuario->email
-        ]);
+    Log::info('Usuário autenticado acessando o painel do professor', [
+        'user_id' => $usuario->id,
+        'email' => $usuario->email
+    ]);
 
-        Log::info('Atividades recuperadas', ['atividades' => $atividades]);
+    return view('professor.painelprof', compact('usuario', 'minhasAtividades'));
+}
+public function profAtividadesMatriculadas()
+{
+    $usuario = Auth::user();
 
-        return view('professor.painelprof', compact('usuario', 'atividades'));
-    }
+    // Filtra atividades onde o professor é o instrutor e traz os alunos relacionados
+    $atividades = Atividades::where('instrutor_id', $usuario->id)
+                            ->where('data_fim', '>=', now()) // Filtra atividades que não expiraram
+                            ->with('alunos') // Carrega a relação de alunos para cada atividade
+                            ->paginate(10);
 
-    // Método para exibir as atividades matriculadas pelo professor
-    public function profAtividadesMatriculadas()
-    {
-        $usuario = Auth::user();
+    Log::info('Listando atividades matriculadas pelo professor', ['user_id' => $usuario->id]);
 
-          $atividades = Atividades::where('instrutor_id', $usuario->id)
-    ->with('alunos')
-    ->paginate(10);
+    return view('professor.atividades.matriculadas', compact('atividades'));
+}
 
-
-
-
-
-        Log::info('Listando atividades matriculadas pelo professor', ['user_id' => $usuario->id]);
-
-        return view('professor.atividades.matriculadas', compact('atividades'));
-    }
-
-    // Exibe a página para editar o perfil do professor
     public function perfilEdit()
     {
         $usuario = Auth::user();

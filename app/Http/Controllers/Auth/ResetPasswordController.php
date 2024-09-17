@@ -28,31 +28,35 @@ class ResetPasswordController extends Controller
     // Reseta a senha do usuário
     public function reset(Request $request)
     {
+        // Validação dos dados de entrada
         $validator = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
+            'senha' => 'required|min:8|confirmed',
         ]);
 
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
+        // Tentativa de resetar a senha
         $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
+            $request->only('email', 'senha', 'senha_confirmation', 'token'),
+            function ($user, $senha) {
                 $user->forceFill([
-                    'password' => Hash::make($password),
+                    'senha' => Hash::make($senha),
                     'remember_token' => Str::random(60),
                 ])->save();
             }
         );
 
+        // Verificação do status do reset
         if ($status == Password::PASSWORD_RESET) {
             Session::flash('flash_message', 'Senha redefinida com sucesso!');
             return redirect()->route('login')->with('status', __($status));
         }
 
+        // Exceção em caso de falha no reset
         throw ValidationException::withMessages([
             'email' => [trans($status)],
         ]);

@@ -26,26 +26,46 @@
 
             <!-- Listagem de Atividades -->
             @if($atividades->isNotEmpty())
-                <ul class="list-group">
-                    @foreach($atividades as $atividade)
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            <div>
-                                <h5>{{ $atividade->atividade }}</h5>
-                                <p><strong>Local:</strong> {{ $atividade->local }}</p>
-                                <p><strong>Instrutor:</strong> {{ $atividade->instrutor->nome ?? 'Instrutor não definido' }}</p>
-                                <p><strong>Data:</strong>
-                                    {{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') ?? 'Data não definida' }} -
-                                    {{ \Carbon\Carbon::parse($atividade->data_fim)->format('d/m/Y') ?? 'Data não definida' }}
-                                </p>
-                                <p><strong>Horários:</strong>
-                                    @foreach($atividade->horarios as $horario)
-                                        {{ \Carbon\Carbon::parse($horario->hora)->format('H:i') }}@if(!$loop->last), @endif
-                                    @endforeach
-                                </p>
-                            </div>
-                        </li>
-                    @endforeach
-                </ul>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>{{ __('Atividade') }}</th>
+                                <th>{{ __('Data de Início') }}</th>
+                                <th>{{ __('Data de Fim') }}</th>
+                                <th>{{ __('Hora') }}</th>
+                                <th>{{ __('Dias da Semana') }}</th>
+                                <th>{{ __('Instrutor') }}</th>
+                                <th>{{ __('Local') }}</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($atividades as $atividade)
+                                <tr>
+                                    <td>{{ $atividade->atividade }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($atividade->data_fim)->format('d/m/Y') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
+                                    <td>
+                                        @php
+                                            $diasSemana = explode(',', $atividade->dias);
+                                            $diasSemanaFormatados = array_map(function($dia) {
+                                                return ucfirst(strtolower(trim($dia)));
+                                            }, $diasSemana);
+                                            echo implode(', ', $diasSemanaFormatados);
+                                        @endphp
+                                    </td>
+                                    <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
+                                    <td>{{ $atividade->local }}</td>
+                                    <td>
+
+                                        
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             @else
                 <p>{{ __('Nenhuma atividade encontrada.') }}</p>
             @endif

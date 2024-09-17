@@ -25,24 +25,24 @@
                     </div>
 
                     <div>
+                        <h4>Minhas Atividades</h4>
+                        @if($minhasAtividades->isNotEmpty())
+                            <ul class="list-group">
+                                @foreach($minhasAtividades as $atividade)
+                                    <li class="list-group-item">
+                                        <strong>{{ $atividade->atividade }}</strong> <br>
+                                        Data: {{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($atividade->data_fim)->format('d/m/Y') }} <br>
+                                        Hora: {{ $atividade->hora }} <br>
+                                        Local: {{ $atividade->local }} <br>
+                                        Dias da Semana: {{ implode(', ', explode(',', $atividade->dias)) }} <br>
+                                    </li>
+                                @endforeach
+                            </ul>
 
-                    <div>
-    <h4>Minhas Atividades</h4>
-    @if(isset($minhasAtividades) && $minhasAtividades->isNotEmpty())
-        <ul class="list-group">
-            @foreach($minhasAtividades as $atividade)
-                <li class="list-group-item">
-                    {{ $atividade->titulo }} - {{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }} às {{ $atividade->hora }}
-                    <br>Local: {{ $atividade->local }}
-                </li>
-            @endforeach
-        </ul>
-    @else
-        <p>Você ainda não está alocado em nenhuma atividade.</p>
-    @endif
-</div>
-
-
+                            {{ $minhasAtividades->links() }}
+                        @else
+                            <p>Você ainda não está alocado em nenhuma atividade.</p>
+                        @endif
                     </div>
                 </div>
             </div>

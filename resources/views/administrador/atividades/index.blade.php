@@ -3,12 +3,28 @@
 @section('title', 'Gerenciador de Atividades')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card card-custom">
-    <div class="card-body">
+<div class="container mt-10 d-flex justify-content-center">
+    <div class="card card-custom" style="width: 100%; max-width: 1500px;">
+        <div class="card-body">
 
-            <h2>{{ __('Gerenciador de Atividades') }}</h2>
+
+            <h2 class="text-center">{{ __('Gerenciador de Atividades') }}</h2>
         </div>
+        <div class="card-body">
+            @if($errors->any())
+                <div class="alert alert-danger">
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+
+
+
+
 
          <!-- Formulário de busca -->
 <form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-7">
@@ -44,7 +60,6 @@
                 <th>{{ __('Dias da Semana') }}</th>
                 <th>{{ __('Instrutor') }}</th>
                 <th>{{ __('Local') }}</th>
-                <th>{{ __('Próximas Atividades') }}</th>
                 <th>{{ __('Ações') }}</th>
             </tr>
         </thead>
@@ -57,27 +72,19 @@
                     <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
                     <td>
                         @php
-                            // Transformando os dias da semana para maiúsculas
-                            $diasSemana = explode(',', $atividade->dias);
-                            $diasSemanaFormatados = array_map(function($dia) {
-                                return ucfirst(strtoupper(trim($dia)));
-                            }, $diasSemana);
-                            echo implode(', ', $diasSemanaFormatados);
-                        @endphp
+
+                    // Transformando apenas a primeira letra dos dias da semana para maiúscula
+                    $diasSemana = explode(',', $atividade->dias);
+                    $diasSemanaFormatados = array_map(function($dia) {
+                        return ucfirst(trim($dia)); // Apenas a primeira letra em maiúscula
+                    }, $diasSemana);
+                    echo implode(', ', $diasSemanaFormatados);
+                @endphp
+
                     </td>
                     <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
                     <td>{{ $atividade->local }}</td>
-                    <td>
-                        @if(!empty($atividade->proximas_atividades) && is_array($atividade->proximas_atividades))
-                            <ul>
-                                @foreach($atividade->proximas_atividades as $data)
-                                    <li>{{ \Carbon\Carbon::parse($data)->format('d/m/Y') }}</li>
-                                @endforeach
-                            </ul>
-                        @else
-                            {{ __('Nenhuma atividade programada') }}
-                        @endif
-                    </td>
+                   
                     <td>
                         <a href="{{ route('admin.atividades.edit', $atividade->id) }}" class="btn btn-primary">{{ __('Editar') }}</a>
                         <form action="{{ route('admin.atividades.destroy', $atividade->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('{{ __('Tem certeza que deseja excluir esta atividade?') }}');">

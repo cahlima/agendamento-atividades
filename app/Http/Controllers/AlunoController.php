@@ -6,37 +6,63 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Carbon;
 
 class AlunoController extends Controller
 {
 
     public function index()
-    {
-        $usuario = Auth::guard('web')->user();
+{
+    $usuario = Auth::guard('web')->user();
 
-        if (!$usuario || is_null($usuario->email)) {
-            Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
-            return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
-        }
-
-        // Adicionando um log para verificar o tipo de usuário
-        Log::info('Usuário autenticado acessando o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
-
-        if (!$usuario->isAluno()) {
-            Log::warning('Usuário não autorizado a acessar o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
-            abort(403, 'Acesso negado. Você não tem permissão para acessar esta página.');
-        }
-
-        // Carregar as atividades do aluno e garantir que o instrutor seja carregado
-        $atividades = $usuario->atividades()->with('instrutor')->get();
-        Log::debug('Atividades recuperadas', ['atividades' => $atividades]);
-        Log::info('Usuário autenticado', ['user_id' => $usuario->id, 'email' => $usuario->email]);
-
-        return view('aluno.painelaluno', compact('usuario', 'atividades'));
+    if (!$usuario || is_null($usuario->email)) {
+        Log::error('Usuário não autenticado ou sem e-mail ao acessar o painel', ['user' => $usuario]);
+        return redirect()->route('login')->with('error', 'Você precisa estar autenticado para acessar essa página.');
     }
 
+    Log::info('Usuário autenticado acessando o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
 
+    if (!$usuario->isAluno()) {
+        Log::warning('Usuário não autorizado a acessar o painel do aluno', ['user_id' => $usuario->id, 'tipo_id' => $usuario->tipo_id]);
+        abort(403, 'Acesso negado. Você não tem permissão para acessar esta página.');
+    }
 
+    $dataAtual = \Carbon\Carbon::now();
+
+    // Carrega as atividades do aluno e garante que o instrutor seja carregado
+    $atividades = $usuario->atividades()->with('instrutor')->get();
+
+    // Calcula a próxima ocorrência para cada atividade, ignorando as que já passaram
+    $atividadesFiltradas = $atividades->map(function ($atividade) use ($dataAtual) {
+        $diasSemanaMap = [
+            'domingo' => \Carbon\Carbon::SUNDAY,
+            'segunda' => \Carbon\Carbon::MONDAY,
+            'terca' => \Carbon\Carbon::TUESDAY,
+            'quarta' => \Carbon\Carbon::WEDNESDAY,
+            'quinta' => \Carbon\Carbon::THURSDAY,
+            'sexta' => \Carbon\Carbon::FRIDAY,
+            'sabado' => \Carbon\Carbon::SATURDAY,
+        ];
+
+        $dias = explode(',', $atividade->dias);
+
+        foreach ($dias as $dia) {
+            $proxDia = $dataAtual->copy()->next($diasSemanaMap[trim($dia)]);
+
+            // Verifica se a próxima ocorrência é hoje e ainda não passou, ou se está no futuro
+            if ($proxDia->greaterThanOrEqualTo($dataAtual) && $proxDia->between(\Carbon\Carbon::parse($atividade->data_inicio), \Carbon\Carbon::parse($atividade->data_fim))) {
+                $atividade->data_ocorrencia = $proxDia->toDateString();
+                return $atividade;
+            }
+        }
+
+        return null;
+    })->filter();
+
+    Log::debug('Atividades filtradas com próximas ocorrências', ['atividadesFiltradas' => $atividadesFiltradas]);
+
+    return view('aluno.painelaluno', compact('usuario', 'atividadesFiltradas'));
+}
 
     public function showPerfil()
     {

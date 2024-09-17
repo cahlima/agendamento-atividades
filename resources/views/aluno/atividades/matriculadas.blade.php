@@ -19,7 +19,9 @@
                     <thead>
                         <tr>
                             <th>{{ __('Atividade') }}</th>
-                            <th>{{ __('Data') }}</th>
+                            <th>{{ __('Data de Início') }}</th>
+                            <th>{{ __('Próxima Ocorrência') }}</th>
+                            <th>{{ __('Dia da Semana') }}</th>
                             <th>{{ __('Hora') }}</th>
                             <th>{{ __('Instrutor') }}</th>
                             <th>{{ __('Local') }}</th>
@@ -30,7 +32,9 @@
                         @forelse($atividadesMatriculadas as $atividade)
                         <tr>
                             <td>{{ $atividade->atividade }}</td>
-                            <td>{{ \Carbon\Carbon::parse($atividade->data)->format('d/m/Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }}</td>
+                            <td>{{ \Carbon\Carbon::parse($atividade->data_ocorrencia)->format('d/m/Y') }}</td>
+                            <td>{{ ucfirst(\Carbon\Carbon::parse($atividade->data_ocorrencia)->locale('pt_BR')->isoFormat('dddd')) }}</td>
                             <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
                             <td>{{ $atividade->instrutor['nome'] }}</td>
                             <td>{{ $atividade->local }}</td>
@@ -44,7 +48,7 @@
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="6">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
+                                <td colspan="8">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>

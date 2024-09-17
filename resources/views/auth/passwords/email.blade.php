@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card card-custom">
-    <div class="card-body">
+<div class="container">
+<div class="row justify-content-center">
+     <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
                 <div class="card-header">{{ __('Reset Senha') }}</div>
 
                 <div class="card-body">

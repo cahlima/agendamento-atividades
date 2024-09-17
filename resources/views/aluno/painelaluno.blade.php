@@ -25,11 +25,14 @@
 
                 <div>
                     <h4>Minhas Atividades Matriculadas</h4>
-                    @if(isset($atividades) && $atividades->isNotEmpty())
+                    @if(isset($atividadesFiltradas) && $atividadesFiltradas->isNotEmpty())
                         <ul class="list-group">
-                            @foreach($atividades as $atividade)
+                            @foreach($atividadesFiltradas as $atividade)
                                 <li class="list-group-item">
-                                    {{ $atividade->atividade }} - {{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }} às {{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}
+                                    {{ $atividade->atividade }} -
+                                    {{ \Carbon\Carbon::parse($atividade->data_ocorrencia)->format('d/m/Y') }}
+                                    ({{ ucfirst(\Carbon\Carbon::parse($atividade->data_ocorrencia)->locale('pt_BR')->isoFormat('dddd')) }})
+                                    às {{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}
                                     <br>Instrutor: {{ $atividade->instrutor->nome ?? 'Nome do instrutor não disponível' }}
                                     <br>Local: {{ $atividade->local }}
                                 </li>
