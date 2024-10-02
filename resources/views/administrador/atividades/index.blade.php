@@ -27,19 +27,26 @@
 
 
          <!-- Formulário de busca -->
-<form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-7">
-    <div class="input-group">
-        <input type="text" name="busca" class="form-control" placeholder="{{ request('busca') ? request('busca') : 'Buscar atividade...' }}" value="{{ request('busca') }}">
-        <div class="input-group-append">
+         <form method="GET" action="{{ route('admin.atividades.index') }}" class="mb-7">
+    <div class="input-group mb-3">
+        <!-- Campo para busca de atividade/local -->
+        <input type="text" name="busca" class="form-control" placeholder="{{ request('busca') ? request('busca') : 'Buscar atividade ou local...' }}" value="{{ request('busca') }}">
+
+        <!-- Campo para busca pelo nome do instrutor -->
+        <input type="text" name="instrutor" class="form-control ml-2" placeholder="{{ request('instrutor') ? request('instrutor') : 'Buscar instrutor...'}}" value="{{ request('instrutor') }}">
+
+        <div class="input-group-append ml-2">
             <button class="btn btn-primary" type="submit">
                 <i class="fas fa-search"></i> {{ __('Buscar') }}
             </button>
-            @if(request('busca'))
+            @if(request('busca') || request('instrutor'))
                 <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Limpar') }}</a>
             @endif
         </div>
     </div>
 </form>
+
+
 <div class="card-body">
     @if(Session::has('flash_message'))
         <div class="alert alert-success">{{ Session::get('flash_message') }}</div>
@@ -84,7 +91,7 @@
                     </td>
                     <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
                     <td>{{ $atividade->local }}</td>
-                   
+
                     <td>
                         <a href="{{ route('admin.atividades.edit', $atividade->id) }}" class="btn btn-primary">{{ __('Editar') }}</a>
                         <form action="{{ route('admin.atividades.destroy', $atividade->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('{{ __('Tem certeza que deseja excluir esta atividade?') }}');">

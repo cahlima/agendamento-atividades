@@ -20,7 +20,6 @@ class AtividadesController extends Controller
     }
 
     // ADMINISTRADOR
-
     public function listarAtividades(Request $request)
     {
         // Verifica se o usuário é admin antes de continuar
@@ -29,7 +28,7 @@ class AtividadesController extends Controller
         // Inicializa a query base
         $atividades = Atividades::with('instrutor');
 
-        // Aplica filtros de busca
+        // Aplica filtros de busca para atividade/local e instrutor
         if ($request->has('busca')) {
             $atividades->where(function ($query) use ($request) {
                 $query->where('atividade', 'like', '%' . $request->busca . '%')
@@ -37,13 +36,24 @@ class AtividadesController extends Controller
             });
         }
 
-        // Filtra por datas se necessário
-        $atividades = $atividades->where('data_inicio', '<=', now())
-                                 ->where('data_fim', '>=', now())
-                                 ->get();
+        // Filtro para buscar pelo nome do instrutor
+        if ($request->has('instrutor')) {
+            $atividades->whereHas('instrutor', function ($query) use ($request) {
+                $query->where('nome', 'like', '%' . $request->instrutor . '%');
+            });
+        }
+
+        // Se nenhum filtro for aplicado, exibe todas as atividades
+        if (!$request->has('busca') && !$request->has('instrutor')) {
+            $atividades = $atividades->get(); // Exibe todas as atividades se nenhum filtro for aplicado
+        } else {
+            // Se houver filtros, aplique-os e busque as atividades
+            $atividades = $atividades->get();
+        }
 
         return view('administrador.atividades.index', compact('atividades'));
     }
+
 
     public function adicionarAtividade()
     {
