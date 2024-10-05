@@ -1,17 +1,17 @@
 @extends('layouts.app')
 
-@section('title', 'Dashboard')
+@section('title', 'Adicionar Atividade')
 
 @section('content')
-<div class="container mt-5">
-    <div class="card card-custom">
-    <div class="card-body">
-            <h2>{{ __('Adicionar Atividade') }}</h2>
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg" style="width: 100%; max-width: 800px;">
+        <div class="card-header bg-primary text-white">
+            <h2 class="text-center mb-0">{{ __('Adicionar Atividade') }}</h2>
         </div>
         <div class="card-body">
             @if($errors->any())
                 <div class="alert alert-danger">
-                    <ul>
+                    <ul class="mb-0">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -19,7 +19,7 @@
                 </div>
             @endif
 
-            <form method="POST" action="{{ route('admin.atividades.store') }}">
+            <form method="POST" action="{{ route('admin.atividades.store') }}" class="mx-auto" style="max-width: 700px;">
                 @csrf
 
                 <div class="form-group">
@@ -38,17 +38,9 @@
                     </div>
                 </div>
 
-                <!-- Seção de horários -->
                 <div class="form-group">
-                    <label for="hora">{{ __('Horários') }}</label>
-                    <div id="horarios-container">
-                        <div class="input-group mb-3">
-                            <input type="time" name="hora[]" class="form-control" value="{{ old('hora.0') }}" required>
-                            <div class="input-group-append">
-                                <button type="button" class="btn btn-success add-hora">{{ __('Adicionar Horário') }}</button>
-                            </div>
-                        </div>
-                    </div>
+                    <label for="hora">{{ __('Horário') }}</label>
+                    <input type="time" name="hora" class="form-control" value="{{ old('hora') }}" required>
                 </div>
 
                 <div class="form-group">
@@ -64,6 +56,7 @@
                         @endforeach
                     </select>
                 </div>
+
                 <div class="form-group">
                     <label for="instrutor">{{ __('Instrutor') }}</label>
                     <select id="instrutor" class="form-control" name="instrutor_id" required>
@@ -77,7 +70,8 @@
                     <label for="local">{{ __('Local') }}</label>
                     <input id="local" type="text" class="form-control" name="local" value="{{ old('local') }}" required>
                 </div>
-                <div class="form-group">
+
+                <div class="form-group text-center">
                     <button type="submit" class="btn btn-primary">{{ __('Adicionar Atividade') }}</button>
                     <a href="{{ route('admin.atividades.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
                 </div>
@@ -96,34 +90,6 @@
                 event.preventDefault(); // Cancela o envio se o usuário não confirmar
             }
         });
-
-        var container = document.getElementById('horarios-container');
-
-        // Adicionar novo campo de horário
-        document.querySelector('.add-hora').addEventListener('click', function() {
-            var newInput = document.createElement('div');
-            newInput.classList.add('input-group', 'mb-2');
-            newInput.innerHTML = `
-                <input type="time" name="hora[]" class="form-control" required>
-                <div class="input-group-append">
-                    <button type="button" class="btn btn-danger remove-hora">{{ __('Remover') }}</button>
-                </div>
-            `;
-            container.appendChild(newInput);
-
-            // Adicionar evento para remover horário
-            newInput.querySelector('.remove-hora').addEventListener('click', function() {
-                newInput.remove();
-            });
-        });
-
-        // Remover horário existente
-        document.querySelectorAll('.remove-hora').forEach(function(button) {
-            button.addEventListener('click', function() {
-                button.closest('.input-group').remove();
-            });
-        });
     });
 </script>
-
 @endsection

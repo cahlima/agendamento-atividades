@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card card-custom">
-    <div class="card-body">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
             <h2>{{ __('Meu Perfil') }}</h2>
         </div>
         <div class="card-body">
@@ -13,45 +13,48 @@
                 @php
                     $flashMessage = Session::get('flash_message');
                 @endphp
-                @if(is_array($flashMessage) && isset($flashMessage['msg']))
-                    <div class="alert alert-success">{{ $flashMessage['msg'] }}</div>
-                @else
-                    <div class="alert alert-success">{{ $flashMessage }}</div>
-                @endif
+                <div class="alert alert-success text-center">
+                    {{ is_array($flashMessage) && isset($flashMessage['msg']) ? $flashMessage['msg'] : $flashMessage }}
+                </div>
             @endif
 
-            <div class="form-group">
-                <label for="nome">{{ __('Nome') }}</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" disabled>
+            <!-- Informações do Usuário -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="nome" class="form-label">{{ __('Nome') }}</label>
+                    <input type="text" class="form-control" id="nome" value="{{ $usuario->nome }}" disabled>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="sobrenome" class="form-label">{{ __('Sobrenome') }}</label>
+                    <input type="text" class="form-control" id="sobrenome" value="{{ $usuario->sobrenome }}" disabled>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="sobrenome">{{ __('Sobrenome') }}</label>
-                <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" disabled>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="email" class="form-label">{{ __('Email') }}</label>
+                    <input type="email" class="form-control" id="email" value="{{ $usuario->email }}" disabled>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="login" class="form-label">{{ __('Login') }}</label>
+                    <input type="text" class="form-control" id="login" value="{{ $usuario->login }}" disabled>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="email">{{ __('Email') }}</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="login">{{ __('Login') }}</label>
-                <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
-                <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="telefone">{{ __('Telefone') }}</label>
-                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="data_nascimento" class="form-label">{{ __('Data de Nascimento') }}</label>
+                    <input type="date" class="form-control" id="data_nascimento" value="{{ $usuario->data_nascimento }}" disabled>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="telefone" class="form-label">{{ __('Telefone') }}</label>
+                    <input type="text" class="form-control" id="telefone" value="{{ $usuario->telefone }}" disabled>
+                </div>
             </div>
 
-            <!-- Link para editar o perfil do aluno -->
-            <a href="{{ route('aluno.perfil.edit') }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
-
-            <!-- Botão Voltar -->
-           <!-- Botão Voltar para o Painel do Aluno -->
-<a href="{{ route('aluno.painel') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
-
+            <!-- Botões de Ação -->
+            <div class="d-flex justify-content-end mt-4">
+                <a href="{{ route('aluno.perfil.edit') }}" class="btn btn-primary mr-2"><i class="fas fa-edit"></i> {{ __('Editar Perfil') }}</a>
+                <a href="{{ route('aluno.painel') }}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> {{ __('Voltar') }}</a>
+            </div>
         </div>
     </div>
 </div>

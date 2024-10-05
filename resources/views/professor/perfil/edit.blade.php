@@ -4,13 +4,13 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
-            <h1 class="h2">{{ __('Editar Perfil') }}</h1>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
+            <h1 class="h4">{{ __('Editar Perfil') }}</h1>
         </div>
         <div class="card-body">
             @if(Session::has('flash_message'))
-                <div class="alert {{ Session::get('flash_message.class') }}">
+                <div class="alert {{ Session::get('flash_message.class') }} text-center">
                     {{ Session::get('flash_message.msg') }}
                 </div>
             @endif
@@ -20,64 +20,63 @@
                 @method('PUT')
 
                 <!-- Nome -->
-                <div class="form-group mb-3">
-                    <label for="nome">{{ __('Nome') }}</label>
+                <div class="form-group mb-4">
+                    <label for="nome" class="font-weight-bold">{{ __('Nome') }}</label>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" readonly>
+                        <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" readonly style="background-color: #e9ecef;">
                         <button class="btn btn-outline-primary" type="button" onclick="toggleEditing('nome')">Editar</button>
                     </div>
                 </div>
 
                 <!-- Email -->
-                <div class="form-group mb-3">
-                    <label for="email">{{ __('Email') }}</label>
+                <div class="form-group mb-4">
+                    <label for="email" class="font-weight-bold">{{ __('Email') }}</label>
                     <div class="input-group">
-                        <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" readonly style="background-color: #e9ecef;">
                         <button class="btn btn-outline-primary" type="button" onclick="toggleEditing('email')">Editar</button>
                     </div>
                 </div>
 
-
                 <!-- Login -->
-
-                <div class="form-group">
-                    <label for="login">{{ __('Login') }}</label>
+                <div class="form-group mb-4">
+                    <label for="login" class="font-weight-bold">{{ __('Login') }}</label>
                     <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}">
                 </div>
 
-                  <!-- Data NAscimento -->
-
-                  <div class="form-group">
-                    <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
+                <!-- Data de Nascimento -->
+                <div class="form-group mb-4">
+                    <label for="data_nascimento" class="font-weight-bold">{{ __('Data de Nascimento') }}</label>
                     <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}">
                 </div>
 
-                   <!--Telefone-->
-                   <div class="form-group">
-                    <label for="telefone">{{ __('Telefone') }}</label>
+                <!-- Telefone -->
+                <div class="form-group mb-4">
+                    <label for="telefone" class="font-weight-bold">{{ __('Telefone') }}</label>
                     <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}">
                 </div>
 
                 <!-- Senha -->
-                <div class="form-group mb-3">
-                    <label for="password">{{ __('Senha') }}</label>
+                <div class="form-group mb-4">
+                    <label for="password" class="font-weight-bold">{{ __('Senha') }}</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Deixe em branco se não quiser alterar a senha" readonly style="background-color: #e9ecef;">
                         <button class="btn btn-outline-primary" type="button" onclick="toggleEditing('password')">Editar</button>
                     </div>
                 </div>
 
                 <!-- Confirmar Senha -->
-                <div class="form-group mb-3">
-                    <label for="password_confirmation">{{ __('Confirmar Senha') }}</label>
+                <div class="form-group mb-4">
+                    <label for="password_confirmation" class="font-weight-bold">{{ __('Confirmar Senha') }}</label>
                     <div class="input-group">
-                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Deixe em branco se não quiser alterar a senha" readonly>
+                        <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" placeholder="Deixe em branco se não quiser alterar a senha" readonly style="background-color: #e9ecef;">
                         <button class="btn btn-outline-primary" type="button" onclick="toggleEditing('password_confirmation')">Editar</button>
                     </div>
                 </div>
 
-                <button type="submit" class="btn btn-success mt-3">{{ __('Salvar') }}</button>
-                <a href="{{ route('professor.perfil.index') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success mr-2">{{ __('Salvar') }}</button>
+                    <a href="{{ route('professor.perfil.index') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+                </div>
             </form>
         </div>
     </div>
@@ -90,7 +89,6 @@
 
         if (field.hasAttribute('readonly')) {
             field.removeAttribute('readonly');
-            field.focus();
             field.style.backgroundColor = "#fff";
             button.textContent = "Bloquear";
         } else {

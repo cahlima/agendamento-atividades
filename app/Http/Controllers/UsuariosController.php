@@ -25,7 +25,7 @@ class UsuariosController extends Controller
     public function index()
     {
         Log::info('Acessando a lista de usuários');
-        $usuarios = Usuarios::paginate(10);
+        $usuarios = Usuarios::paginate(50);
         return view('administrador.usuarios.listar', compact('usuarios'));
     }
 

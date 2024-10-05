@@ -4,8 +4,8 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card">
-        <div class="card-header">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
             <h2>{{ __('Meu Perfil') }}</h2>
         </div>
         <div class="card-body">
@@ -13,44 +13,50 @@
                 @php
                     $flashMessage = Session::get('flash_message');
                 @endphp
-                @if(is_array($flashMessage) && isset($flashMessage['msg']))
-                    <div class="alert alert-success">{{ $flashMessage['msg'] }}</div>
-                @else
-                    <div class="alert alert-success">{{ $flashMessage }}</div>
-                @endif
+                <div class="alert alert-success text-center">
+                    {{ is_array($flashMessage) && isset($flashMessage['msg']) ? $flashMessage['msg'] : $flashMessage }}
+                </div>
             @endif
 
-            <div class="form-group">
-                <label for="nome">{{ __('Nome') }}</label>
-                <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="sobrenome">{{ __('Sobrenome') }}</label>
-                <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="email">{{ __('Email') }}</label>
-                <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="login">{{ __('Login') }}</label>
-                <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="data_nascimento">{{ __('Data de Nascimento') }}</label>
-                <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" disabled>
-            </div>
-            <div class="form-group">
-                <label for="telefone">{{ __('Telefone') }}</label>
-                <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
+            <!-- Informações do Perfil -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="nome" class="font-weight-bold">{{ __('Nome') }}</label>
+                    <input type="text" class="form-control" id="nome" name="nome" value="{{ $usuario->nome }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="sobrenome" class="font-weight-bold">{{ __('Sobrenome') }}</label>
+                    <input type="text" class="form-control" id="sobrenome" name="sobrenome" value="{{ $usuario->sobrenome }}" disabled>
+                </div>
             </div>
 
-            <!-- Link para editar o perfil do professor -->
-            <a href="{{ route('professor.perfil.edit') }}" class="btn btn-primary mt-3">{{ __('Editar Perfil') }}</a>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email" class="font-weight-bold">{{ __('Email') }}</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ $usuario->email }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="login" class="font-weight-bold">{{ __('Login') }}</label>
+                    <input type="text" class="form-control" id="login" name="login" value="{{ $usuario->login }}" disabled>
+                </div>
+            </div>
 
-            <!-- Botão Voltar para o Painel do Professor -->
-            <a href="{{ route('professor.painel') }}" class="btn btn-secondary mt-3">{{ __('Voltar') }}</a>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="data_nascimento" class="font-weight-bold">{{ __('Data de Nascimento') }}</label>
+                    <input type="date" class="form-control" id="data_nascimento" name="data_nascimento" value="{{ $usuario->data_nascimento }}" disabled>
+                </div>
+                <div class="col-md-6">
+                    <label for="telefone" class="font-weight-bold">{{ __('Telefone') }}</label>
+                    <input type="text" class="form-control" id="telefone" name="telefone" value="{{ $usuario->telefone }}" disabled>
+                </div>
+            </div>
 
+            <!-- Ações -->
+            <div class="d-flex justify-content-center mt-4">
+                <a href="{{ route('professor.perfil.edit') }}" class="btn btn-primary mr-2">{{ __('Editar Perfil') }}</a>
+                <a href="{{ route('professor.painel') }}" class="btn btn-secondary">{{ __('Voltar') }}</a>
+            </div>
         </div>
     </div>
 </div>

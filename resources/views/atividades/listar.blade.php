@@ -4,30 +4,43 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card card-custom">
-        <div class="card-body">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
             <h2>{{ __('Atividades do Centro Cultural') }}</h2>
-
+        </div>
+        <div class="card-body">
             @if(Session::has('success'))
                 <div class="alert alert-success">
                     {{ Session::get('success') }}
                 </div>
             @endif
 
-            <!-- Formulário de busca -->
+            <!-- Formulário de busca aprimorado -->
             <form method="GET" action="{{ route('professor.atividades.listarProfessor') }}" class="mb-4">
-                <div class="input-group">
-                    <input type="text" name="busca" class="form-control" placeholder="Buscar atividade..." value="{{ request('busca') }}">
-                    <div class="input-group-append">
-                        <button class="btn btn-primary" type="submit">{{ __('Buscar') }}</button>
+                <div class="row">
+                    <!-- Dropdown de busca por atividade -->
+                    <div class="col-md-6 mb-3">
+                        <select name="busca" class="form-select">
+                            <option value="">{{ __('Selecione uma atividade') }}</option>
+                            @foreach($todasAtividades as $atividadeItem)
+                                <option value="{{ $atividadeItem->atividade }}" {{ request('busca') == $atividadeItem->atividade ? 'selected' : '' }}>
+                                    {{ $atividadeItem->atividade }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <!-- Botão de busca -->
+                    <div class="col-md-6 mb-3">
+                        <button class="btn btn-primary w-100" type="submit">{{ __('Buscar') }}</button>
                     </div>
                 </div>
             </form>
 
             <!-- Listagem de Atividades -->
             @if($atividades->isNotEmpty())
-                <div class="table-responsive">
-                    <table class="table">
+                <div class="table-responsive mt-4">
+                    <table class="table table-striped">
                         <thead>
                             <tr>
                                 <th>{{ __('Atividade') }}</th>
@@ -37,7 +50,6 @@
                                 <th>{{ __('Dias da Semana') }}</th>
                                 <th>{{ __('Instrutor') }}</th>
                                 <th>{{ __('Local') }}</th>
-
                             </tr>
                         </thead>
                         <tbody>
@@ -58,16 +70,15 @@
                                     </td>
                                     <td>{{ $atividade->instrutor->nome ?? 'N/A' }}</td>
                                     <td>{{ $atividade->local }}</td>
-                                    <td>
-
-                                        
                                 </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
             @else
-                <p>{{ __('Nenhuma atividade encontrada.') }}</p>
+                <div class="alert alert-info text-center mt-4">
+                    {{ __('Nenhuma atividade encontrada.') }}
+                </div>
             @endif
         </div>
     </div>

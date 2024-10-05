@@ -21,38 +21,41 @@ class AtividadesController extends Controller
 
     // ADMINISTRADOR
     public function listarAtividades(Request $request)
-{
-    // Verifica se o usuário é admin antes de continuar
-    $this->authorize('isAdmin', Auth::user());
+    {
+        // Verifica se o usuário é admin antes de continuar
+        $this->authorize('isAdmin', Auth::user());
 
-    // Inicializa a query base
-    $atividades = Atividades::with('instrutor');
 
-    // Aplica filtros de busca para atividade/local
-    if ($request->has('busca')) {
-        $atividades->where(function ($query) use ($request) {
-            $query->where('atividade', 'like', '%' . $request->busca . '%')
-                  ->orWhere('local', 'like', '%' . $request->busca . '%');
-        });
+             // Obtém todas as atividades únicas para o dropdown
+    $atividades = Atividades::select('atividade')->distinct()->get();
+
+        // Inicializa a query base
+        $atividades = Atividades::with('instrutor');
+
+        // Aplica filtros de busca para atividade/local
+        if ($request->has('busca')) {
+            $atividades->where(function ($query) use ($request) {
+                $query->where('atividade', 'like', '%' . $request->busca . '%')
+                      ->orWhere('local', 'like', '%' . $request->busca . '%');
+            });
+        }
+
+        // Filtro para buscar pelo nome do instrutor
+        if ($request->has('instrutor')) {
+            $atividades->whereHas('instrutor', function ($query) use ($request) {
+                $query->where('nome', 'like', '%' . $request->instrutor . '%');
+            });
+        }
+
+        // Obtém todas as atividades e instrutores para popular o dropdown
+        $todasAtividades = Atividades::all();
+        $instrutores = \App\Models\Usuarios::where('tipo_id', 3)->get(); // Considerando que tipo_id 3 representa instrutores
+
+        // Executa a consulta final
+        $atividades = $atividades->get();
+
+        return view('administrador.atividades.index', compact('atividades', 'todasAtividades', 'instrutores'));
     }
-
-    /*// Filtro para buscar pelo nome do instrutor
-    if ($request->has('instrutor')) {
-        $atividades->whereHas('instrutor', function ($query) use ($request) {
-            $query->where('nome', 'like', '%' . $request->instrutor . '%');
-        });
-    }*/
-
-    // Se nenhum filtro for aplicado, exibe todas as atividades
-    $atividades = $atividades->get();
-
-    // Buscar todos os instrutores para popular o select
-    // Se o filtro por instrutores não for mais necessário, este trecho também pode ser comentado ou removido
-    // $instrutores = \App\Models\Instrutor::all();
-
-    return view('administrador.atividades.index', compact('atividades'));
-}
-
 
     public function adicionarAtividade()
     {
@@ -81,8 +84,7 @@ class AtividadesController extends Controller
             'atividade' => 'required|string|max:255',
             'data_inicio' => 'required|date',
             'data_fim' => 'required|date|after_or_equal:data_inicio',
-            'hora' => 'required|array',
-            'hora.*' => 'required|date_format:H:i',
+            'hora' => 'required|date_format:H:i', // Trata `hora` como um único horário
             'instrutor_id' => 'required|exists:usuarios,id',
             'local' => 'required|string|max:255',
             'dias' => 'required|array',
@@ -94,8 +96,6 @@ class AtividadesController extends Controller
         }
 
         try {
-            $instrutor = Usuarios::find($request->instrutor_id)->nome;
-
             $atividade = Atividades::create([
                 'atividade' => $request->atividade,
                 'data_inicio' => $request->data_inicio,
@@ -103,10 +103,8 @@ class AtividadesController extends Controller
                 'instrutor_id' => $request->instrutor_id,
                 'local' => $request->local,
                 'dias' => implode(',', $request->dias),  // Converte o array de dias para string
-                'hora' => implode(',', $request->hora),  // Converte o array de horários para string
+                'hora' => $request->hora,  // Armazena apenas um horário
             ]);
-
-
 
             Session::flash('flash_message', 'Atividade adicionada com sucesso!');
         } catch (\Exception $e) {
@@ -116,6 +114,40 @@ class AtividadesController extends Controller
 
         return redirect()->route('admin.atividades.index');
     }
+    public function update(Request $request, $id)
+{
+    $request->validate([
+        'atividade' => 'required|string|max:255',
+        'data_inicio' => 'required|date',
+        'data_fim' => 'required|date|after_or_equal:data_inicio',
+        'hora' => 'required|date_format:H:i',  // Confirma que `hora` é um único valor no formato correto (H:i)
+        'instrutor_id' => 'required|exists:usuarios,id',
+        'local' => 'required|string|max:255',
+        'dias' => 'required|array',  // Confirma que `dias` é um array
+        'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'  // Cada dia deve ser válido
+    ]);
+
+    try {
+        $atividade = Atividades::findOrFail($id);
+
+        $atividade->update([
+            'atividade' => $request->atividade,
+            'data_inicio' => $request->data_inicio,
+            'data_fim' => $request->data_fim,
+            'instrutor_id' => $request->instrutor_id,
+            'local' => $request->local,
+            'dias' => implode(',', $request->dias),  // Converte o array de dias para uma string separada por vírgulas
+            'hora' => $request->hora,  // Armazena apenas um horário
+        ]);
+
+        Session::flash('success', 'Atividade atualizada com sucesso!');
+    } catch (\Exception $e) {
+        Log::error('Erro ao atualizar atividade: ' . $e->getMessage());
+        return redirect()->back()->with('error', 'Erro ao atualizar atividade. Por favor, tente novamente.');
+    }
+
+    return redirect()->route('admin.atividades.index');
+}
 
     public function deletarAtividade($id)
     {
@@ -131,104 +163,70 @@ class AtividadesController extends Controller
         return redirect()->route('admin.atividades.index');
     }
 
-    public function update(Request $request, $id)
-{
-    // Valida os campos
-    $request->validate([
-        'atividade' => 'required|string|max:255',
-        'data_inicio' => 'required|date',
-        'data_fim' => 'required|date|after_or_equal:data_inicio',
-        'hora' => 'required|array',  // Confirma que `hora` é um array
-        'hora.*' => 'required|date_format:H:i',  // Cada item deve estar no formato correto (H:i)
-        'instrutor_id' => 'required|exists:usuarios,id',
-        'local' => 'required|string|max:255',
-        'dias' => 'required|array',  // Confirma que `dias` é um array
-        'dias.*' => 'in:domingo,segunda,terca,quarta,quinta,sexta,sabado'  // Cada dia deve ser válido
-    ]);
-
-    try {
-        // Busca a atividade no banco de dados
-        $atividade = Atividades::findOrFail($id);
-
-        // Atualiza os dados da atividade
-        $atividade->update([
-            'atividade' => $request->atividade,
-            'data_inicio' => $request->data_inicio,
-            'data_fim' => $request->data_fim,
-            'instrutor_id' => $request->instrutor_id,
-            'local' => $request->local,
-            'dias' => implode(',', $request->dias),  // Converte o array de dias para uma string separada por vírgulas
-            'hora' => implode(',', $request->hora),  // Converte o array de horários para uma string separada por vírgulas
-        ]);
-
-        // Flash de sucesso
-        Session::flash('success', 'Atividade atualizada com sucesso!');
-    } catch (\Exception $e) {
-        // Log de erro e mensagem de falha
-        Log::error('Erro ao atualizar atividade: ' . $e->getMessage());
-        return redirect()->back()->with('error', 'Erro ao atualizar atividade. Por favor, tente novamente.');
-    }
-
-    // Redireciona para a listagem de atividades após a atualização
-    return redirect()->route('admin.atividades.index');
-}
-
     // ALUNO
 
     public function listarAtividadesAlunos(Request $request)
+{
+    $usuario = Auth::user();
 
-    {
-        $usuario = Auth::user();
+    // Recupera as atividades nas quais o aluno já está matriculado
+    $atividadesMatriculadas = $usuario->atividades()
+                                      ->with(['instrutor', 'horarios'])
+                                      ->get();
 
-        // Recupera as atividades nas quais o aluno já está matriculado
-        $atividadesMatriculadas = $usuario->atividades()
-                                          ->with(['instrutor', 'horarios'])
-                                          ->get();
-
-        // Recupera as atividades nas quais o aluno ainda não está matriculado
-        $atividades = Atividades::whereNotIn('id', $atividadesMatriculadas->pluck('id'))
+    // Recupera as atividades nas quais o aluno ainda não está matriculado
+    $atividadesQuery = Atividades::whereNotIn('id', $atividadesMatriculadas->pluck('id'))
                                 ->with(['instrutor', 'horarios']);
 
-        // Aplica filtros de busca
-        if ($request->has('busca')) {
-            $atividades->where(function ($query) use ($request) {
-                $query->where('atividade', 'like', '%' . $request->busca . '%')
-                      ->orWhere('local', 'like', '%' . $request->busca . '%');
-            });
-        }
-
-        $atividades = $atividades->paginate(10);
-
-
-        return view('aluno.atividades.listar', compact('atividades', 'atividadesMatriculadas'));
+    // Aplica filtros de busca para atividade/local
+    if ($request->has('busca')) {
+        $atividadesQuery->where(function ($query) use ($request) {
+            $query->where('atividade', 'like', '%' . $request->busca . '%')
+                  ->orWhere('local', 'like', '%' . $request->busca . '%');
+        });
     }
 
-    // PROFESSOR
-    public function listarParaProfessores(Request $request)
-    {
-        // Obtém o usuário autenticado
-        $user = Auth::user();
+    // Pagina as atividades para garantir a disponibilidade do método links()
+    $atividades = $atividadesQuery->paginate(10); // Apenas paginate(), sem get()
 
-        // Verifica se o usuário está autenticado
-        if ($user) {
-            Log::info('Listando todas as atividades do Centro Cultural para professor', ['user_id' => $user->id]);
-        }
+    return view('aluno.atividades.listar', compact('atividades', 'atividadesMatriculadas'));
+}
 
-        // Lista todas as atividades do Centro Cultural, carregando o instrutor e horários relacionados
-        $atividades = Atividades::with(['instrutor', 'horarios']) // Carrega as relações
-            ->when($request->busca, function ($query) use ($request) {
-                // Filtro de busca opcional por nome da atividade ou local
-                return $query->where('atividade', 'like', '%' . $request->busca . '%')
-                             ->orWhere('local', 'like', '%' . $request->busca . '%');
-            })
-            ->get();
 
-        // Retorna a view com as atividades filtradas ou todas as atividades
-        return view('atividades.listar', compact('atividades'));
+// PROFESSOR
+public function listarParaProfessores(Request $request)
+{
+    $user = Auth::user();
+
+    if ($user) {
+        Log::info('Listando todas as atividades do Centro Cultural para professor', ['user_id' => $user->id]);
     }
 
+    // Criação da query base para listar atividades com instrutor e horários
+    $atividadesQuery = Atividades::with(['instrutor', 'horarios']);
 
-    public function buscarAtividade($id)
+    // Filtro de busca por atividade ou local
+    if ($request->has('busca')) {
+        $atividadesQuery->where(function ($query) use ($request) {
+            $query->where('atividade', 'like', '%' . $request->busca . '%')
+                  ->orWhere('local', 'like', '%' . $request->busca . '%');
+        });
+    }
+
+    // Obter a lista de atividades para exibir na tabela
+    $atividades = $atividadesQuery->get();
+
+    // Obter todas as atividades únicas para o dropdown
+    $todasAtividades = Atividades::select('atividade')->distinct()->get();
+
+    // Obter todos os instrutores
+    $instrutores = Usuarios::where('tipo_id', 3)->distinct()->get();
+
+    return view('atividades.listar', compact('atividades', 'instrutores', 'todasAtividades'));
+}
+
+
+    /*public function buscarAtividade($id)
     {
         try {
             $atividade = Atividades::with(['horarios', 'instrutor'])->findOrFail($id);
@@ -264,5 +262,5 @@ class AtividadesController extends Controller
         ];
 
         return response()->json($horarios);
-    }
+    }*/
 }

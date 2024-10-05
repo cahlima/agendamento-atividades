@@ -3,16 +3,15 @@
 @section('title', 'Editar Atividade')
 
 @section('content')
-<div class="container mt-10 d-flex justify-content-center">
-    <div class="card card-custom" style="width: 100%; max-width: 900px;">
-        <div class="card-body">
-            
-            <h2 class="text-center">{{ __('Editar Atividade') }}</h2>
+<div class="container mt-5 d-flex justify-content-center">
+    <div class="card shadow-lg" style="width: 100%; max-width: 800px;">
+        <div class="card-header bg-primary text-white">
+            <h2 class="text-center mb-0">{{ __('Editar Atividade') }}</h2>
         </div>
         <div class="card-body">
             @if($errors->any())
                 <div class="alert alert-danger">
-                    <ul>
+                    <ul class="mb-0">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
                         @endforeach
@@ -20,8 +19,8 @@
                 </div>
             @endif
 
-            <!-- Centralizando o formulário -->
-            <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}" class="mx-auto" style="max-width: 800px;">
+            <!-- Formulário de edição -->
+            <form method="POST" action="{{ route('admin.atividades.update', $atividade->id) }}" class="mx-auto" style="max-width: 700px;">
                 @csrf
                 @method('PUT')
 
@@ -31,11 +30,11 @@
                 </div>
 
                 <div class="form-row">
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-6">
                         <label for="data_inicio">{{ __('Data de Início') }}</label>
                         <input id="data_inicio" type="date" class="form-control" name="data_inicio" value="{{ $atividade->data_inicio }}" required>
                     </div>
-                    <div class="form-group col-md-12">
+                    <div class="form-group col-md-6">
                         <label for="data_fim">{{ __('Data de Fim') }}</label>
                         <input id="data_fim" type="date" class="form-control" name="data_fim" value="{{ $atividade->data_fim }}" required>
                     </div>
@@ -48,9 +47,14 @@
                         @foreach(explode(',', $atividade->hora) as $index => $horario)
                             <div class="input-group mb-2">
                                 <input type="time" name="hora[]" class="form-control" value="{{ $horario }}" required>
-
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-danger remove-hora">Remover</button>
+                                </div>
                             </div>
                         @endforeach
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-2 add-hora">Adicionar Horário</button>
+                </div>
 
                 <div class="form-group">
                     <label for="dias">{{ __('Dias da Semana') }}</label>
@@ -103,7 +107,7 @@
             newInput.innerHTML = `
                 <input type="time" name="hora[]" class="form-control" required>
                 <div class="input-group-append">
-                    <button type="button" class="btn btn-danger remove-hora">{{ __('Remover') }}</button>
+                    <button type="button" class="btn btn-danger remove-hora">Remover</button>
                 </div>
             `;
             container.appendChild(newInput);

@@ -4,19 +4,22 @@
 
 @section('content')
 <div class="container mt-5">
-    <div class="card card-custom">
-        <div class="card-body">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-primary text-white text-center">
             <h2>{{ __('Minhas Atividades Matriculadas') }}</h2>
+        </div>
 
+        <div class="card-body">
             @if(Session::has('success'))
                 <div class="alert alert-success">
                     {{ Session::get('success') }}
                 </div>
             @endif
 
+            <!-- Tabela de Atividades Matriculadas -->
             <div class="table-responsive mt-4">
-                <table class="table table-striped table-sm">
-                    <thead>
+                <table class="table table-hover table-striped align-middle text-center">
+                    <thead class="table-light">
                         <tr>
                             <th>{{ __('Atividade') }}</th>
                             <th>{{ __('Data de Início') }}</th>
@@ -31,7 +34,7 @@
                     <tbody>
                         @forelse($atividadesMatriculadas as $atividade)
                         <tr>
-                            <td>{{ $atividade->atividade }}</td>
+                            <td><strong>{{ $atividade->atividade }}</strong></td>
                             <td>{{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($atividade->data_ocorrencia)->format('d/m/Y') }}</td>
                             <td>{{ ucfirst(\Carbon\Carbon::parse($atividade->data_ocorrencia)->locale('pt_BR')->isoFormat('dddd')) }}</td>
@@ -48,15 +51,18 @@
                         </tr>
                         @empty
                             <tr>
-                                <td colspan="8">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
+                                <td colspan="8" class="text-center text-muted">{{ __('Você não está matriculado em nenhuma atividade.') }}</td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
 
+            <!-- Paginação -->
             @if($atividadesMatriculadas instanceof \Illuminate\Pagination\LengthAwarePaginator)
-                {{ $atividadesMatriculadas->links() }}
+                <div class="d-flex justify-content-center mt-3">
+                    {{ $atividadesMatriculadas->links() }}
+                </div>
             @endif
         </div>
     </div>
