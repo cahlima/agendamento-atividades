@@ -21,38 +21,37 @@ class AtividadesController extends Controller
 
     // ADMINISTRADOR
     public function listarAtividades(Request $request)
-    {
-        // Verifica se o usuário é admin antes de continuar
-        $this->authorize('isAdmin', Auth::user());
+{
+    // Verifica se o usuário é admin antes de continuar
+    $this->authorize('isAdmin', Auth::user());
 
-        // Inicializa a query base
-        $atividades = Atividades::with('instrutor');
+    // Inicializa a query base
+    $atividades = Atividades::with('instrutor');
 
-        // Aplica filtros de busca para atividade/local e instrutor
-        if ($request->has('busca')) {
-            $atividades->where(function ($query) use ($request) {
-                $query->where('atividade', 'like', '%' . $request->busca . '%')
-                      ->orWhere('local', 'like', '%' . $request->busca . '%');
-            });
-        }
-
-        // Filtro para buscar pelo nome do instrutor
-        if ($request->has('instrutor')) {
-            $atividades->whereHas('instrutor', function ($query) use ($request) {
-                $query->where('nome', 'like', '%' . $request->instrutor . '%');
-            });
-        }
-
-        // Se nenhum filtro for aplicado, exibe todas as atividades
-        if (!$request->has('busca') && !$request->has('instrutor')) {
-            $atividades = $atividades->get(); // Exibe todas as atividades se nenhum filtro for aplicado
-        } else {
-            // Se houver filtros, aplique-os e busque as atividades
-            $atividades = $atividades->get();
-        }
-
-        return view('administrador.atividades.index', compact('atividades'));
+    // Aplica filtros de busca para atividade/local
+    if ($request->has('busca')) {
+        $atividades->where(function ($query) use ($request) {
+            $query->where('atividade', 'like', '%' . $request->busca . '%')
+                  ->orWhere('local', 'like', '%' . $request->busca . '%');
+        });
     }
+
+    /*// Filtro para buscar pelo nome do instrutor
+    if ($request->has('instrutor')) {
+        $atividades->whereHas('instrutor', function ($query) use ($request) {
+            $query->where('nome', 'like', '%' . $request->instrutor . '%');
+        });
+    }*/
+
+    // Se nenhum filtro for aplicado, exibe todas as atividades
+    $atividades = $atividades->get();
+
+    // Buscar todos os instrutores para popular o select
+    // Se o filtro por instrutores não for mais necessário, este trecho também pode ser comentado ou removido
+    // $instrutores = \App\Models\Instrutor::all();
+
+    return view('administrador.atividades.index', compact('atividades'));
+}
 
 
     public function adicionarAtividade()

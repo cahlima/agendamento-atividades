@@ -31,7 +31,8 @@ class Atividades extends Model
 {
     return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
                 ->withPivot('tipo_id')
-                ->wherePivot('tipo_id', 2); // Certifique-se de que tipo_id = 2 é para alunos
+                ->wherePivot('tipo_id', 2) // Certifique-se de que tipo_id = 2 é para alunos
+                ->withTimestamps();
 }
 
 
@@ -40,7 +41,9 @@ class Atividades extends Model
      */
     public function usuariosMatriculados()
     {
-        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id');
+        return $this->belongsToMany(Usuarios::class, 'matriculas', 'atividade_id', 'usuario_id')
+        ->withPivot(['tipo_id'])
+                ->withTimestamps();
     }
 
     /**

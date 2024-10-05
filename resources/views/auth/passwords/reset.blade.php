@@ -13,29 +13,30 @@
                     <input type="hidden" name="token" value="{{ $token ?? '' }}">
                     <input type="hidden" name="email" value="{{ $email ?? '' }}">
 
-                    <!-- Campo Senha -->
-                    <div class="form-group row">
-                        <label for="senha" class="col-md-4 col-form-label text-md-right">{{ __('Senha') }}</label>
+                  <!-- Campo Senha -->
+<div class="form-group row">
+    <label for="password" class="col-md-4 col-form-label text-md-right">{{ __('Senha') }}</label>
 
-                        <div class="col-md-6">
-                            <input id="senha" type="password" class="form-control @error('senha') is-invalid @enderror" name="senha" required autocomplete="new-password">
+    <div class="col-md-6">
+        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="new-password">
 
-                            @error('senha')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                    </div>
+        @error('password')
+            <span class="invalid-feedback" role="alert">
+                <strong>{{ $message }}</strong>
+            </span>
+        @enderror
+    </div>
+</div>
 
-                    <!-- Campo Confirmar Senha -->
-                    <div class="form-group row">
-                        <label for="senha_confirmation" class="col-md-4 col-form-label text-md-right">{{ __('Confirmar Senha') }}</label>
+<!-- Campo Confirmar Senha -->
+<div class="form-group row">
+    <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">{{ __('Confirmar Senha') }}</label>
 
-                        <div class="col-md-6">
-                            <input id="senha_confirmation" type="password" class="form-control" name="senha_confirmation" required autocomplete="new-password">
-                        </div>
-                    </div>
+    <div class="col-md-6">
+        <input id="password_confirmation" type="password" class="form-control" name="password_confirmation" required autocomplete="new-password">
+    </div>
+</div>
+
 
                     <!-- Botão de Submissão -->
                     <div class="form-group row mb-0">
