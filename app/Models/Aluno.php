@@ -18,9 +18,5 @@ class Aluno extends Model
         return $this->belongsToMany(Atividades::class, 'matriculas', 'aluno_id', 'atividade_id');
     }
 
-    public function atividadesIndex()
-    {
-     return $this->belongsToAMny(Atividades::class,
-     'matriculas', 'usuario_id', 'atividade_id');
-    }
+ 
 }

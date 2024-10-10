@@ -23,7 +23,7 @@
                         <div class="input-group">
                             <select name="busca" class="form-control">
                                 <option value="">{{ __('Selecione uma atividade') }}</option>
-                                @foreach($atividades as $atividadeOption)
+                                @foreach($todasAtividades as $atividadeOption)
                                     <option value="{{ $atividadeOption->atividade }}" {{ request('busca') == $atividadeOption->atividade ? 'selected' : '' }}>
                                         {{ $atividadeOption->atividade }}
                                     </option>
@@ -52,10 +52,8 @@
                                     {{ \Carbon\Carbon::parse($atividade->data_fim)->format('d/m/Y') }}
                                 </p>
                                 <p><strong>Hora(s):</strong>
-                                    @if($atividade->horarios->isNotEmpty())
-                                        @foreach($atividade->horarios as $horario)
-                                            {{ \Carbon\Carbon::parse($horario->hora)->format('H:i') }}@if(!$loop->last), @endif
-                                        @endforeach
+                                    @if(!empty($atividade->hora))
+                                        {{ $atividade->hora }}
                                     @else
                                         {{ __('Horários não definidos') }}
                                     @endif
@@ -89,13 +87,7 @@
                                     {{ \Carbon\Carbon::parse($atividade->data_fim)->format('d/m/Y') }}
                                 </p>
                                 <p><strong>Hora(s):</strong>
-                                    @if($atividade->horarios->isNotEmpty())
-                                        @foreach($atividade->horarios as $horario)
-                                            {{ \Carbon\Carbon::parse($horario->hora)->format('H:i') }}@if(!$loop->last), @endif
-                                        @endforeach
-                                    @else
-                                        {{ __('Horários não definidos') }}
-                                    @endif
+                                    {{ $atividade->hora ?? __('Horários não definidos') }}
                                 </p>
                                 <p><strong>Local:</strong> {{ $atividade->local }}</p>
                             </div>

@@ -56,25 +56,33 @@ public function profAtividadesMatriculadas()
 
     // Atualiza os dados do perfil do professor
     public function perfilUpdate(Request $request)
-    {
-        $usuario = Auth::user();
+{
+    $usuario = Auth::user();
 
-        $data = $request->validate([
-            'nome' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
-            'password' => 'nullable|string|min:8|confirmed',
-        ]);
+    $data = $request->validate([
+        'nome' => 'required|string|max:255',
+        'email' => 'required|string|email|max:255|unique:usuarios,email,' . $usuario->id,
+        'login' => 'required|string|max:255|unique:usuarios,login,' . $usuario->id,
+        'telefone' => 'nullable|string|max:20',
+        'senha' => 'nullable|string|min:8|confirmed',
+    ]);
 
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        } else {
-            unset($data['password']);
-        }
+    // Verifica se a senha foi fornecida para ser atualizada
+    if ($request->filled('senha')) {
+        $data['senha'] = bcrypt($request->senha);  // bcrypt para garantir a segurança
+    } else {
+        unset($data['senha']);
+    }
 
+    try {
         $usuario->update($data);
 
-        return redirect()->route('professor.perfil.edit')->with('success', 'Perfil atualizado com sucesso.');
+        return redirect()->route('professor.perfil.index')->with('success', 'Perfil atualizado com sucesso.');
+    } catch (\Exception $e) {
+        return redirect()->route('professor.perfil.edit')->with('error', 'Erro ao atualizar o perfil.');
     }
+}
+
 
     public function showPerfil()
     {

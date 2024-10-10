@@ -38,9 +38,9 @@
                             <td>{{ \Carbon\Carbon::parse($atividade->data_inicio)->format('d/m/Y') }}</td>
                             <td>{{ \Carbon\Carbon::parse($atividade->data_ocorrencia)->format('d/m/Y') }}</td>
                             <td>{{ ucfirst(\Carbon\Carbon::parse($atividade->data_ocorrencia)->locale('pt_BR')->isoFormat('dddd')) }}</td>
-                            <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
-                            <td>{{ $atividade->instrutor['nome'] }}</td>
-                            <td>{{ $atividade->local }}</td>
+                            <td>{{ $atividade->hora ?? 'Horário não definido' }}</td>
+                            <td>{{ $atividade->instrutor->nome ?? 'Instrutor não definido' }}</td>
+                            <td>{{ $atividade->local ?? 'Local não definido' }}</td>
                             <td>
                                 <form action="{{ route('aluno.atividades.desmatricular', $atividade->id) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja se desmatricular desta atividade?');">
                                     @csrf

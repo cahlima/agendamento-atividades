@@ -30,7 +30,7 @@ class MatriculaController extends Controller
         Log::info('Atividade encontrada:', ['atividade_id' => $atividade->id]);
 
         // Verifica se o usuário já está matriculado nesta atividade
-        if ($usuario->atividades()->where('atividades.id', $id)->exists()) {
+        if (Matricula::where('usuario_id', $usuario->id)->where('atividade_id', $id)->exists()) {
             Log::info('Usuário já está matriculado na atividade:', ['user_id' => $usuario->id, 'atividade_id' => $id]);
             return redirect()->route('aluno.atividades.matriculadas')->with('error', 'Você já está matriculado nesta atividade.');
         }
@@ -91,19 +91,53 @@ class MatriculaController extends Controller
     }
 
     public function matriculaaluno()
-    {
-        // Verifica se o usuário está autenticado
-        $usuario = Auth::user();
+{
+    // Verifica se o usuário está autenticado
+    $usuario = Auth::user();
 
-        if (!$usuario) {
-            return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
+    if (!$usuario) {
+        return redirect()->route('login')->with('error', 'Você precisa estar logado para acessar suas matrículas.');
+    }
+
+    // Obtenha as atividades matriculadas do usuário e carregue as informações de dias e horários
+    $atividadesMatriculadas = $usuario->atividades()->with(['instrutor'])->get();
+
+    // Calcula a próxima ocorrência e formata os dias da semana corretamente
+    $atividadesMatriculadas->map(function ($atividade) {
+        $diasSemanaMap = [
+            'domingo' => \Carbon\Carbon::SUNDAY,
+            'segunda' => \Carbon\Carbon::MONDAY,
+            'terca' => \Carbon\Carbon::TUESDAY,
+            'quarta' => \Carbon\Carbon::WEDNESDAY,
+            'quinta' => \Carbon\Carbon::THURSDAY,
+            'sexta' => \Carbon\Carbon::FRIDAY,
+            'sabado' => \Carbon\Carbon::SATURDAY,
+        ];
+
+        $dias = explode(',', $atividade->dias);
+        $proxDia = null;
+        $dataAtual = \Carbon\Carbon::now();
+
+        foreach ($dias as $dia) {
+            $dia = trim($dia);
+            if (isset($diasSemanaMap[$dia])) {
+                $proxDia = $dataAtual->copy()->next($diasSemanaMap[$dia]);
+
+                // Define a próxima ocorrência da atividade
+                if ($proxDia->greaterThanOrEqualTo($dataAtual)) {
+                    $atividade->data_ocorrencia = $proxDia->toDateString();
+                    break;
+                }
+            }
         }
 
-        // Obtenha as atividades matriculadas do usuário com paginação
-        $atividadesMatriculadas = $usuario->atividades()->paginate(10); // Paginação com 10 itens por página
+        // Formatação de dias e horários
+        $atividade->dias_formatados = implode(', ', array_map('ucfirst', explode(',', $atividade->dias)));
+        return $atividade;
+    });
 
-        return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
-    }
+    return view('aluno.atividades.matriculadas', compact('atividadesMatriculadas'));
+}
 
 
 }

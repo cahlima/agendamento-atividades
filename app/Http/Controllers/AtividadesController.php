@@ -166,31 +166,35 @@ class AtividadesController extends Controller
     // ALUNO
 
     public function listarAtividadesAlunos(Request $request)
-{
-    $usuario = Auth::user();
+    {
+        $usuario = Auth::user();
 
-    // Recupera as atividades nas quais o aluno já está matriculado
-    $atividadesMatriculadas = $usuario->atividades()
-                                      ->with(['instrutor', 'horarios'])
-                                      ->get();
+        // Verifica se o usuário está autenticado e tem atividades matriculadas
+        $atividadesMatriculadas = $usuario->atividades()
+                                          ->with('instrutor')
+                                          ->get(); // Aqui obtemos as atividades que o aluno já está matriculado
 
-    // Recupera as atividades nas quais o aluno ainda não está matriculado
-    $atividadesQuery = Atividades::whereNotIn('id', $atividadesMatriculadas->pluck('id'))
-                                ->with(['instrutor', 'horarios']);
+        // Recupera as atividades nas quais o aluno ainda não está matriculado
+        $atividadesQuery = Atividades::whereNotIn('id', $atividadesMatriculadas->pluck('id'))
+                                     ->with('instrutor'); // Atividades que o aluno ainda não se matriculou
 
-    // Aplica filtros de busca para atividade/local
-    if ($request->has('busca')) {
-        $atividadesQuery->where(function ($query) use ($request) {
-            $query->where('atividade', 'like', '%' . $request->busca . '%')
-                  ->orWhere('local', 'like', '%' . $request->busca . '%');
-        });
+        // Aplica filtros de busca para atividade/local
+        if ($request->has('busca')) {
+            $atividadesQuery->where(function ($query) use ($request) {
+                $query->where('atividade', 'like', '%' . $request->busca . '%')
+                      ->orWhere('local', 'like', '%' . $request->busca . '%');
+            });
+        }
+
+        // Recupera todas as atividades disponíveis para popular o dropdown
+        $todasAtividades = Atividades::select('atividade')->distinct()->get();
+
+        // Recupera as atividades paginadas para listar
+        $atividades = $atividadesQuery->paginate(10);
+
+        return view('aluno.atividades.listar', compact('atividades', 'atividadesMatriculadas', 'todasAtividades'));
     }
 
-    // Pagina as atividades para garantir a disponibilidade do método links()
-    $atividades = $atividadesQuery->paginate(10); // Apenas paginate(), sem get()
-
-    return view('aluno.atividades.listar', compact('atividades', 'atividadesMatriculadas'));
-}
 
 
 // PROFESSOR

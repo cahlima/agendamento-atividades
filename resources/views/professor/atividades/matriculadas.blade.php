@@ -30,6 +30,8 @@
                                             <td>{{ \Carbon\Carbon::parse($atividade->hora)->format('H:i') }}</td>
                                             <td>{{ ucfirst(str_replace(',', ', ', $atividade->dias)) }}</td>
                                             <td>{{ $atividade->local }}</td>
+
+                                            
                                             <td>
                                                 @if($atividade->alunos->isNotEmpty())
                                                     <ul class="list-unstyled mb-0">
