@@ -109,8 +109,10 @@ class Usuarios extends Authenticatable
      */
     public function setSenhaAttribute($value)
     {
-        if (!empty($value)) {
-            $this->attributes['senha'] = Hash::make($value);
-        }
+        if (!empty($value)&& !str_starts_with($value,'$2y$'))   {
+            $this->attributes['senha'] = bcrypt($value);
+        }else {
+            $this->attributes['senha'] = $value;
     }
+}
 }

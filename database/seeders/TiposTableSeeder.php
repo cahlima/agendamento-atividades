@@ -14,7 +14,7 @@ class TiposTableSeeder extends Seeder
      */
     public function run()
     {
-        DB::table('tipos')->insert([
+        DB::table('tipos')->insertOrIgnore([
             ['nome' => 'Administrador'],
             ['nome' => 'Professor'],
             ['nome' => 'Aluno'],
