@@ -132,9 +132,3 @@ Route::prefix('usuarios')->name('usuarios.')->group(function () {
     Route::delete('/{id}', [UsuariosController::class, 'deletar'])->name('destroy'); // Deletar usuário
 });
 
-//  ROTA TEMPORÁRIA, APAGUE DEPOIS!
-Route::get('/run-migrate', function() {
-    \Artisan::call('migrate --force');
-    \Artisan::call('db:seed --force');
-    return 'Migrations e seeders rodados!';
-});
